@@ -11,7 +11,7 @@ if (file_exists(ROOT_PATH . '/.env')) {
 	}
 }
 
-if ($_ENV['DEBUG'] === 'true') {
+if ($_ENV['DEBUG'] == true) {
 	ini_set('display_errors', 1);
 	error_reporting(E_ALL);
 } else {
