@@ -20,6 +20,8 @@
 	<h1>Welcome to <?= htmlspecialchars($appName) ?></h1>
     <h1 class="text-3xl font-bold underline">    Hello world!  </h1>
     <a href="/user/1" preload="mouseover">About</a>
+
+    <?php view('admin/login') ?>
 </body>
 
 </html>
