@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @throws Exception
+ */
 function db()
 {
 	static $pdo;

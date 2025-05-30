@@ -1,0 +1,1 @@
+.\tailwindcss.exe -i public/css/style.css -o public/css/output.css --watch
