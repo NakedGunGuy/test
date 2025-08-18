@@ -184,9 +184,6 @@
     --tw-font-weight: var(--font-weight-bold);
     font-weight: var(--font-weight-bold);
   }
-  .text-black {
-    color: var(--color-black);
-  }
   .text-red-400 {
     color: var(--color-red-400);
   }

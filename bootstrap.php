@@ -19,3 +19,10 @@ if ($_ENV['DEBUG']) {
 	ini_set('display_errors', 0);
 	error_reporting(0);
 }
+
+// Start output buffering with gzip compression
+if (!headers_sent() && extension_loaded('zlib') && !ini_get('zlib.output_compression')) {
+    ob_start('ob_gzhandler');
+} else {
+    ob_start();
+}

@@ -1,23 +1,34 @@
 <?php
 
-function route($pattern, $callback = null)
+function route($pattern, $callback = null, $middleware = [])
 {
     static $routes = [];
     if ($callback !== null) {
-        // Convert "/user/{id}" to regex: "#^/user/(?P<id>[^/]+)$#"
+        // Convert "/user/{id}" to regex
         $regex = preg_replace('#\{(\w+)\}#', '(?P<$1>[^/]+)', $pattern);
-        $regex = "#^" . $regex . "$#";
-        $routes[$regex] = $callback;
+        $regex = "#^" . rtrim($regex, '/') . "$#"; // normalize trailing slash
+        $routes[$regex] = [
+            'callback' => $callback,
+            'middleware' => $middleware,
+        ];
         return;
     }
 
     $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $uri = rtrim($uri, '/'); // normalize trailing slash
 
-    foreach ($routes as $regex => $handler) {
+    foreach ($routes as $regex => $route) {
         if (preg_match($regex, $uri, $matches)) {
+            // Run middleware first
+            foreach ($route['middleware'] as $mw) {
+                if (is_callable($mw)) {
+                    $mw();
+                }
+            }
+
             // Only keep named params
             $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
-            call_user_func($handler, $params);
+            call_user_func($route['callback'], $params);
             return true;
         }
     }
@@ -25,19 +36,20 @@ function route($pattern, $callback = null)
     return false;
 }
 
-function get($pattern, $callback): void
+function get($pattern, $callback, $middleware = [])
 {
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        route($pattern, $callback);
+        route($pattern, $callback, $middleware);
     }
 }
 
-function post($pattern, $callback): void
+function post($pattern, $callback, $middleware = [])
 {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        route($pattern, $callback);
+        route($pattern, $callback, $middleware);
     }
 }
+
 
 /**
  * @throws Exception
@@ -53,11 +65,17 @@ function build_page_tree(): array
         $slug = $data['slug'] ?? '';
         $parent = $data['parent'] ?? null;
         $id = basename($file, '.yaml');
+        $title = $data['title'] ?? '';
+        $view = $data['view'] ?? '';
+        $layout = $data['layout'] ?? '';
         $pages[$id] = [
             'slug' => $slug,
             'parent' => $parent,
             'file' => $file,
-            'data' => $data
+            'title' => $title,
+            'view' => $view,
+            'layout' => $layout,
+            'data' => $data,
         ];
     }
 
@@ -77,8 +95,12 @@ function build_page_tree(): array
 function route_page_tree($pages): void
 {
     foreach ($pages as $page) {
-        route($page['full_path'], function () {
-            view('home', ['appName' => $_ENV['APP_NAME']]);
+        route($page['full_path'], function () use ($page) {
+            view(
+                (!empty($page['view']) ? $page['view'] : 'home'),
+                ['appName' => $_ENV['APP_NAME']],
+                (!empty($page['layout']) ? $page['layout'] : 'default')
+            );
         });
     }
 }

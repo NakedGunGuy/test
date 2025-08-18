@@ -1,25 +1,35 @@
 <?php
 
-route('/admin/login', function () {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if ($_POST['username'] === 'admin' && $_POST['password'] === 'password') {
-            $_SESSION['user'] = 'admin';
-            header("Location: /admin");
-            exit;
-        } else {
-            echo "Invalid credentials.";
-        }
-    }
+$getAdminAuth = function() {
+    require_admin_auth();
+};
+
+get('/admin', function () {
+    view('admin/dashboard', [], 'admin');
+}, [$getAdminAuth]);
+
+get('/admin/login', function () {
     view('admin/login');
 });
 
-route('/admin/logout', function () {
-    unset($_SESSION['user']);
+post('/admin/login', function () {
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
+
+    if (authenticate_admin($username, $password)) {
+        header("Location: /admin");
+        exit;
+    } else {
+        session_flash('error', 'Invalid credentials.');
+        header("Location: /admin/login");
+        exit;
+    }
+});
+
+// Logout
+get('/admin/logout', function () {
+    unset($_SESSION['admin']);
     header("Location: /admin/login");
     exit;
 });
 
-route('/admin', function () {
-    require_auth();
-    view('admin/dashboard');
-});
