@@ -5,7 +5,7 @@
  */
 function db()
 {
-	static $pdo;
+    global $pdo;
 
 	if (!$pdo) {
 		$path = ROOT_PATH . '/database/database.sqlite';
