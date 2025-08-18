@@ -19,7 +19,7 @@
 
 <body hx-ext="preload" data-htmx-log-level="debug">
 	<h1>Welcome to <?= htmlspecialchars($appName) ?></h1>
-    <h1 class="text-3xl font-bold underline">    Hello world!  </h1>
+    <h1 class="text-3xl font-bold underline text-red-400">    Hello world!  </h1>
     <a href="/user/1" preload="mouseover">About</a>
 
     <?php
