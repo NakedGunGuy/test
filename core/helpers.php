@@ -2,7 +2,7 @@
 
 $__sections = []; // holds content sections
 
-function view($name, $data = [], $layout = null)
+function view($name, $data = [], $layout = 'default')
 {
     global $__sections;
     extract($data);

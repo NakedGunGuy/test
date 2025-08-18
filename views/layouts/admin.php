@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title><?= section('title', 'Admin Dashboard') ?></title>
+    <title><?= section('title', htmlspecialchars($_ENV['APP_NAME'])) ?></title>
 
-    <!-- Default CSS -->
+    <link rel="preload" href="/css/output.css" as="style">
+    <link rel="stylesheet" href="/css/output.css" media="all">
 
-    <!-- Additional CSS per page -->
     <?= section('css') ?>
 </head>
-<body>
+<body hx-ext="preload" data-htmx-log-level="debug">
 <header>
     <h1>Admin Panel</h1>
     <nav>
@@ -22,9 +22,9 @@
     <?= $content ?>
 </main>
 
-<!-- Default JS -->
-
-<!-- Additional JS per page -->
+<script src="/js/htmx.min.js"></script>
+<script src="/js/preload.js"></script>
+<script src="/js/images.js"></script>
 <?= section('js') ?>
 </body>
 </html>

@@ -104,3 +104,13 @@ CREATE TABLE IF NOT EXISTS card_classes (
     UNIQUE(card_id, class_id)
     );
 
+-- products (the admin listings)
+CREATE TABLE products (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    edition_id INTEGER,    -- NULL if custom product
+    name TEXT,             -- required if custom product
+    price DECIMAL(10,2) NOT NULL,
+    quantity INTEGER NOT NULL DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (edition_id) REFERENCES editions(id)
+);
