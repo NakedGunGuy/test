@@ -5,6 +5,7 @@ const CONTENT_PATH = ROOT_PATH . '/content';
 const VIEW_PATH = ROOT_PATH . '/views';
 const CORE_PATH = ROOT_PATH . '/core';
 const PUBLIC_PATH = ROOT_PATH . '/public';
+const ROUTE_PATH = ROOT_PATH . '/routes';
 
 if (file_exists(ROOT_PATH . '/.env')) {
 	foreach (parse_ini_file(__DIR__ . '/.env') as $key => $value) {
@@ -20,7 +21,6 @@ if ($_ENV['DEBUG']) {
 	error_reporting(0);
 }
 
-// Start output buffering with gzip compression
 if (!headers_sent() && extension_loaded('zlib') && !ini_get('zlib.output_compression')) {
     ob_start('ob_gzhandler');
 } else {

@@ -26,17 +26,12 @@ post('/admin/login', function () {
     }
 });
 
-// Logout
 get('/admin/logout', function () {
     unset($_SESSION['admin']);
     header("Location: /admin/login");
     exit;
 });
 
-
-// --------------------------
-// Main products page
-// --------------------------
 get('/admin/products', function () {
     $stmt = db()->query("
         SELECT 
@@ -52,16 +47,17 @@ get('/admin/products', function () {
         LEFT JOIN sets s ON e.set_id = s.id
         ORDER BY p.id DESC
     ");
+
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     view('admin/products/index', ['products' => $products], 'admin');
 }, [$getAdminAuth]);
 
-// --------------------------
-// Search editions (HTMX live search)
-// --------------------------
 get('/admin/products/search', function () {
     $q = $_GET['q'] ?? '';
+    if (trim($q) === '') {
+        return;
+    }
     $stmt = db()->prepare("
         SELECT e.*, c.name AS card_name, s.name AS set_name
         FROM editions e
@@ -73,12 +69,9 @@ get('/admin/products/search', function () {
     $stmt->execute([':q' => "%$q%"]);
     $editions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    view('admin/products/partials/edition_search_results', ['editions' => $editions]);
+    partial('admin/products/partials/edition_search_results', ['editions' => $editions]);
 }, [$getAdminAuth]);
 
-// --------------------------
-// Open add product form
-// --------------------------
 get('/admin/products/add', function () {
     $edition_id = $_GET['edition_id'] ?? null;
     $edition = null;
@@ -98,9 +91,6 @@ get('/admin/products/add', function () {
     partial('admin/products/partials/product_form', ['edition' => $edition]);
 }, [$getAdminAuth]);
 
-// --------------------------
-// Save new product
-// --------------------------
 post('/admin/products/create', function () {
     $edition_id  = $_POST['edition_id'] ?? null;
     $name        = $_POST['name'] ?? '';
@@ -110,7 +100,6 @@ post('/admin/products/create', function () {
 
     insert_product($edition_id, $name, $description, $price, $quantity);
 
-    // Return the new row for HTMX swap
     $stmt = db()->query("
         SELECT 
             p.*,
@@ -131,9 +120,6 @@ post('/admin/products/create', function () {
     view('admin/products/partials/product_row', ['product' => $product]);
 }, [$getAdminAuth]);
 
-// --------------------------
-// Show all variations for a given edition
-// --------------------------
 get('/admin/products/edition/{edition_id}', function ($edition_id) {
     $stmt = db()->prepare("
         SELECT 
