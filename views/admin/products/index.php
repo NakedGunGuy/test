@@ -2,8 +2,8 @@
 <h1>Products</h1>
 
 <button 
-    hx-get="/admin/products/add" 
-    hx-target="#dialog" 
+    hx-get="/admin/products/add"
+    hx-target="#dialog"
     hx-trigger="click"
     class="btn bg-blue-600 text-white px-4 py-2 rounded"
 >
@@ -27,4 +27,4 @@
     </tbody>
 </table>
 
-<div id="dialog"></div>
+<div id="dialog" class="relative p-4 w-full max-w-2xl max-h-full"></div>

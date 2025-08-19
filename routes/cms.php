@@ -88,7 +88,7 @@ get('/admin/products/add', function () {
         $edition = $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    partial('admin/products/partials/product_form', ['edition' => $edition]);
+    partial('admin/products/partials/product_add', ['edition' => $edition]);
 }, [$getAdminAuth]);
 
 post('/admin/products/create', function () {
@@ -120,7 +120,8 @@ post('/admin/products/create', function () {
     view('admin/products/partials/product_row', ['product' => $product]);
 }, [$getAdminAuth]);
 
-get('/admin/products/edition/{edition_id}', function ($edition_id) {
+get('/admin/products/edition/{edition_id}', function ($data) {
+    $edition_id = $data['edition_id'] ?? null;
     $stmt = db()->prepare("
         SELECT 
             p.*,
@@ -138,5 +139,19 @@ get('/admin/products/edition/{edition_id}', function ($edition_id) {
     $stmt->execute([':edition_id' => $edition_id]);
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    view('admin/products/partials/product_variations', ['products' => $products]);
+    if ($products) {
+        partial('admin/products/partials/product_variations', ['products' => $products]);
+    } else {
+        $stmt = db()->prepare("
+            SELECT e.*, c.name AS card_name, s.name AS set_name
+            FROM editions e
+            JOIN cards c ON e.card_id = c.id
+            JOIN sets s ON e.set_id = s.id
+            WHERE e.id = :id
+        ");
+        $stmt->execute([':id' => $edition_id]);
+        $edition = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        partial('admin/products/partials/product_form', ['edition' => $edition]);
+    }
 }, [$getAdminAuth]);

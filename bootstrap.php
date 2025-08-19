@@ -6,6 +6,7 @@ const VIEW_PATH = ROOT_PATH . '/views';
 const CORE_PATH = ROOT_PATH . '/core';
 const PUBLIC_PATH = ROOT_PATH . '/public';
 const ROUTE_PATH = ROOT_PATH . '/routes';
+const MAIL_PATH = ROOT_PATH . '/mail';
 
 if (file_exists(ROOT_PATH . '/.env')) {
 	foreach (parse_ini_file(__DIR__ . '/.env') as $key => $value) {

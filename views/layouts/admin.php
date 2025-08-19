@@ -25,6 +25,7 @@
 <script src="/js/htmx.min.js"></script>
 <script src="/js/preload.js"></script>
 <script src="/js/images.js"></script>
+<script src="https://unpkg.com/hyperscript.org@0.9.14"></script>
 <?= section('js') ?>
 </body>
 </html>
