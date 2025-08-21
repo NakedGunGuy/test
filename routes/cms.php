@@ -33,44 +33,24 @@ get('/admin/logout', function () {
 });
 
 get('/admin/products', function () {
-    $stmt = db()->query("
-        SELECT 
-            p.*,
-            e.collector_number AS edition_number,
-            e.slug AS edition_slug,
-            c.name AS card_name,
-            s.name AS set_name,
-            p.edition_id IS NULL AS is_custom
-        FROM products p
-        LEFT JOIN editions e ON p.edition_id = e.id
-        LEFT JOIN cards c ON e.card_id = c.id
-        LEFT JOIN sets s ON e.set_id = s.id
-        ORDER BY p.id DESC
-    ");
+    $filters = [
+        'name' => $_GET['name'] ?? null,
+        'min_price' => $_GET['min_price'] ?? null,
+        'max_price' => $_GET['max_price'] ?? null,
+    ];
+    $filters = array_filter($filters); // remove nulls
 
-    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $products = getProducts($filters, 'p.id DESC', 50);
 
     view('admin/products/index', ['products' => $products], 'admin');
-}, [$getAdminAuth]);
+}, ['adminAuth']);
 
 get('/admin/products/search', function () {
     $q = $_GET['q'] ?? '';
-    if (trim($q) === '') {
-        return;
-    }
-    $stmt = db()->prepare("
-        SELECT e.*, c.name AS card_name, s.name AS set_name
-        FROM editions e
-        JOIN cards c ON e.card_id = c.id
-        JOIN sets s ON e.set_id = s.id
-        WHERE c.name LIKE :q OR e.collector_number LIKE :q
-        LIMIT 20
-    ");
-    $stmt->execute([':q' => "%$q%"]);
-    $editions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+    $editions = $q ? getEditions(['q' => $q]) : [];
     partial('admin/products/partials/edition_search_results', ['editions' => $editions]);
-}, [$getAdminAuth]);
+}, ['adminAuth']);
+
 
 get('/admin/products/add', function () {
     $edition_id = $_GET['edition_id'] ?? null;
