@@ -73,32 +73,47 @@ get('/admin/products/add', function () {
 
 post('/admin/products/create', function () {
     $edition_id  = $_POST['edition_id'] ?? null;
-    $name        = $_POST['name'] ?? '';
-    $description = $_POST['description'] ?? '';
-    $price       = $_POST['price'] ?? 0;
-    $quantity    = $_POST['quantity'] ?? 0;
+    $name        = trim($_POST['name'] ?? '');
+    $description = trim($_POST['description'] ?? '');
+    $price       = $_POST['price'] ?? null;
+    $quantity    = $_POST['quantity'] ?? null;
+
+    $errors = [];
+
+    if ($name === '') {
+        $errors[] = 'Name is required';
+    }
+
+    if ($price === null || !is_numeric($price) || $price < 0) {
+        $errors[] = 'Price must be a positive number';
+    }
+
+    if ($quantity === null || !is_numeric($quantity) || $quantity < 0) {
+        $errors[] = 'Quantity must be a positive number';
+    }
+
+    if ($errors) {
+        http_response_code(422);
+        echo '❌ ' . implode(', ', $errors);
+        return;
+    }
 
     insert_product($edition_id, $name, $description, $price, $quantity);
 
-    $stmt = db()->query("
-        SELECT 
-            p.*,
-            e.collector_number AS edition_number,
-            e.slug AS edition_slug,
-            c.name AS card_name,
-            s.name AS set_name,
-            p.edition_id IS NULL AS is_custom
-        FROM products p
-        LEFT JOIN editions e ON p.edition_id = e.id
-        LEFT JOIN cards c ON e.card_id = c.id
-        LEFT JOIN sets s ON e.set_id = s.id
-        ORDER BY p.id DESC
-        LIMIT 1
-    ");
-    $product = $stmt->fetch(PDO::FETCH_ASSOC);
+    $filters = array_filter([
+        'name'      => $_GET['name'] ?? null,
+        'min_price' => $_GET['min_price'] ?? null,
+        'max_price' => $_GET['max_price'] ?? null,
+    ]);
 
-    view('admin/products/partials/product_row', ['product' => $product]);
+    $order = $_GET['sort'] ?? 'p.id DESC';
+
+    $products = getProducts($filters, $order, 50);
+
+    partial('admin/products/partials/products_table_body', ['products' => $products]);
+
 }, [$getAdminAuth]);
+
 
 get('/admin/products/edition/{edition_id}', function ($data) {
     $edition_id = $data['edition_id'] ?? null;
@@ -133,5 +148,24 @@ get('/admin/products/edition/{edition_id}', function ($data) {
         $edition = $stmt->fetch(PDO::FETCH_ASSOC);
 
         partial('admin/products/partials/product_form', ['edition' => $edition]);
+    }
+}, [$getAdminAuth]);
+
+get('/admin/products', function () {
+    $filters = [
+        'name' => $_GET['name'] ?? null,
+        'min_price' => $_GET['min_price'] ?? null,
+        'max_price' => $_GET['max_price'] ?? null,
+    ];
+    $filters = array_filter($filters);
+
+    $products = getProducts($filters, 'p.id DESC', 50);
+
+    if (!empty($_SERVER['HTTP_HX_REQUEST'])) {
+        // htmx request → only return table body
+        partial('admin/products/partials/products_table_body', ['products' => $products]);
+    } else {
+        // normal request → full page
+        view('admin/products/index', ['products' => $products], 'admin');
     }
 }, [$getAdminAuth]);

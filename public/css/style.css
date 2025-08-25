@@ -1,1 +1,22 @@
 @import "tailwindcss";
+
+.toast {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    background: #333;
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 9999;
+}
+.toast.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.toast.error {
+    background: #e74c3c;
+}
