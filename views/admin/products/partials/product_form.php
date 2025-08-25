@@ -4,18 +4,14 @@
     ]) ?>
     <!-- Modal body -->
     <div class="p-4 md:p-5 space-y-4">
-        <label class="block">
-            Search edition
-            <input
-                    name="q"
-                    hx-get="/admin/products/search"
-                    hx-trigger="keyup changed delay:200ms"
-                    hx-target="#edition-results"
-                    hx-swap="innerHTML"
-                    class="border rounded p-2 w-full"
-            >
-        </label>
-        <div id="edition-results" class="absolute bg-white border rounded mt-1 w-full max-h-60 overflow-y-auto z-50"></div>
+        <form>
+            <div class="mb-4">
+                <label class="block text-sm font-bold mb-2" for="description">
+                    Description
+                </label>
+                <textarea class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="description" name="description" placeholder="Description"></textarea>
+            </div>
+        </form>
     </div>
     <!-- Modal footer -->
     <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">

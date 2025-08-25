@@ -27,4 +27,4 @@
     </tbody>
 </table>
 
-<div id="dialog" class="relative p-4 w-full max-w-2xl max-h-full"></div>
+<div id="dialog" class="absolute p-4 w-full max-w-2xl max-h-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
