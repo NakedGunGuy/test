@@ -18,7 +18,6 @@
 </main>
 
 <script src="/js/htmx.min.js"></script>
-<script src="/js/preload.js"></script>
 <script src="/js/images.js"></script>
 <?= section('js') ?>
 </body>
