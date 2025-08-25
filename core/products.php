@@ -1,9 +1,9 @@
 <?php
 
-function insert_product($edition_id, $name, $description, $price, $quantity) {
+function insert_product($edition_id, $name, $description, $price, $quantity, $is_foil) {
     $stmt = db()->prepare("
-        INSERT INTO products (edition_id, name, description, price, quantity)
-        VALUES (:edition_id, :name, :description, :price, :quantity)
+        INSERT INTO products (edition_id, name, description, price, quantity, is_foil)
+        VALUES (:edition_id, :name, :description, :price, :quantity, :is_foil)
     ");
     $stmt->execute([
         ':edition_id'  => $edition_id ?: null,
@@ -11,13 +11,14 @@ function insert_product($edition_id, $name, $description, $price, $quantity) {
         ':description' => $description,
         ':price'       => $price,
         ':quantity'    => $quantity,
+        ':is_foil'     => $is_foil
     ]);
 }
 
-function update_product($id, $edition_id, $name, $description, $price, $quantity) {
+function update_product($id, $edition_id, $name, $description, $price, $quantity, $is_foil) {
     $stmt = db()->prepare("
         UPDATE products
-        SET edition_id = :edition_id, name = :name, description = :description, price = :price, quantity = :quantity
+        SET edition_id = :edition_id, name = :name, description = :description, price = :price, quantity = :quantity, is_foil = :is_foil
         WHERE id = :id
     ");
     $stmt->execute([
@@ -27,6 +28,7 @@ function update_product($id, $edition_id, $name, $description, $price, $quantity
         ':description' => $description,
         ':price'       => $price,
         ':quantity'    => $quantity,
+        ':is_foil'     => $is_foil
     ]);
 }
 

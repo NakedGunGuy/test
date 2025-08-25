@@ -43,13 +43,13 @@ get('/admin/products', function () {
     $products = getProducts($filters, 'p.id DESC', 50);
 
     view('admin/products/index', ['products' => $products], 'admin');
-}, ['adminAuth']);
+}, [$getAdminAuth]);
 
 get('/admin/products/search', function () {
     $q = $_GET['q'] ?? '';
     $editions = $q ? getEditions(['q' => $q]) : [];
     partial('admin/products/partials/edition_search_results', ['editions' => $editions]);
-}, ['adminAuth']);
+}, [$getAdminAuth]);
 
 
 get('/admin/products/add', function () {
@@ -77,6 +77,7 @@ post('/admin/products/create', function () {
     $description = trim($_POST['description'] ?? '');
     $price       = $_POST['price'] ?? null;
     $quantity    = $_POST['quantity'] ?? null;
+    $is_foil     = $_POST['is_foil'] ?? 0;
 
     $errors = [];
 
@@ -98,7 +99,7 @@ post('/admin/products/create', function () {
         return;
     }
 
-    insert_product($edition_id, $name, $description, $price, $quantity);
+    insert_product($edition_id, $name, $description, $price, $quantity, $is_foil);
 
     $filters = array_filter([
         'name'      => $_GET['name'] ?? null,
@@ -167,5 +168,85 @@ get('/admin/products', function () {
     } else {
         // normal request → full page
         view('admin/products/index', ['products' => $products], 'admin');
+    }
+}, [$getAdminAuth]);
+
+post('/admin/products/update/{product_id}', function ($data) {
+    $product_id  = $data['product_id'] ?? null;
+    $edition_id  = $_POST['edition_id'] ?? null;
+    $name        = trim($_POST['name'] ?? '');
+    $description = trim($_POST['description'] ?? '');
+    $price       = $_POST['price'] ?? null;
+    $quantity    = $_POST['quantity'] ?? null;
+    $is_foil     = $_POST['is_foil'] ?? 0;
+
+    $errors = [];
+
+    if ($product_id === null || !is_numeric($product_id)) {
+        $errors[] = 'Invalid product ID';
+    }
+
+    if ($name === '') {
+        $errors[] = 'Name is required';
+    }
+
+    if ($price === null || !is_numeric($price) || $price < 0) {
+        $errors[] = 'Price must be a positive number';
+    }
+
+    if ($quantity === null || !is_numeric($quantity) || $quantity < 0) {
+        $errors[] = 'Quantity must be a positive number';
+    }
+
+    if ($errors) {
+        http_response_code(422);
+        echo '❌ ' . implode(', ', $errors);
+        return;
+    }
+
+    update_product($product_id, $edition_id, $name, $description, $price, $quantity, $is_foil);
+
+    $filters = array_filter([
+        'name'      => $_GET['name'] ?? null,
+        'min_price' => $_GET['min_price'] ?? null,
+        'max_price' => $_GET['max_price'] ?? null,
+    ]);
+
+    $order = $_GET['sort'] ?? 'p.id DESC';
+
+    $products = getProducts($filters, $order, 50);
+
+    partial('admin/products/partials/products_table_body', ['products' => $products]);
+
+}, [$getAdminAuth]);
+
+get('/admin/products/confirm-delete/{product_id}', function ($data) {
+    $product_id = $data['product_id'] ?? null;
+
+    if ($product_id) {
+        partial('admin/products/partials/product_delete_confirm', ['product_id' => $product_id]);
+    }
+});
+
+post('/admin/products/delete/{product_id}', function ($data) {
+    $product_id = $data['product_id'] ?? null;
+
+    if ($product_id) {
+        delete_product($product_id);
+
+        $filters = array_filter([
+            'name'      => $_GET['name'] ?? null,
+            'min_price' => $_GET['min_price'] ?? null,
+            'max_price' => $_GET['max_price'] ?? null,
+        ]);
+
+        $order = $_GET['sort'] ?? 'p.id DESC';
+
+        $products = getProducts($filters, $order, 50);
+
+        partial('admin/products/partials/products_table_body', ['products' => $products, 'actions' => ['edit', 'delete']]);
+    } else {
+        http_response_code(400);
+        echo '❌ Invalid product ID';
     }
 }, [$getAdminAuth]);

@@ -10,11 +10,7 @@
     + Add Product
 </button>
 
-<form 
-    id="filters-form"
-    hx-get="/admin/products" 
-    hx-target="#products-table" 
-    hx-push-url="true"
+<form
     class="flex gap-2"
 >
     <input type="text" name="name" placeholder="Name" class="border px-2 py-1" />
@@ -36,6 +32,6 @@
         </tr>
     </thead>
     <tbody id="products-table">
-        <?php partial('admin/products/partials/products_table_body', ['products' => $products]); ?>
+        <?php partial('admin/products/partials/products_table_body', ['products' => $products, 'actions' => ['edit', 'delete']]); ?>
     </tbody>
 </table>

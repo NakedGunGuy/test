@@ -9,6 +9,10 @@ function getProducts($filters = [], $sort = 'p.id DESC', $limit = null, $offset 
             c.name AS card_name,
             s.name AS set_name,
             p.edition_id IS NULL AS is_custom
+            -- count how many cart items for this product
+            --(SELECT COUNT(*) FROM cart_items ci WHERE ci.product_id = p.id) AS cart_count,
+            -- can_be_deleted is true (1) if cart_count = 0
+            --(SELECT COUNT(*) = 0 FROM cart_items ci WHERE ci.product_id = p.id) AS can_be_deleted
         FROM products p
         LEFT JOIN editions e ON p.edition_id = e.id
         LEFT JOIN cards c ON e.card_id = c.id
@@ -55,5 +59,7 @@ function getProducts($filters = [], $sort = 'p.id DESC', $limit = null, $offset 
     $stmt = db()->prepare($sql);
     $stmt->execute($params);
 
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return $products;
 }
