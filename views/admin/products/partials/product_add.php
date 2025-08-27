@@ -7,7 +7,7 @@
         Search edition
         <input
             name="q"
-            hx-get="/admin/products/search"
+            hx-get="/admin/editions/search"
             hx-trigger="keyup changed delay:200ms"
             hx-target="#edition-results"
             hx-swap="innerHTML"

@@ -46,6 +46,12 @@ get('/admin/products', function () {
 }, [$getAdminAuth]);
 
 get('/admin/products/search', function () {
+    $name = $_GET['name'] ?? '';
+    $products = $name ? getProducts(['name' => $name], null, 10) : [];
+    partial('admin/products/partials/product_search_results', ['products' => $products]);
+}, [$getAdminAuth]);
+
+get('/admin/editions/search', function () {
     $q = $_GET['q'] ?? '';
     $editions = $q ? getEditions(['q' => $q]) : [];
     partial('admin/products/partials/edition_search_results', ['editions' => $editions]);
@@ -171,24 +177,59 @@ get('/admin/products', function () {
     }
 }, [$getAdminAuth]);
 
+get('/admin/products/update/{product_id}', function ($data) {
+    $product_id = $data['product_id'] ?? null;
+
+    if (!$product_id || !is_numeric($product_id)) {
+        http_response_code(400);
+        echo '❌ Invalid product ID';
+        return;
+    }
+
+    // Reuse getProducts with a filter
+    $products = getProducts(['id' => $product_id], null, 1);
+
+    $product = $products[0] ?? null;
+
+    if (!$product) {
+        http_response_code(404);
+        echo '❌ Product not found';
+        return;
+    }
+
+    // Render edit form with all product data
+    partial('admin/products/partials/product_edit_form', ['product' => $product]);
+}, [$getAdminAuth]);
+
 post('/admin/products/update/{product_id}', function ($data) {
     $product_id  = $data['product_id'] ?? null;
-    $edition_id  = $_POST['edition_id'] ?? null;
     $name        = trim($_POST['name'] ?? '');
     $description = trim($_POST['description'] ?? '');
     $price       = $_POST['price'] ?? null;
     $quantity    = $_POST['quantity'] ?? null;
     $is_foil     = $_POST['is_foil'] ?? 0;
 
+    if ($product_id === null || !is_numeric($product_id)) {
+        http_response_code(422);
+        echo '❌ Invalid product ID';
+        return;
+    }
+
+    $stmt = db()->prepare("SELECT quantity, (SELECT COUNT(*) FROM cart_items ci WHERE ci.product_id = p.id) AS in_carts FROM products p WHERE id = :id");
+    $stmt->execute([':id' => $product_id]);
+    $product = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$product) {
+        http_response_code(404);
+        echo '❌ Product not found';
+        return;
+    }
+
     $errors = [];
 
-    if ($product_id === null || !is_numeric($product_id)) {
-        $errors[] = 'Invalid product ID';
-    }
-
-    if ($name === '') {
-        $errors[] = 'Name is required';
-    }
+    // if ($name === '') {
+    //     $errors[] = 'Name is required';
+    // }
 
     if ($price === null || !is_numeric($price) || $price < 0) {
         $errors[] = 'Price must be a positive number';
@@ -198,13 +239,18 @@ post('/admin/products/update/{product_id}', function ($data) {
         $errors[] = 'Quantity must be a positive number';
     }
 
+    // prevent reducing quantity below cart count
+    if ($quantity < $product['in_carts']) {
+        $errors[] = "Quantity cannot be lower than {$product['in_carts']} (products in carts)";
+    }
+
     if ($errors) {
         http_response_code(422);
         echo '❌ ' . implode(', ', $errors);
         return;
     }
 
-    update_product($product_id, $edition_id, $name, $description, $price, $quantity, $is_foil);
+    update_product($product_id, $name, $description, $price, $quantity, $is_foil);
 
     $filters = array_filter([
         'name'      => $_GET['name'] ?? null,
@@ -220,6 +266,7 @@ post('/admin/products/update/{product_id}', function ($data) {
 
 }, [$getAdminAuth]);
 
+
 get('/admin/products/confirm-delete/{product_id}', function ($data) {
     $product_id = $data['product_id'] ?? null;
 
@@ -231,22 +278,36 @@ get('/admin/products/confirm-delete/{product_id}', function ($data) {
 post('/admin/products/delete/{product_id}', function ($data) {
     $product_id = $data['product_id'] ?? null;
 
-    if ($product_id) {
-        delete_product($product_id);
-
-        $filters = array_filter([
-            'name'      => $_GET['name'] ?? null,
-            'min_price' => $_GET['min_price'] ?? null,
-            'max_price' => $_GET['max_price'] ?? null,
-        ]);
-
-        $order = $_GET['sort'] ?? 'p.id DESC';
-
-        $products = getProducts($filters, $order, 50);
-
-        partial('admin/products/partials/products_table_body', ['products' => $products, 'actions' => ['edit', 'delete']]);
-    } else {
+    if (!$product_id) {
         http_response_code(400);
         echo '❌ Invalid product ID';
+        return;
     }
+
+    // check if product is in any cart
+    $stmt = db()->prepare("SELECT COUNT(*) AS in_carts FROM cart_items WHERE product_id = :id");
+    $stmt->execute([':id' => $product_id]);
+    $in_carts = $stmt->fetch(PDO::FETCH_ASSOC)['in_carts'];
+
+    if ($in_carts > 0) {
+        http_response_code(403);
+        echo "❌ Cannot delete product: it exists in {$in_carts} cart(s)";
+        return;
+    }
+
+    delete_product($product_id);
+
+    $filters = array_filter([
+        'name'      => $_GET['name'] ?? null,
+        'min_price' => $_GET['min_price'] ?? null,
+        'max_price' => $_GET['max_price'] ?? null,
+    ]);
+
+    $order = $_GET['sort'] ?? 'p.id DESC';
+
+    $products = getProducts($filters, $order, 50);
+
+    partial('admin/products/partials/products_table_body', ['products' => $products]);
+
 }, [$getAdminAuth]);
+

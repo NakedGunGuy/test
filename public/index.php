@@ -7,7 +7,6 @@ require_once CORE_PATH . '/autoload.php';
 require_once ROUTE_PATH . '/autoload.php';
 require_once MAIL_PATH . '/mailer.php';
 require_once ROOT_PATH . '/cards/query.php';
-require_once ROOT_PATH . '/products/query.php';
 
 if (!route(null)) {
     http_response_code(404);
