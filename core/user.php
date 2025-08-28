@@ -45,3 +45,55 @@ function user_logout(): void {
     header("Location: /login");
     exit;
 }
+
+/**
+ * Get the currently logged-in user.
+ *
+ * @return array|null
+ */
+function get_logged_in_user(): ?array {
+    return $_SESSION['user'] ?? null;
+}
+
+/**
+ * Update user profile info.
+ *
+ * @param int $user_id
+ * @param string $name
+ * @param string $email
+ * @return bool
+ */
+function update_user_profile(int $user_id, string $name, string $email): bool {
+    $pdo = db();
+    $stmt = $pdo->prepare("
+        UPDATE users
+        SET username = :name, email = :email
+        WHERE id = :id
+    ");
+    return $stmt->execute([
+        ':id'    => $user_id,
+        ':name'  => $name,
+        ':email' => $email
+    ]);
+}
+
+/**
+ * Change user password.
+ *
+ * @param int $user_id
+ * @param string $new_password
+ * @return bool
+ */
+function update_user_password(int $user_id, string $new_password): bool {
+    $pdo = db();
+    $hash = password_hash($new_password, PASSWORD_DEFAULT);
+    $stmt = $pdo->prepare("
+        UPDATE users
+        SET password = :password
+        WHERE id = :id
+    ");
+    return $stmt->execute([
+        ':id'       => $user_id,
+        ':password' => $hash
+    ]);
+}
