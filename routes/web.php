@@ -5,7 +5,7 @@ try {
 } catch (Exception $e) {}
 
 route('/', function () {
-	view('home', ['appName' => $_ENV['APP_NAME']], 'default');
+	view('home', ['appName' => $_ENV['APP_NAME']]);
 });
 
 get('/login', function () {
@@ -15,41 +15,42 @@ get('/login', function () {
 post('/login', function () {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
+    $ip = $_SERVER['REMOTE_ADDR'];
 
-    // Initialize login attempts if not set
-    if (!isset($_SESSION['login_attempts'])) {
-        $_SESSION['login_attempts'] = 0;
-        $_SESSION['last_login_attempt'] = time();
+    if (!isset($_SESSION['login_attempts']) || !is_array($_SESSION['login_attempts'])) {
+        $_SESSION['login_attempts'] = [];
     }
 
-    // Reset attempts after 15 minutes
-    if (time() - ($_SESSION['last_login_attempt'] ?? 0) > 900) { // 900s = 15min
-        $_SESSION['login_attempts'] = 0;
+    if (!isset($_SESSION['login_attempts'][$ip])) {
+        $_SESSION['login_attempts'][$ip] = ['count' => 0, 'last_attempt' => time()];
     }
 
-    // Check if too many attempts
-    if ($_SESSION['login_attempts'] >= 5) {
+    if (time() - $_SESSION['login_attempts'][$ip]['last_attempt'] > 900) {
+        $_SESSION['login_attempts'][$ip] = ['count' => 0, 'last_attempt' => time()];
+    }
+
+    if ($_SESSION['login_attempts'][$ip]['count'] >= 5) {
         http_response_code(429);
         exit('Too many login attempts. Try again later.');
     }
 
     if (authenticate_user($username, $password)) {
-        // Successful login → reset attempts
-        $_SESSION['login_attempts'] = 0;
-        $_SESSION['last_login_attempt'] = time();
+        $_SESSION['login_attempts'][$ip] = ['count' => 0, 'last_attempt' => time()];
 
-        header("Location: /profile");
+        // HTMX redirect
+        header('HX-Redirect: /profile');
+        http_response_code(200);
         exit;
     } else {
-        // Failed login → increment attempts
-        $_SESSION['login_attempts']++;
-        $_SESSION['last_login_attempt'] = time();
+        $_SESSION['login_attempts'][$ip]['count']++;
+        $_SESSION['login_attempts'][$ip]['last_attempt'] = time();
 
-        session_flash('error', 'Invalid credentials.');
-        header("Location: /login");
-        exit;
+        http_response_code(401);
+        exit('Invalid credentials');
     }
 });
+
+
 
 
 get('/logout', function () {
