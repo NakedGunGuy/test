@@ -1,3 +1,11 @@
-title: About Us
 slug: about
-parent: null
+title: About Us
+parent: null       # no parent (top-level page)
+
+content:
+  hero:
+    heading: "Welcome to Our Shop"
+    subheading: "Find the best cards here!"
+  text:
+    - "We started this project to make trading easier."
+    - "All products are verified and shipped fast."

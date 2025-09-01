@@ -60,23 +60,8 @@ function build_page_tree(): array
     $files = recursive_glob(CONTENT_PATH . '/pages/*.yaml');
 
     foreach ($files as $file) {
-
-        $data = parse_yaml_file($file);
-        $slug = $data['slug'] ?? '';
-        $parent = $data['parent'] ?? null;
         $id = basename($file, '.yaml');
-        $title = $data['title'] ?? '';
-        $view = $data['view'] ?? '';
-        $layout = $data['layout'] ?? '';
-        $pages[$id] = [
-            'slug' => $slug,
-            'parent' => $parent,
-            'file' => $file,
-            'title' => $title,
-            'view' => $view,
-            'layout' => $layout,
-            'data' => $data,
-        ];
+        $pages[$id] = parse_yaml_file($file);
     }
 
     foreach ($pages as &$page) {
@@ -97,8 +82,8 @@ function route_page_tree($pages): void
     foreach ($pages as $page) {
         route($page['full_path'], function () use ($page) {
             view(
-                (!empty($page['view']) ? $page['view'] : 'home'),
-                ['appName' => $_ENV['APP_NAME']],
+                (!empty($page['view']) ? $page['view'] : 'page'),
+                ['page' => $page],
                 (!empty($page['layout']) ? $page['layout'] : 'default')
             );
         });
