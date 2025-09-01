@@ -8,7 +8,7 @@
 <!-- Modal footer -->
 <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
     <button type="button"
-        hx-post="/admin/products/delete/<?php echo $product_id; ?>" 
+        hx-post="/admin/products/delete/<?= $product_id ?>"
         hx-target="#products-table"
         hx-swap="outerHTML"
         data-toast="Product deleted successfully!"

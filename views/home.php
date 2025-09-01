@@ -8,5 +8,5 @@ $svg = '
   <rect x="0" y="0" width="250" height="350" rx="15" ry="15" fill="#007bff"/>
 </svg>';
 $dataUri = 'data:image/svg+xml;base64,' . base64_encode($svg);
-echo '<img src="' . $dataUri . '" alt="SVG circle" data-src="assets/test.png" />';
+echo '<img src="' . $dataUri . '" alt="SVG circle" data-src="assets/test.jpg" />';
 ?>
