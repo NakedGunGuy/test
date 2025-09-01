@@ -20,6 +20,7 @@ get('/discover', function () {
 
     view('discover', ['products' => $products], 'default');
 });
+
 get('/login', function () {
     view('login');
 });
