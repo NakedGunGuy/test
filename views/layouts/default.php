@@ -11,7 +11,11 @@
 </head>
 <body hx-ext="preload" data-htmx-log-level="debug">
 <header>
-    <h1>Discover</h1>
+    <?php
+    $user = get_logged_in_user();
+    $cart = $user ? get_cart_items(get_user_cart_id($user['id'])) : [];
+    partial('shop/partials/cart_badge', ['cart' => $cart]);
+    ?>
 </header>
 
 <main>
