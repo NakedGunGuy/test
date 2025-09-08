@@ -35,8 +35,17 @@ function is_user_logged_in(): bool {
 
 function require_user_auth(): void {
     if (!is_user_logged_in()) {
-        header("Location: /login");
+        error_log('User not logged in: ' . print_r($_SESSION, true));
+
+        if (isset($_SERVER['HTTP_HX_REQUEST'])) {
+            header("HX-Redirect: /login");
+            http_response_code(200);
+        } else {
+            header("Location: /login");
+        }
         exit;
+    } else {
+        error_log('User logged in: ' . print_r($_SESSION['user'], true));
     }
 }
 
