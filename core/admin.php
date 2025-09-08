@@ -33,7 +33,14 @@ function is_admin_logged_in(): bool {
 
 function require_admin_auth(): void {
     if (!is_admin_logged_in()) {
-        header("Location: /admin/login");
+        error_log('User not logged in: ' . print_r($_SESSION, true));
+
+        if (isset($_SERVER['HTTP_HX_REQUEST'])) {
+            header("HX-Redirect: /admin/login");
+            http_response_code(200);
+        } else {
+            header("Location: /admin/login");
+        }
         exit;
     }
 }

@@ -134,3 +134,7 @@ post('/register', function () {
     exit;
 });
 
+get('/cards/image/{slug}', function ($params) {
+    $slug = $params['slug'];
+    partial('page/products/partials/product_image_dialog', ['slug' => $slug]);
+});

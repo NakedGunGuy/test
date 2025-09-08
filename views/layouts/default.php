@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <title><?= section('title', htmlspecialchars($_ENV['APP_NAME'])) ?></title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-
 <link rel="stylesheet" href="/css/default.css" media="all">
+<link rel="stylesheet" href="/css/style.css" media="all">
+
 
     <?= section('css') ?>
 </head>
@@ -19,13 +17,17 @@
     $cart = $user ? get_cart_items(get_user_cart_id($user['id'])) : [];
     partial('shop/partials/cart_badge', ['cart' => $cart]);
     ?>
+
+    <?php
+        $currentUrl = $_SERVER['REQUEST_URI'];
+    ?>
 </header> -->
     <nav>
         <section>
-            <div>Cardpoint</div>
+            <div><a href="/">Cardpoint</a></div>
             <ul>
                 <li>
-                    <a>Discover</a>    
+                    <a href="/discover" class="<?= $currentUrl === '/discover' ? 'active' : '' ?>">Discover</a>    
                 </li>
             </ul>
         </section>
@@ -49,10 +51,10 @@
         <section>
             <ul>
                 <li>
-                    <a class="btn black">Login</a>
+                    <a class="btn black" href="/login">Login</a>
                 </li>
                 <li>
-                    <a class="btn blue">Sign Up</a>
+                    <a class="btn blue" href="/register">Sign Up</a>
                 </li>
             </ul>
         </section>
@@ -63,7 +65,7 @@
 
 </div>
 
-<dialog id="dialog" class="w-full max-w-2xl max-h-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg shadow-sm bg-gray-700 overflow-hidden"></dialog>
+<dialog id="dialog" class="dialog"></dialog>
 
 <script src="/js/htmx.min.js"></script>
 <script src="/js/images.js"></script>

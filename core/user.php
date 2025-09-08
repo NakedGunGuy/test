@@ -44,8 +44,6 @@ function require_user_auth(): void {
             header("Location: /login");
         }
         exit;
-    } else {
-        error_log('User logged in: ' . print_r($_SESSION['user'], true));
     }
 }
 

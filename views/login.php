@@ -2,6 +2,9 @@
 <div class="max-w-md mx-auto mt-20 p-6 border rounded shadow">
     <h1 class="text-xl font-bold mb-4">Login</h1>
 
+    <canvas id="c"></canvas>
+
+
     <form
             hx-post="/login"
             hx-target="body"
@@ -19,7 +22,7 @@
             <input type="password" name="password" id="password" class="border rounded px-2 py-1 w-full" required>
         </div>
 
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        <button type="submit" class="btn blue">
             Login
         </button>
     </form>
