@@ -5,7 +5,6 @@
     <title><?= section('title', htmlspecialchars($_ENV['APP_NAME'])) ?></title>
 
 <link rel="stylesheet" href="/css/default.css" media="all">
-<link rel="stylesheet" href="/css/style.css" media="all">
 
 
     <?= section('css') ?>
@@ -46,7 +45,7 @@
                     ?>
                 </li>
                 <li>
-                    <a>Account</a>
+                    <a href="/profile">Account</a>
                 </li>
             </ul>
         </section>

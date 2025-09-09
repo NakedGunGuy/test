@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <title><?= section('title', htmlspecialchars($_ENV['APP_NAME'])) ?></title>
 
-    <link rel="preload" href="/css/output.css" as="style">
-    <link rel="stylesheet" href="/css/output.css" media="all">
+    <link rel="stylesheet" href="/css/default.css" media="all">
 
     <?= section('css') ?>
 </head>
@@ -22,7 +21,7 @@
     <?= $content ?>
 </main>
 
-<dialog id="dialog" class="w-full max-w-2xl max-h-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg shadow-sm bg-gray-700 overflow-hidden"></dialog>
+<dialog id="dialog" class="dialog"></dialog>
 
 <script src="/js/htmx.min.js"></script>
 <script src="/js/images.js"></script>

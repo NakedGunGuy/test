@@ -60,9 +60,9 @@ function getProducts($filters = [], $sort = 'p.id DESC', $limit = null, $offset 
         LEFT JOIN cards c ON e.card_id = c.id
         LEFT JOIN sets s ON e.set_id = s.id
         
-        -- subquery to count cart items per product
+        -- subquery to sum cart item quantities per product
         LEFT JOIN (
-            SELECT product_id, COUNT(*) AS cart_count
+            SELECT product_id, SUM(quantity) AS cart_count
             FROM cart_items
             GROUP BY product_id
         ) ci ON ci.product_id = p.id

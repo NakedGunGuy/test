@@ -3,15 +3,36 @@
     hx-target="#profile-info"
     hx-swap="outerHTML"
     data-toast="Profile updated successfully!"
-    class="space-y-4"
+    class="profile-form"
 >
-    <div>
-        <label>Username</label>
-        <input type="text" name="username" value="<?= htmlspecialchars($user['username']) ?>" class="border px-2 py-1 w-full" />
+    <div class="form-grid">
+        <div class="form-group">
+            <label for="username" class="form-label">Username</label>
+            <input 
+                type="text" 
+                id="username"
+                name="username" 
+                value="<?= is_array($user) ? htmlspecialchars($user['username']) : '' ?>" 
+                class="form-input" 
+                required
+            />
+        </div>
+        <div class="form-group">
+            <label for="email" class="form-label">Email Address</label>
+            <input 
+                type="email" 
+                id="email"
+                name="email" 
+                value="<?= is_array($user) ? htmlspecialchars($user['email'] ?? '') : '' ?>" 
+                class="form-input" 
+                required
+            />
+        </div>
     </div>
-    <div>
-        <label>Email</label>
-        <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" class="border px-2 py-1 w-full" />
+    
+    <div class="form-actions">
+        <button type="submit" class="btn blue">
+            Update Profile
+        </button>
     </div>
-    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
 </form>

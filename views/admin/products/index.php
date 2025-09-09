@@ -1,52 +1,76 @@
 <?php /** @var array $products */ ?>
-<h1>Products</h1>
+<?php start_section('title'); ?>
+Products - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
+<?php end_section('title'); ?>
 
-<button 
-    hx-get="/admin/products/add"
-    hx-target="#dialog"
-    hx-trigger="click"
-    class="btn bg-blue-600 text-white px-4 py-2 rounded"
->
-    + Add Product
-</button>
+<!-- Page Header -->
+<div class="section" style="margin-bottom: 2rem;">
+    <a href="/admin" class="btn text back">← Back to Dashboard</a>
+    <h1 class="section-title" style="margin-top: 0;">Products Management</h1>
+    <p style="color: #C0C0D1;">Manage your store inventory and product listings</p>
+</div>
 
-<form method="get" class="flex gap-2">
-    <label class="block">
-        Search product
-        <input
-            name="name"
-            hx-get="/admin/products/search"
-            hx-trigger="keyup changed delay:200ms"
-            hx-target="#product-results"
-            hx-swap="innerHTML"
-            class="border rounded p-2 w-full"
-            value="<?= htmlspecialchars($_GET['name'] ?? '') ?>"
-        >
-    </label>
-    <div id="product-results" class="absolute bg-white border rounded mt-1 w-full max-h-60 overflow-y-auto z-50"></div>
-    <input type="number" name="min_price" placeholder="Min price" value="<?= htmlspecialchars($_GET['min_price'] ?? '') ?>" class="border px-2 py-1" />
-    <input type="number" name="max_price" placeholder="Max price" value="<?= htmlspecialchars($_GET['max_price'] ?? '') ?>" class="border px-2 py-1" />
-    
-    <button type="submit" class="bg-blue-600 text-white px-4 py-1 rounded">Filter</button>
-    <?php
-$baseUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-?>
-<a href="<?= $baseUrl ?>" class="bg-gray-300 text-gray-800 px-4 py-1 rounded hover:bg-gray-400">Reset</a>
+<!-- Products Section -->
+<div class="section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2 class="section-subtitle" style="margin-bottom: 0;">Product Inventory</h2>
+            <button 
+                hx-get="/admin/products/add"
+                hx-target="#dialog"
+                hx-trigger="click"
+                class="btn blue"
+            >
+                + Add Product
+            </button>
+        </div>
 
-</form>
+        <!-- Search and Filters -->
+        <form method="get" style="margin-bottom: 2rem;">
+            <div class="grid form">
+                <div style="position: relative;">
+                    <label class="form-label">Search Products</label>
+                    <input
+                        name="name"
+                        hx-get="/admin/products/search"
+                        hx-trigger="keyup changed delay:200ms"
+                        hx-target="#product-results"
+                        hx-swap="innerHTML"
+                        class="form-input"
+                        placeholder="Search by name..."
+                        value="<?= htmlspecialchars($_GET['name'] ?? '') ?>"
+                    >
+                    <div id="product-results" style="position: absolute; top: 100%; left: 0; right: 0; background: #1E1E27; border: 1px solid #C0C0D133; border-radius: 12px; margin-top: 4px; max-height: 300px; overflow-y: auto; z-index: 50; display: none;"></div>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <label class="form-label">Min Price</label>
+                        <input type="number" name="min_price" placeholder="0.00" value="<?= htmlspecialchars($_GET['min_price'] ?? '') ?>" class="form-input" step="0.01" />
+                    </div>
+                    <div style="flex: 1;">
+                        <label class="form-label">Max Price</label>
+                        <input type="number" name="max_price" placeholder="999.99" value="<?= htmlspecialchars($_GET['max_price'] ?? '') ?>" class="form-input" step="0.01" />
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button type="submit" class="btn blue">Apply Filters</button>
+                <?php $baseUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); ?>
+                <a href="<?= $baseUrl ?>" class="btn black">Reset</a>
+            </div>
+        </form>
 
-<table border="1" cellpadding="8" cellspacing="0" width="100%" class="mt-4">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Edition</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Foil?</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody id="products-table">
-        <?php partial('admin/products/partials/products_table_body', ['products' => $products]); ?>
-    </tbody>
-</table>
+        <!-- Products Table -->
+        <div class="products-grid">
+            <div class="products-header">
+                <div class="header-cell">Product</div>
+                <div class="header-cell">Edition</div>
+                <div class="header-cell">Price</div>
+                <div class="header-cell">Stock</div>
+                <div class="header-cell">Foil</div>
+                <div class="header-cell">Actions</div>
+            </div>
+            <div class="products-body" id="products-table">
+                <?php partial('admin/products/partials/products_table_body', ['products' => $products]); ?>
+            </div>
+        </div>
+</div>

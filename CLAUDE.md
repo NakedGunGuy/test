@@ -20,6 +20,37 @@ Cardpoint is an e-commerce web application for selling Trading Card Game (TCG) c
 ### Dependencies
 - **Install**: `composer install` - Install PHP dependencies (PHPMailer)
 
+## Styling Guidelines
+
+### CSS Framework
+- **NO TAILWIND CSS** - The project has moved away from Tailwind CSS
+- **Pure CSS Only** - Use custom CSS in `public/css/style.css` and `public/css/default.css`
+- **Existing Class Reuse** - Always check and reuse existing CSS classes before creating new ones
+
+### Button System
+- **Base class**: `.btn` (flex layout, padding, border-radius, transitions)
+- **Color variants**: `.btn.blue`, `.btn.black`, `.btn.red`
+- **Size variants**: `.btn-small`, `.btn-full`
+- **Style variants**: `.btn-outline`, `.btn-disabled`, `.btn-text`
+
+### Layout Classes
+- **Containers**: `.product-container`, `.product-section`, `.purchase-card`
+- **Typography**: `.product-title`, `.section-title`, `.section-subtitle`, `.meta-label`
+- **Cards**: `.product-section` (dark background, border, padding, border-radius)
+
+### Design System
+- **Colors**: Dark theme (`#07070A` body, `#1E1E27` cards, `#01AFFC` primary)
+- **Border Radius**: Consistent `12px` throughout
+- **Borders**: `#C0C0D133` for subtle borders
+- **Transitions**: `all 0.2s ease` for hover effects
+- **Shadows**: `0 4px 10px rgba(255, 255, 255, 0.1)` for hover states
+
+### Component Patterns
+- **Action Items**: Icon + content + arrow pattern
+- **Stats Cards**: Icon + number + label structure  
+- **Modal System**: Overlay + modal + header + content structure
+- **Form Layout**: Label + input + help text + actions
+
 ## Architecture
 
 ### Core Framework

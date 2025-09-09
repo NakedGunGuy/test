@@ -5,7 +5,23 @@ $getAdminAuth = function() {
 };
 
 get('/admin', function () {
-    view('admin/dashboard', [], 'admin');
+    // Get dashboard statistics
+    $low_stock_threshold = get_low_stock_threshold();
+    $stats_stmt = db()->prepare("
+        SELECT 
+            (SELECT COUNT(*) FROM products WHERE quantity > 0) as total_products,
+            (SELECT COUNT(DISTINCT ci.product_id) FROM cart_items ci JOIN products p ON ci.product_id = p.id) as products_in_carts,
+            (SELECT COUNT(*) FROM orders WHERE status = 'pending') as pending_orders,
+            (SELECT COUNT(*) FROM products WHERE quantity <= :low_stock_threshold AND quantity > 0) as low_stock,
+            (SELECT COUNT(*) FROM products WHERE quantity = 0) as out_of_stock,
+            (SELECT ROUND(SUM(total_amount), 2) FROM orders WHERE created_at >= date('now', '-30 days')) as revenue,
+            (SELECT COALESCE(SUM(quantity), 0) FROM products WHERE quantity > 0) as total_units_available,
+            (SELECT COALESCE(SUM(ci.quantity), 0) FROM cart_items ci) as total_units_in_carts
+    ");
+    $stats_stmt->execute([':low_stock_threshold' => $low_stock_threshold]);
+    $stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
+    
+    view('admin/dashboard', $stats, 'admin');
 }, [$getAdminAuth]);
 
 get('/admin/login', function () {
@@ -311,3 +327,124 @@ post('/admin/products/delete/{product_id}', function ($data) {
 
 }, [$getAdminAuth]);
 
+// Admin Orders Management
+get('/admin/orders', function () {
+    // Get orders with user information and order totals
+    $stmt = db()->prepare("
+        SELECT 
+            o.*,
+            u.username,
+            u.email,
+            COUNT(oi.id) as item_count,
+            ROUND(o.total_amount, 2) as total_amount
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        LEFT JOIN order_items oi ON o.id = oi.order_id
+        GROUP BY o.id
+        ORDER BY o.created_at DESC
+        LIMIT 50
+    ");
+    $stmt->execute();
+    $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Get order statistics
+    $stats_stmt = db()->prepare("
+        SELECT 
+            COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_count,
+            COUNT(CASE WHEN status = 'processing' THEN 1 END) as processing_count,
+            COUNT(CASE WHEN status = 'shipped' THEN 1 END) as shipped_count,
+            COUNT(CASE WHEN status = 'delivered' THEN 1 END) as delivered_count,
+            COUNT(*) as total_orders,
+            ROUND(SUM(total_amount), 2) as total_revenue
+        FROM orders 
+        WHERE created_at >= date('now', '-30 days')
+    ");
+    $stats_stmt->execute();
+    $stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
+    
+    view('admin/orders/index', ['orders' => $orders, 'stats' => $stats], 'admin');
+}, [$getAdminAuth]);
+
+// Update order status
+post('/admin/orders/{id}/status', function ($data) {
+    $order_id = $data['id'];
+    $status = $_POST['status'] ?? '';
+    
+    $valid_statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+    if (!in_array($status, $valid_statuses)) {
+        http_response_code(400);
+        echo '❌ Invalid status';
+        return;
+    }
+    
+    $stmt = db()->prepare("UPDATE orders SET status = :status WHERE id = :id");
+    $success = $stmt->execute([':status' => $status, ':id' => $order_id]);
+    
+    if ($success) {
+        echo "✅ Order status updated to " . ucfirst($status);
+    } else {
+        http_response_code(500);
+        echo '❌ Failed to update status';
+    }
+}, [$getAdminAuth]);
+
+// Admin Analytics
+get('/admin/analytics', function () {
+    // Sales data for the last 30 days
+    $sales_stmt = db()->prepare("
+        SELECT 
+            DATE(created_at) as date,
+            COUNT(*) as orders_count,
+            ROUND(SUM(total_amount), 2) as daily_revenue
+        FROM orders 
+        WHERE created_at >= date('now', '-30 days')
+        GROUP BY DATE(created_at)
+        ORDER BY date DESC
+    ");
+    $sales_stmt->execute();
+    $daily_sales = $sales_stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Top selling products
+    $top_products_stmt = db()->prepare("
+        SELECT 
+            p.name,
+            SUM(oi.quantity) as total_sold,
+            ROUND(SUM(oi.quantity * oi.price), 2) as revenue
+        FROM order_items oi
+        JOIN products p ON oi.product_id = p.id
+        JOIN orders o ON oi.order_id = o.id
+        WHERE o.created_at >= date('now', '-30 days')
+        GROUP BY p.id, p.name
+        ORDER BY total_sold DESC
+        LIMIT 10
+    ");
+    $top_products_stmt->execute();
+    $top_products = $top_products_stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Overall statistics
+    $overview_stmt = db()->prepare("
+        SELECT 
+            (SELECT COUNT(*) FROM orders) as total_orders,
+            (SELECT COUNT(*) FROM products WHERE quantity > 0) as products_in_stock,
+            (SELECT COUNT(DISTINCT ci.product_id) FROM cart_items ci JOIN products p ON ci.product_id = p.id) as products_in_carts,
+            (SELECT COUNT(*) FROM products WHERE quantity <= 5 AND quantity > 0) as low_stock_products,
+            (SELECT COUNT(*) FROM users) as total_customers,
+            (SELECT ROUND(SUM(total_amount), 2) FROM orders) as total_revenue,
+            (SELECT ROUND(AVG(total_amount), 2) FROM orders) as avg_order_value,
+            (SELECT COALESCE(SUM(quantity), 0) FROM products WHERE quantity > 0) as total_units_available,
+            (SELECT COALESCE(SUM(ci.quantity), 0) FROM cart_items ci) as total_units_in_carts
+    ");
+    $overview_stmt->execute();
+    $overview = $overview_stmt->fetch(PDO::FETCH_ASSOC);
+    
+    view('admin/analytics/index', [
+        'daily_sales' => $daily_sales, 
+        'top_products' => $top_products,
+        'overview' => $overview
+    ], 'admin');
+}, [$getAdminAuth]);
+
+// Admin Settings
+get('/admin/settings', function () {
+    view('admin/settings/index', [], 'admin');
+}, [$getAdminAuth]);
