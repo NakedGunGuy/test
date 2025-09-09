@@ -6,22 +6,22 @@ $svg = '
 $dataUri = 'data:image/svg+xml;base64,' . base64_encode($svg);
 ?>
 
-<tr id="product-<?= $product['id'] ?>" hx-swap-oob="true">
-    <td>
+<div id="product-<?= $product['id'] ?>" class="product-row" hx-swap-oob="true">
+    <div class="product-cell">
         <img 
             hx-get="/cards/image/<?= $product['edition_slug'] ?>"
             hx-target="#dialog"
             hx-trigger="click"
             height="40" width="40" src="<?= $dataUri ?>" alt="SVG circle" data-src="https://api.gatcg.com/cards/images/<?= $product['edition_slug'] ?>.jpg" />
-        <span><?= htmlspecialchars($product['name']); ?></span>
-    </td>
-    <td><?= htmlspecialchars($product['set_name']); ?></td>
-    <td><?= htmlspecialchars($product['price']); ?>€</td>
-    <td>
+        <span><a href="/product/<?= $product['id'] ?>"><?= htmlspecialchars($product['name']); ?></a></span>
+    </div>
+    <div class="product-cell"><?= htmlspecialchars($product['set_name']); ?></div>
+    <div class="product-cell"><?= htmlspecialchars($product['price']); ?>€</div>
+    <div class="product-cell">
         <div id="quantity-<?= $product['id'] ?>"><?= $product['quantity'] ?></div>
-    </td>
-    <td><?= $product['is_foil'] ? 'Yes' : 'No'; ?></td>
-    <td>
+    </div>
+    <div class="product-cell"><?= $product['is_foil'] ? 'Yes' : 'No'; ?></div>
+    <div class="product-cell">
         <form
                 hx-post="/cart/add"
                 hx-swap="outerHTML">
@@ -29,5 +29,5 @@ $dataUri = 'data:image/svg+xml;base64,' . base64_encode($svg);
             <input type="number" name="quantity" value="1" min="1" max="<?= $product['quantity'] ?>">
             <button type="submit">Add to Cart</button>
         </form>
-    </td>
-</tr>
+    </div>
+</div>

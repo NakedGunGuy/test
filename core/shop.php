@@ -114,3 +114,53 @@ function update_order_status(int $order_id, string $status): void {
     $stmt->execute([':status' => $status, ':id' => $order_id]);
 }
 
+function get_product_order_history(int $product_id): array {
+    $pdo = db();
+    $stmt = $pdo->prepare("
+        SELECT 
+            oi.id, oi.quantity, oi.price, 
+            o.id as order_id, o.status, o.created_at,
+            u.username
+        FROM order_items oi
+        JOIN orders o ON oi.order_id = o.id
+        JOIN users u ON o.user_id = u.id
+        WHERE oi.product_id = :product_id
+        AND o.status IN ('paid', 'pending')
+        ORDER BY o.created_at DESC
+        LIMIT 50
+    ");
+    $stmt->execute([':product_id' => $product_id]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function get_card_variants(string $card_name, int $exclude_product_id = null): array {
+    $pdo = db();
+    $sql = "
+        SELECT 
+            p.*, 
+            e.collector_number AS edition_number,
+            e.slug AS edition_slug,
+            e.rarity,
+            s.name AS set_name,
+            c.name AS card_name
+        FROM products p
+        JOIN editions e ON p.edition_id = e.id
+        JOIN cards c ON e.card_id = c.id
+        JOIN sets s ON e.set_id = s.id
+        WHERE c.name = :card_name
+    ";
+    
+    $params = [':card_name' => $card_name];
+    
+    if ($exclude_product_id) {
+        $sql .= " AND p.id != :exclude_id";
+        $params[':exclude_id'] = $exclude_product_id;
+    }
+    
+    $sql .= " ORDER BY s.name, e.collector_number";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+

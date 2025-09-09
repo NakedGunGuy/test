@@ -25,20 +25,18 @@ $baseUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 </form>
 
-<table cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>
-                <span>Name</span><img class="sort" src="assets/sort.svg" alt="Sort items in ascending or descending order">
-            </th>
-            <th>Edition</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Foil?</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody id="products-table">
+<div class="products-grid">
+    <div class="products-header">
+        <div class="header-cell">
+            <span>Name</span><img class="sort" src="assets/sort.svg" alt="Sort items in ascending or descending order">
+        </div>
+        <div class="header-cell">Edition</div>
+        <div class="header-cell">Price</div>
+        <div class="header-cell">Quantity</div>
+        <div class="header-cell">Foil?</div>
+        <div class="header-cell">Actions</div>
+    </div>
+    <div id="products-table" class="products-body">
         <?php partial('page/products/partials/products_table_body', ['products' => $products]); ?>
-    </tbody>
-</table>
+    </div>
+</div>

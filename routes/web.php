@@ -134,6 +134,43 @@ post('/register', function () {
     exit;
 });
 
+get('/product/{id}', function ($params) {
+    $product_id = (int)$params['id'];
+    
+    if ($product_id <= 0) {
+        http_response_code(404);
+        echo "Product not found";
+        return;
+    }
+
+    // Get product details
+    $filters = ['id' => $product_id];
+    $products = getProducts($filters);
+    
+    if (empty($products)) {
+        http_response_code(404);
+        echo "Product not found";
+        return;
+    }
+    
+    $product = $products[0];
+    
+    // Get order history for this product
+    $order_history = get_product_order_history($product_id);
+    
+    // Get other products from same card (different editions/variants)
+    $card_variants = [];
+    if (!$product['is_custom'] && $product['card_name']) {
+        $card_variants = get_card_variants($product['card_name'], $product_id);
+    }
+    
+    view('shop/product_detail', [
+        'product' => $product,
+        'order_history' => $order_history,
+        'card_variants' => $card_variants
+    ]);
+});
+
 get('/cards/image/{slug}', function ($params) {
     $slug = $params['slug'];
     partial('page/products/partials/product_image_dialog', ['slug' => $slug]);

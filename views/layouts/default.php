@@ -37,6 +37,15 @@
                     <a>Search</a>
                 </li>
                 <li>
+                    <?php
+                    $user = get_logged_in_user();
+                    if ($user) {
+                        $cart = get_cart_items(get_user_cart_id($user['id']));
+                        partial('shop/partials/cart_badge', ['cart' => $cart]);
+                    }
+                    ?>
+                </li>
+                <li>
                     <a>Account</a>
                 </li>
             </ul>

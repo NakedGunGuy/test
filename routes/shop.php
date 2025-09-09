@@ -39,7 +39,8 @@ post('/cart/add', function () {
     // Multi-target HTMX response
     partial('page/products/partials/product_row', ['product' => reset($product)]);
     partial('shop/partials/cart_badge', ['cart' => $cart_items]);
-});
+    partial('shop/partials/product_purchase_section', ['product' => reset($product)]);
+}, [$getUserAuth]);
 
 post('/cart/remove', function () {
     $user = get_logged_in_user();
