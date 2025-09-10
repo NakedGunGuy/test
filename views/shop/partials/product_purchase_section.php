@@ -22,11 +22,11 @@
         >
             <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
             <label>Quantity</label>
-            <select name="quantity">
-                <?php for ($i = 1; $i <= min(10, $product['quantity']); $i++): ?>
-                    <option value="<?= $i ?>"><?= $i ?></option>
-                <?php endfor; ?>
-            </select>
+            <div class="quantity-selector large">
+                <button type="button" class="qty-btn" onclick="changeQuantity('purchase-<?= $product['id'] ?>', -1)">-</button>
+                <input type="number" id="qty-purchase-<?= $product['id'] ?>" name="quantity" value="1" min="1" max="<?= min(10, $product['quantity']) ?>" class="qty-input" readonly>
+                <button type="button" class="qty-btn" onclick="changeQuantity('purchase-<?= $product['id'] ?>', 1)">+</button>
+            </div>
             <button type="submit" class="btn blue btn-full">
                 Add to Cart
             </button>

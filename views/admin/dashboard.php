@@ -2,12 +2,6 @@
 Admin Dashboard - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 <?php end_section('title'); ?>
 
-<!-- Welcome Section -->
-<div class="section" style="margin-bottom: 3rem;">
-    <h1 class="section-title" style="margin-top: 0;">Welcome back!</h1>
-    <p style="color: #C0C0D1; font-size: 1.125rem;">Here's what's happening with your store today.</p>
-</div>
-
 <!-- Quick Stats -->
 <div class="section">
     <h2 class="section-subtitle">Store Overview</h2>

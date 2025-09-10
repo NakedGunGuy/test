@@ -42,6 +42,40 @@ post('/cart/add', function () {
     partial('shop/partials/product_purchase_section', ['product' => reset($product)]);
 }, [$getUserAuth]);
 
+post('/cart/update-quantity', function () {
+    $user = get_logged_in_user();
+    $product_id = (int)($_POST['product_id'] ?? 0);
+    $action = $_POST['action'] ?? '';
+
+    if ($product_id <= 0) {
+        http_response_code(422);
+        exit("Invalid product.");
+    }
+
+    if (!in_array($action, ['increase', 'decrease'])) {
+        http_response_code(422);
+        exit("Invalid action.");
+    }
+
+    if ($action === 'increase') {
+        // Check stock availability
+        if (!add_to_cart($user['id'], $product_id, 1)) {
+            http_response_code(422);
+            exit("❌ Not enough stock.");
+        }
+    } else {
+        // Decrease quantity by 1
+        update_cart_quantity($user['id'], $product_id, -1);
+    }
+
+    $cart_id = get_user_cart_id($user['id']);
+    $items = get_cart_items($cart_id);
+
+    // Multi-target HTMX response
+    partial('shop/partials/cart_badge', ['cart' => $items]);
+    partial('shop/partials/cart_list', ['cart' => $items]);
+}, [$getUserAuth]);
+
 post('/cart/remove', function () {
     $user = get_logged_in_user();
     $product_id = (int)($_POST['product_id'] ?? 0);
@@ -57,8 +91,31 @@ post('/cart/remove', function () {
     $items   = get_cart_items($cart_id);
 
     // Multi-target HTMX response
-    view('shop/partials/cart_badge', ['cart' => $items]);
-    view('shop/partials/cart_list', ['cart' => $items]);
+    partial('shop/partials/cart_badge', ['cart' => $items]);
+    partial('shop/partials/cart_list', ['cart' => $items]);
+}, [$getUserAuth]);
+
+get('/checkout', function () {
+    $user = get_logged_in_user();
+    $cart_id = get_user_cart_id($user['id']);
+    $cart_items = get_cart_items($cart_id);
+
+    if (empty($cart_items)) {
+        header('Location: /cart');
+        exit;
+    }
+
+    // Calculate totals
+    $cart_total = 0;
+    foreach ($cart_items as $item) {
+        $cart_total += $item['price'] * $item['quantity'];
+    }
+
+    view('shop/checkout', [
+        'cart' => $cart_items,
+        'total' => $cart_total,
+        'user' => $user
+    ]);
 }, [$getUserAuth]);
 
 post('/checkout', function () {
@@ -73,33 +130,30 @@ post('/checkout', function () {
         exit("Cart is empty.");
     }
 
-    $order_id = create_order($user['id'], $cart_items);
+    // Get shipping information
+    $shipping_address = [
+        'full_name' => $_POST['full_name'] ?? '',
+        'email' => $_POST['email'] ?? '',
+        'address' => $_POST['address'] ?? '',
+        'city' => $_POST['city'] ?? '',
+        'state' => $_POST['state'] ?? '',
+        'zip' => $_POST['zip'] ?? ''
+    ];
 
-    \Stripe\Stripe::setApiKey($_ENV['STRIPE_SECRET']);
+    $order_id = create_order_with_shipping($user['id'], $cart_items, $shipping_address);
 
-    $lineItems = [];
-    foreach ($cart_items as $item) {
-        $lineItems[] = [
-            'price_data' => [
-                'currency'     => 'usd',
-                'product_data' => ['name' => $item['name']],
-                'unit_amount'  => $item['price'] * 100,
-            ],
-            'quantity' => $item['quantity'],
-        ];
-    }
-
-    $session = \Stripe\Checkout\Session::create([
-        'payment_method_types' => ['card'],
-        'line_items'           => $lineItems,
-        'mode'                 => 'payment',
-        'metadata'             => ['order_id' => $order_id],
-        'success_url'          => $_ENV['APP_URL'] . '/checkout/success?order_id=' . $order_id,
-        'cancel_url'           => $_ENV['APP_URL'] . '/checkout/cancel?order_id=' . $order_id,
-    ]);
-
-    header('Content-Type: application/json');
-    echo json_encode(['id' => $session->id, 'url' => $session->url]);
+    // For now, let's simulate payment success without Stripe
+    // In a real implementation, you would integrate with Stripe here
+    
+    // Mark order as paid
+    update_order_status($order_id, 'paid');
+    
+    // Clear cart
+    $stmt = $pdo->prepare("DELETE FROM cart_items WHERE cart_id = :cid");
+    $stmt->execute([':cid' => $cart_id]);
+    
+    // Redirect to success page
+    header('Location: /checkout/success?order_id=' . $order_id);
     exit;
 }, [$getUserAuth]);
 

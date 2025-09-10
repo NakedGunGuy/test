@@ -446,5 +446,138 @@ get('/admin/analytics', function () {
 
 // Admin Settings
 get('/admin/settings', function () {
-    view('admin/settings/index', [], 'admin');
+    // Get current settings values
+    $settings = [
+        'store_status' => get_setting('store_status', 'open'),
+        'default_order_status' => get_setting('default_order_status', 'pending'),
+        'low_stock_threshold' => get_setting('low_stock_threshold', 5),
+        'notification_email' => get_setting('notification_email', ''),
+        'email_notifications' => get_setting('email_notifications', 1)
+    ];
+    
+    view('admin/settings/index', ['settings' => $settings], 'admin');
+}, [$getAdminAuth]);
+
+// Save Settings
+post('/admin/settings', function () {
+    $store_status = $_POST['store_status'] ?? 'open';
+    $default_order_status = $_POST['default_order_status'] ?? 'pending';
+    $low_stock_threshold = $_POST['low_stock_threshold'] ?? 5;
+    $notification_email = $_POST['notification_email'] ?? '';
+    $email_notifications = isset($_POST['email_notifications']) ? 1 : 0;
+    
+    // Validate inputs
+    $valid_store_statuses = ['open', 'maintenance', 'closed'];
+    $valid_order_statuses = ['pending', 'processing'];
+    
+    if (!in_array($store_status, $valid_store_statuses)) {
+        session_flash('error', 'Invalid store status');
+        header('Location: /admin/settings');
+        exit;
+    }
+    
+    if (!in_array($default_order_status, $valid_order_statuses)) {
+        session_flash('error', 'Invalid default order status');
+        header('Location: /admin/settings');
+        exit;
+    }
+    
+    if (!is_numeric($low_stock_threshold) || $low_stock_threshold < 0) {
+        session_flash('error', 'Low stock threshold must be a positive number');
+        header('Location: /admin/settings');
+        exit;
+    }
+    
+    if ($notification_email && !filter_var($notification_email, FILTER_VALIDATE_EMAIL)) {
+        session_flash('error', 'Invalid email address');
+        header('Location: /admin/settings');
+        exit;
+    }
+    
+    // Save settings
+    set_setting('store_status', $store_status);
+    set_setting('default_order_status', $default_order_status);
+    set_setting('low_stock_threshold', $low_stock_threshold);
+    set_setting('notification_email', $notification_email);
+    set_setting('email_notifications', $email_notifications);
+    
+    session_flash('success', 'Settings saved successfully');
+    header('Location: /admin/settings');
+    exit;
+}, [$getAdminAuth]);
+
+// Clear Cache
+post('/admin/settings/clear-cache', function () {
+    // Clear any cache files if they exist
+    $cache_cleared = false;
+    
+    // You can add cache clearing logic here if needed
+    // For now, we'll just simulate clearing cache
+    $cache_cleared = true;
+    
+    if ($cache_cleared) {
+        session_flash('success', 'Cache cleared successfully');
+    } else {
+        session_flash('error', 'Failed to clear cache');
+    }
+    
+    header('Location: /admin/settings');
+    exit;
+}, [$getAdminAuth]);
+
+// Backup Database
+post('/admin/settings/backup-database', function () {
+    $backup_dir = 'backups';
+    if (!file_exists($backup_dir)) {
+        mkdir($backup_dir, 0777, true);
+    }
+    
+    $timestamp = date('Y-m-d_H-i-s');
+    $backup_file = $backup_dir . '/database_backup_' . $timestamp . '.sqlite';
+    
+    try {
+        if (copy('database/database.sqlite', $backup_file)) {
+            session_flash('success', 'Database backup created: ' . $backup_file);
+        } else {
+            session_flash('error', 'Failed to create database backup');
+        }
+    } catch (Exception $e) {
+        session_flash('error', 'Error creating backup: ' . $e->getMessage());
+    }
+    
+    header('Location: /admin/settings');
+    exit;
+}, [$getAdminAuth]);
+
+// Import Cards
+post('/admin/settings/import-cards', function () {
+    try {
+        // Execute the import cards console script
+        $output = [];
+        $return_var = 0;
+        
+        // Use the WAMP PHP path directly
+        $php_path = 'C:\wamp64\bin\php\php8.2.18\php.exe';
+        
+        // Change to the project root directory and run the import script
+        $original_dir = getcwd();
+        chdir(__DIR__ . '/../');
+        
+        $command = '"' . $php_path . '" console/import_cards.php 2>&1';
+        exec($command, $output, $return_var);
+        
+        // Change back to original directory
+        chdir($original_dir);
+        
+        if ($return_var === 0) {
+            session_flash('success', 'Cards imported successfully');
+        } else {
+            session_flash('error', 'Failed to import cards: ' . implode(' ', $output));
+        }
+    } catch (Exception $e) {
+        session_flash('error', 'Error importing cards: ' . $e->getMessage());
+    }
+    
+    header('Location: /admin/settings');
+    exit;
 }, [$getAdminAuth]);

@@ -63,7 +63,6 @@ post('/login', function () {
     }
 });
 
-
 get('/logout', function () {
     unset($_SESSION['user']);
     header("Location: /login");

@@ -4,23 +4,14 @@
     <meta charset="UTF-8">
     <title><?= section('title', htmlspecialchars($_ENV['APP_NAME'])) ?></title>
 
-<link rel="stylesheet" href="/css/default.css" media="all">
-
+    <link rel="stylesheet" href="/css/default.css" media="all">
 
     <?= section('css') ?>
 </head>
 <body hx-ext="preload" data-htmx-log-level="debug">
-<!-- <header>
-    <?php
-    $user = get_logged_in_user();
-    $cart = $user ? get_cart_items(get_user_cart_id($user['id'])) : [];
-    partial('shop/partials/cart_badge', ['cart' => $cart]);
-    ?>
-
     <?php
         $currentUrl = $_SERVER['REQUEST_URI'];
     ?>
-</header> -->
     <nav>
         <section>
             <div><a href="/">Cardpoint</a></div>
@@ -78,6 +69,7 @@
 <script src="/js/htmx.min.js"></script>
 <script src="/js/images.js"></script>
 <script src="/js/dialog.js"></script>
+<script src="/js/quantity.js"></script>
 <?= section('js') ?>
 </body>
 </html>

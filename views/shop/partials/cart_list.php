@@ -1,31 +1,78 @@
 <?php if (empty($cart)): ?>
-    <p hx-swap-oob="true" id="cart-list">Your cart is empty.</p>
-<?php else: ?>
-    <div class="cart-grid" hx-swap-oob="true" id="cart-list">
-        <div class="cart-header">
-            <div class="header-cell">Product</div>
-            <div class="header-cell">Price</div>
-            <div class="header-cell">Qty</div>
-            <div class="header-cell">Total</div>
-            <div class="header-cell"></div>
+    <div hx-swap-oob="true" id="cart-list">
+        <div class="empty">
+            <div class="icon">🛒</div>
+            <h3>Your cart is empty</h3>
+            <p>Add some products to get started</p>
+            <a href="/products" class="btn blue">Browse Products</a>
         </div>
-        <div class="cart-body">
-        <?php foreach ($cart as $item): ?>
-            <div class="cart-row" id="cart-item-<?= $item['product_id'] ?>">
-                <div class="cart-cell"><?= htmlspecialchars($item['name']) ?></div>
-                <div class="cart-cell">$<?= number_format($item['price'], 2) ?></div>
-                <div class="cart-cell"><div id="quantity-<?= $item['id'] ?>"><?= $item['quantity'] ?></div></div>
-                <div class="cart-cell">$<?= number_format($item['price'] * $item['quantity'], 2) ?></div>
-                <div class="cart-cell">
-                    <form
-                        hx-post="/cart/remove"
-                        hx-swap="outerHTML">
-                        <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
-                        <button type="submit" class="text-red-600">Remove</button>
-                    </form>
+    </div>
+<?php else: ?>
+    <?php
+    $cart_total = 0;
+    foreach ($cart as $item) {
+        $cart_total += $item['price'] * $item['quantity'];
+    }
+    ?>
+    <div hx-swap-oob="true" id="cart-list">
+        <div class="">
+            <h2 class="section-subtitle">Shopping Cart</h2>
+            <div class="cart-grid">
+                <div class="cart-header">
+                    <div class="header-cell">Product</div>
+                    <div class="header-cell">Price</div>
+                    <div class="header-cell">Qty</div>
+                    <div class="header-cell">Total</div>
+                    <div class="header-cell"></div>
+                </div>
+                <div class="cart-body">
+                <?php foreach ($cart as $item): ?>
+                    <div class="cart-row" id="cart-item-<?= $item['product_id'] ?>">
+                        <div class="cart-cell" data-label="Product">
+                            <div class="product-name"><?= htmlspecialchars($item['name']) ?></div>
+                        </div>
+                        <div class="cart-cell" data-label="Price">$<?= number_format($item['price'], 2) ?></div>
+                        <div class="cart-cell" data-label="Qty">
+                            <div class="quantity-controls">
+                                <form hx-post="/cart/update-quantity" hx-swap="outerHTML" class="quantity-form">
+                                    <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
+                                    <button type="submit" name="action" value="decrease" class="qty-btn">-</button>
+                                    <span id="quantity-<?= $item['id'] ?>" class="quantity-display"><?= $item['quantity'] ?></span>
+                                    <button type="submit" name="action" value="increase" class="qty-btn">+</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="cart-cell" data-label="Total">
+                            <span class="item-total">$<?= number_format($item['price'] * $item['quantity'], 2) ?></span>
+                        </div>
+                        <div class="cart-cell" data-label="Action">
+                            <form hx-post="/cart/remove" hx-swap="outerHTML" class="remove-form">
+                                <input type="hidden" name="product_id" value="<?= $item['product_id'] ?>">
+                                <button type="submit" class="btn text red">Remove All</button>
+                            </form>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
                 </div>
             </div>
-        <?php endforeach; ?>
+        </div>
+        
+        <!-- Cart Summary -->
+        <div class="">
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span class="summary-label">Subtotal:</span>
+                    <span class="summary-value">$<?= number_format($cart_total, 2) ?></span>
+                </div>
+                <div class="summary-row total">
+                    <span class="summary-label">Total:</span>
+                    <span class="summary-value">$<?= number_format($cart_total, 2) ?></span>
+                </div>
+                <div class="cart-actions">
+                    <a href="/products" class="btn black">Continue Shopping</a>
+                    <a href="/checkout" class="btn blue">Proceed to Checkout</a>
+                </div>
+            </div>
         </div>
     </div>
 <?php endif; ?>

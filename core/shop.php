@@ -61,12 +61,53 @@ function add_to_cart(int $user_id, int $product_id, int $quantity = 1): bool {
     return true;
 }
 
+function update_cart_quantity(int $user_id, int $product_id, int $quantity_change): void {
+    $pdo = db();
+    $cart_id = get_user_cart_id($user_id);
+
+    // Get current quantity
+    $stmt = $pdo->prepare("SELECT quantity FROM cart_items WHERE cart_id = :cid AND product_id = :pid");
+    $stmt->execute([':cid' => $cart_id, ':pid' => $product_id]);
+    $current_quantity = (int)$stmt->fetchColumn();
+
+    $new_quantity = $current_quantity + $quantity_change;
+
+    if ($new_quantity <= 0) {
+        // Remove item completely if quantity becomes 0 or less
+        // The remove_from_cart function will handle stock return, so don't do it here
+        remove_from_cart($user_id, $product_id);
+    } else {
+        // Update quantity
+        $stmt = $pdo->prepare("UPDATE cart_items SET quantity = :qty WHERE cart_id = :cid AND product_id = :pid");
+        $stmt->execute([':qty' => $new_quantity, ':cid' => $cart_id, ':pid' => $product_id]);
+        
+        // Handle stock changes
+        if ($quantity_change < 0) {
+            // Return stock to product when decreasing cart quantity
+            $stmt = $pdo->prepare("UPDATE products SET quantity = quantity + :qty WHERE id = :id");
+            $stmt->execute([':qty' => abs($quantity_change), ':id' => $product_id]);
+        }
+    }
+}
+
 function remove_from_cart(int $user_id, int $product_id): void {
     $pdo = db();
     $cart_id = get_user_cart_id($user_id);
 
+    // Get the quantity being removed to return to stock
+    $stmt = $pdo->prepare("SELECT quantity FROM cart_items WHERE cart_id = :cid AND product_id = :pid");
+    $stmt->execute([':cid' => $cart_id, ':pid' => $product_id]);
+    $removed_quantity = (int)$stmt->fetchColumn();
+
+    // Delete from cart
     $stmt = $pdo->prepare("DELETE FROM cart_items WHERE cart_id = :cid AND product_id = :pid");
     $stmt->execute([':cid' => $cart_id, ':pid' => $product_id]);
+    
+    // Return stock to product
+    if ($removed_quantity > 0) {
+        $stmt = $pdo->prepare("UPDATE products SET quantity = quantity + :qty WHERE id = :id");
+        $stmt->execute([':qty' => $removed_quantity, ':id' => $product_id]);
+    }
 }
 
 function create_order(int $user_id, array $cart_items): int {
@@ -92,16 +133,57 @@ function create_order(int $user_id, array $cart_items): int {
 
     // Insert items
     $stmt = $pdo->prepare("
-        INSERT INTO order_items (order_id, product_id, name, price, quantity)
-        VALUES (:oid, :pid, :name, :price, :qty)
+        INSERT INTO order_items (order_id, product_id, quantity, price)
+        VALUES (:oid, :pid, :qty, :price)
     ");
     foreach ($cart_items as $item) {
         $stmt->execute([
             ':oid'   => $order_id,
-            ':pid'   => $item['id'],
-            ':name'  => $item['name'],
-            ':price' => $item['price'],
+            ':pid'   => $item['product_id'],
             ':qty'   => $item['quantity'],
+            ':price' => $item['price'],
+        ]);
+    }
+
+    return $order_id;
+}
+
+function create_order_with_shipping(int $user_id, array $cart_items, array $shipping_address): int {
+    $pdo = db();
+
+    // Calculate total
+    $total = 0;
+    foreach ($cart_items as $item) {
+        $total += $item['price'] * $item['quantity'];
+    }
+
+    // Create shipping address string
+    $shipping_string = json_encode($shipping_address);
+
+    // Insert order
+    $stmt = $pdo->prepare("
+        INSERT INTO orders (user_id, total_amount, shipping_address, status)
+        VALUES (:uid, :total, :shipping, 'pending')
+    ");
+    $stmt->execute([
+        ':uid'      => $user_id,
+        ':total'    => $total,
+        ':shipping' => $shipping_string,
+    ]);
+
+    $order_id = (int)$pdo->lastInsertId();
+
+    // Insert items
+    $stmt = $pdo->prepare("
+        INSERT INTO order_items (order_id, product_id, quantity, price)
+        VALUES (:oid, :pid, :qty, :price)
+    ");
+    foreach ($cart_items as $item) {
+        $stmt->execute([
+            ':oid'   => $order_id,
+            ':pid'   => $item['product_id'],
+            ':qty'   => $item['quantity'],
+            ':price' => $item['price'],
         ]);
     }
 

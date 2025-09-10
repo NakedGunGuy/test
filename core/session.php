@@ -25,6 +25,11 @@ function session_remove($key): void
     unset($_SESSION[$key]);
 }
 
+function session_get($key)
+{
+    return session_flash($key);
+}
+
 function session_flash($key, $value = null)
 {
     static $flashed = [];
