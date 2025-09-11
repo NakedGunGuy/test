@@ -1,5 +1,6 @@
 <?php /** @var array $products */ ?>
 <?php start_section('title'); ?>Discover Cards - <?= htmlspecialchars($_ENV['APP_NAME']) ?><?php end_section('title'); ?>
+<?php start_section('page_title'); ?>Discover<?php end_section('page_title'); ?>
 
 <div class="section" style="margin-bottom: 2rem;">
     <h3 class="section-header">

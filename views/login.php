@@ -1,4 +1,5 @@
 <?php start_section('title'); ?>Login - <?= htmlspecialchars($_ENV['APP_NAME']) ?><?php end_section('title'); ?>
+<?php start_section('page_title'); ?>Login<?php end_section('page_title'); ?>
 
 <div class="auth-container">
     <div class="auth-wrapper">

@@ -5,6 +5,7 @@
 <?php start_section('title'); ?>
 <?= htmlspecialchars($product['name'] ?? $product['card_name']) ?> - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 <?php end_section('title'); ?>
+<?php start_section('page_title'); ?>Product Details<?php end_section('page_title'); ?>
 
 <div class="product-container">
     <!-- Product Image & Info -->

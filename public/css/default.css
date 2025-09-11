@@ -69,6 +69,7 @@ body {
                 height: 64px;
                 display: flex;
                 align-items: center;
+                margin-bottom: 20px;
 
                 & img {
                     object-fit: contain;
@@ -1342,12 +1343,12 @@ textarea.form-input {
     gap: 2rem;
 }
 
+/*TODO IMPORTANT yeah change this to be the same as every grid (in discover)*/
 /* Cart Styles - Using unified table system */
 .cart-grid {
     width: 100%;
     overflow-x: auto;
 }
-
 .cart-header {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr 120px;
@@ -1531,7 +1532,6 @@ textarea.form-input {
 
 .add-to-cart-form {
     display: flex;
-    flex-direction: column;
     align-items: center;
     gap: 0.5rem;
     margin: 0;
@@ -1606,6 +1606,7 @@ textarea.form-input {
     }
 }
 
+/*TODO this as well*/
 @media (max-width: 768px) {
     .cart-header {
         display: none !important; /* Hide header on mobile */

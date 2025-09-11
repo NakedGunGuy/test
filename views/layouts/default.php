@@ -61,7 +61,7 @@
 <div>
     <header>
         <section>
-            <div class="page-title">Discover</div>
+            <div class="page-title"><?= section('page_title', htmlspecialchars($_ENV['APP_NAME'])) ?></div>
         </section>
         <section>
             <ul style="display: flex; gap: 1rem; align-items: center;">

@@ -1,6 +1,8 @@
-<!-- views/login.php -->
+<?php start_section('title'); ?>Register - <?= htmlspecialchars($_ENV['APP_NAME']) ?><?php end_section('title'); ?>
+<?php start_section('page_title'); ?>Register<?php end_section('page_title'); ?>
+
 <div class="max-w-md mx-auto mt-20 p-6 border rounded shadow">
-    <h1 class="text-xl font-bold mb-4">Login</h1>
+    <h1 class="text-xl font-bold mb-4">Register</h1>
 
     <form
         hx-post="/register"

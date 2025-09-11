@@ -1,3 +1,4 @@
+<?php start_section('page_title'); ?>Home<?php end_section('page_title'); ?>
 <h1>Welcome to <?= htmlspecialchars($appName) ?></h1>
 <h1 class="text-3xl font-bold underline text-red-400">    Hello world!  </h1>
 <a href="/user/1" preload="mouseover">About</a>

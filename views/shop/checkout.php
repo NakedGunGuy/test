@@ -1,6 +1,7 @@
 <?php start_section('title'); ?>
 Checkout - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 <?php end_section('title'); ?>
+<?php start_section('page_title'); ?>Checkout<?php end_section('page_title'); ?>
 
 <div class="section" style="margin-bottom: 2rem;">
     <a href="/cart" class="btn text back">← Back to Cart</a>
