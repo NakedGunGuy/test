@@ -60,8 +60,8 @@ Products - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         </form>
 
         <!-- Products Table -->
-        <div class="products-grid">
-            <div class="products-header">
+        <div class="grid">
+            <div class="grid-header">
                 <div class="header-cell">Product</div>
                 <div class="header-cell">Edition</div>
                 <div class="header-cell">Price</div>
@@ -69,7 +69,7 @@ Products - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                 <div class="header-cell">Foil</div>
                 <div class="header-cell">Actions</div>
             </div>
-            <div class="products-body" id="products-table">
+            <div class="grid-body" id="products-table">
                 <?php partial('admin/products/partials/products_table_body', ['products' => $products]); ?>
             </div>
         </div>

@@ -1,42 +1,67 @@
 <?php /** @var array $products */ ?>
-<h1>Products</h1>
+<?php start_section('title'); ?>Discover Cards - <?= htmlspecialchars($_ENV['APP_NAME']) ?><?php end_section('title'); ?>
 
-<form method="get">
-    <label class="block">
-        Search product
-        <input
-            name="name"
-            hx-get="/admin/products/search"
-            hx-trigger="keyup changed delay:200ms"
-            hx-target="#product-results"
-            hx-swap="innerHTML"
-            value="<?= htmlspecialchars($_GET['name'] ?? '') ?>"
-        >
-    </label>
-    <div id="product-results"></div>
-    <input type="number" name="min_price" placeholder="Min price" value="<?= htmlspecialchars($_GET['min_price'] ?? '') ?>"/>
-    <input type="number" name="max_price" placeholder="Max price" value="<?= htmlspecialchars($_GET['max_price'] ?? '') ?>"/>
-    
-    <button type="submit">Filter</button>
-    <?php
-$baseUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-?>
-<a href="<?= $baseUrl ?>" class="btn black">Reset</a>
-
-</form>
-
-<div class="products-grid">
-    <div class="products-header">
-        <div class="header-cell">
-            <span>Name</span><img class="sort" src="assets/sort.svg" alt="Sort items in ascending or descending order">
+<div class="section" style="margin-bottom: 2rem;">
+    <h3 class="section-header">
+        <span class="section-header-icon">🔍</span>Search & Filter
+    </h3>
+    <form method="get" class="search-form">
+        <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Search Cards</label>
+            <input
+                class="form-input"
+                name="name"
+                hx-get="/admin/products/search"
+                hx-trigger="keyup changed delay:300ms"
+                hx-target="#product-results"
+                hx-swap="innerHTML"
+                value="<?= htmlspecialchars($_GET['name'] ?? '') ?>"
+                placeholder="Enter card name..."
+            >
+            <div id="product-results" class="search-results"></div>
         </div>
-        <div class="header-cell">Edition</div>
-        <div class="header-cell">Price</div>
-        <div class="header-cell">Quantity</div>
-        <div class="header-cell">Foil?</div>
-        <div class="header-cell">Actions</div>
+        
+        <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Min Price</label>
+            <input class="form-input" type="number" name="min_price" placeholder="€0" value="<?= htmlspecialchars($_GET['min_price'] ?? '') ?>"/>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Max Price</label>
+            <input class="form-input" type="number" name="max_price" placeholder="€1000" value="<?= htmlspecialchars($_GET['max_price'] ?? '') ?>"/>
+        </div>
+        
+        <button type="submit" class="btn blue filter-button">Filter</button>
+        
+        <a href="<?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?>" class="btn black reset-button">Reset</a>
+    </form>
+</div>
+
+<div class="section">
+    <div class="products-stats">
+        <h3 class="products-count">📄 Products (<?= count($products) ?> found)</h3>
+        <div class="view-toggle">
+            <span class="view-toggle-label">View:</span>
+            <button class="view-toggle-btn active">Grid</button>
+            <button class="view-toggle-btn inactive">List</button>
+        </div>
     </div>
-    <div id="products-table" class="products-body">
-        <?php partial('page/products/partials/products_table_body', ['products' => $products]); ?>
+    
+    <div class="grid">
+        <div class="grid-header">
+            <div class="header-cell">
+                <span class="grid-header-with-icon">
+                    <span>🃏</span>Card Name
+                </span>
+            </div>
+            <div class="header-cell">Edition</div>
+            <div class="header-cell">Price</div>
+            <div class="header-cell">Stock</div>
+            <div class="header-cell">Foil</div>
+            <div class="header-cell">Actions</div>
+        </div>
+        <div id="products-table" class="grid-body">
+            <?php partial('page/products/partials/products_table_body', ['products' => $products]); ?>
+        </div>
     </div>
 </div>

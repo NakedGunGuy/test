@@ -73,8 +73,8 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             <p>Orders will appear here as customers make purchases.</p>
         </div>
     <?php else: ?>
-        <div class="products-grid">
-            <div class="products-header">
+        <div class="grid">
+            <div class="grid-header">
                 <div class="header-cell">Order</div>
                 <div class="header-cell">Customer</div>
                 <div class="header-cell">Items</div>
@@ -82,40 +82,40 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                 <div class="header-cell">Status</div>
                 <div class="header-cell">Actions</div>
             </div>
-            <div class="products-body">
+            <div class="grid-body">
                 <?php foreach ($orders as $order): ?>
-                    <div class="product-row">
-                        <div class="product-cell">
+                    <div class="grid-row">
+                        <div class="grid-cell">
                             <div style="font-weight: 600;">#<?= $order['id'] ?></div>
                             <div style="font-size: 12px; color: #C0C0D1; margin-top: 2px;">
                                 <?= date('M j, Y g:i A', strtotime($order['created_at'])) ?>
                             </div>
                         </div>
                         
-                        <div class="product-cell">
+                        <div class="grid-cell">
                             <div style="font-weight: 600;"><?= htmlspecialchars($order['username']) ?></div>
                             <div style="font-size: 12px; color: #C0C0D1; margin-top: 2px;">
                                 <?= htmlspecialchars($order['email']) ?>
                             </div>
                         </div>
                         
-                        <div class="product-cell">
+                        <div class="grid-cell">
                             <?= $order['item_count'] ?> item<?= $order['item_count'] != 1 ? 's' : '' ?>
                         </div>
                         
-                        <div class="product-cell">
+                        <div class="grid-cell">
                             <span style="font-weight: 600; color: #01AFFC;">
                                 $<?= number_format($order['total_amount'], 2) ?>
                             </span>
                         </div>
                         
-                        <div class="product-cell">
+                        <div class="grid-cell">
                             <span class="badge status status-<?= $order['status'] ?>">
                                 <?= ucfirst($order['status']) ?>
                             </span>
                         </div>
                         
-                        <div class="product-cell">
+                        <div class="grid-cell">
                             <form style="display: inline;" 
                                   hx-post="/admin/orders/<?= $order['id'] ?>/status" 
                                   hx-trigger="change"

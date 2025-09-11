@@ -1,5 +1,5 @@
-<div class="product-row">
-    <div class="product-cell">
+<div class="grid-row">
+    <div class="grid-cell">
         <div style="font-weight: 600;"><?= htmlspecialchars($product['name']) ?></div>
         <?php if ($product['is_custom']): ?>
             <div style="font-size: 12px; color: #C0C0D1;">Custom Product</div>
@@ -8,17 +8,17 @@
         <?php endif; ?>
     </div>
     
-    <div class="product-cell">
+    <div class="grid-cell">
         <?= htmlspecialchars($product['set_name'] ?? 'Custom') ?>
     </div>
     
-    <div class="product-cell">
+    <div class="grid-cell">
         <span style="font-weight: 600; color: #01AFFC;">
             $<?= number_format($product['price'], 2) ?>
         </span>
     </div>
     
-    <div class="product-cell">
+    <div class="grid-cell">
         <div style="font-weight: 600;">
             <?= $product['quantity'] ?>
             <?php if ($product['in_carts'] > 0): ?>
@@ -30,7 +30,7 @@
         <?php endif; ?>
     </div>
     
-    <div class="product-cell">
+    <div class="grid-cell">
         <?php if ($product['is_foil']): ?>
             <span style="color: #FFB800;">✨ Foil</span>
         <?php else: ?>
@@ -38,7 +38,7 @@
         <?php endif; ?>
     </div>
     
-    <div class="product-cell">
+    <div class="grid-cell">
         <?php
             if (!empty($actions)) {
                 partial('admin/products/partials/product_actions', ['product_id' => $product['id'], 'actions' => $actions]); 

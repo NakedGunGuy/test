@@ -6,11 +6,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Cardpoint is an e-commerce web application for selling Trading Card Game (TCG) cards, primarily focused on Grand Archive TCG. The platform serves as an online store where Cardpoint company sells physical TCG cards to customers.
 
-## Commands
-
-### Development
-- **CSS Build**: `.\tailwindcss.exe -i public/css/style.css -o public/css/output.css --watch` - Build and watch Tailwind CSS
-
 ### Database & Console
 - **Import Cards**: `php console/import_cards.php` - Import cards from external API
 - **Create Admin User**: `php console/create_admin_user.php` - Create admin user account
@@ -92,6 +87,8 @@ Cardpoint is an e-commerce web application for selling Trading Card Game (TCG) c
 - User management in `core/user.php`
 - Admin functionality in `core/admin.php`
 - Role-based access control
+- Separate admin user accounts (`admin_users` table) with dedicated login system
+- Admin authentication middleware for protected routes
 
 ### Card & Product System
 - **Card Data**: Imported from game developers' API via `console/import_cards.php`
@@ -169,20 +166,21 @@ SQLite database with foreign key support enabled. All database queries use prepa
 
 ## Development Roadmap
 
-### Planned Features
-- **Enhanced Admin Dashboard**: 
-  - Order management and tracking
-  - Sales metrics and analytics
-  - Improved stock overview and product management
-  - Streamlined product creation workflow
-- **Product Detail Pages**: 
-  - Individual card/product pages
-  - Order history for specific cards
-  - Edition-based filtering for card variants
-- **E-commerce Features**:
-  - Complete cart and checkout process
-  - Payment gateway integration
-  - Order confirmation and tracking
+### Remaining Features to Implement
+- **Payment Gateway Integration**:
+  - Stripe or other payment processor integration
+  - Real payment processing (currently in demo mode)
+  - Payment webhooks and confirmation handling
+- **Email System Enhancement**:
+  - SMTP configuration for email notifications
+  - Order confirmation emails
+  - Admin notification emails for new orders
+  - Password reset emails
+- **Additional Admin Features**:
+  - Bulk product operations
+  - Advanced inventory management
+  - Customer management dashboard
+  - Detailed reporting and export functionality
 
 ### Current State
 - ✅ Card data import from developer API
@@ -190,8 +188,23 @@ SQLite database with foreign key support enabled. All database queries use prepa
 - ✅ User authentication and profiles
 - ✅ Shopping cart with HTMX interactions
 - ✅ Search and discovery features
-- 🚧 Admin dashboard (basic, needs enhancement)
-- ❌ Product detail pages
-- ❌ Order management system
-- ❌ Payment processing
-- ❌ Sales analytics
+- ✅ **Enhanced Admin Dashboard** with comprehensive features:
+  - Store overview with real-time statistics (products, orders, revenue)
+  - Complete product management (CRUD operations, stock tracking)
+  - Order management system with status tracking
+  - Sales analytics and reporting dashboard
+  - Store settings and configuration
+  - Database backup and card import tools
+- ✅ **Product Detail Pages** - Individual card/product pages with:
+  - Product images and metadata
+  - Order history for specific products
+  - Card variants and edition filtering
+  - Purchase functionality integrated with cart
+- ✅ **Complete E-commerce System**:
+  - Full cart and checkout process
+  - Order creation and management
+  - Shipping address collection
+  - Order status tracking (pending, processing, shipped, delivered, cancelled)
+  - Demo payment processing (ready for payment gateway integration)
+- ❌ **Payment Gateway Integration** - Currently using demo/simulation mode
+- ❌ **Email Notifications** - System ready but needs SMTP configuration

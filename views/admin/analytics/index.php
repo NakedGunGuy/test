@@ -104,28 +104,28 @@ Analytics - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             <p>Sales data will appear here once orders are placed.</p>
         </div>
     <?php else: ?>
-        <div class="products-grid">
-            <div class="products-header">
+        <div class="grid">
+            <div class="grid-header">
                 <div class="header-cell">Date</div>
                 <div class="header-cell">Orders</div>
                 <div class="header-cell">Revenue</div>
                 <div class="header-cell">Avg Order</div>
             </div>
-            <div class="products-body">
+            <div class="grid-body">
                 <?php foreach ($daily_sales as $day): ?>
-                    <div class="product-row">
-                        <div class="product-cell">
+                    <div class="grid-row">
+                        <div class="grid-cell">
                             <?= date('M j, Y', strtotime($day['date'])) ?>
                         </div>
-                        <div class="product-cell">
+                        <div class="grid-cell">
                             <span style="font-weight: 600;"><?= $day['orders_count'] ?></span>
                         </div>
-                        <div class="product-cell">
+                        <div class="grid-cell">
                             <span style="font-weight: 600; color: #01AFFC;">
                                 $<?= number_format($day['daily_revenue'], 2) ?>
                             </span>
                         </div>
-                        <div class="product-cell">
+                        <div class="grid-cell">
                             $<?= number_format($day['daily_revenue'] / $day['orders_count'], 2) ?>
                         </div>
                     </div>
@@ -150,26 +150,26 @@ Analytics - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             <p>Top selling products will appear here once orders are placed.</p>
         </div>
     <?php else: ?>
-        <div class="products-grid">
-            <div class="products-header">
+        <div class="grid">
+            <div class="grid-header">
                 <div class="header-cell">Product</div>
                 <div class="header-cell">Units Sold</div>
                 <div class="header-cell">Revenue</div>
                 <div class="header-cell">Avg Price</div>
             </div>
-            <div class="products-body">
+            <div class="grid-body">
                 <?php foreach ($top_products as $product): ?>
-                    <div class="product-row">
-                        <div class="product-cell">
+                    <div class="grid-row">
+                        <div class="grid-cell">
                             <span style="font-weight: 600;"><?= htmlspecialchars($product['name']) ?></span>
                         </div>
-                        <div class="product-cell">
+                        <div class="grid-cell">
                             <span style="font-weight: 600; color: #01AFFC;"><?= number_format($product['total_sold']) ?></span>
                         </div>
-                        <div class="product-cell">
+                        <div class="grid-cell">
                             $<?= number_format($product['revenue'], 2) ?>
                         </div>
-                        <div class="product-cell">
+                        <div class="grid-cell">
                             $<?= number_format($product['revenue'] / $product['total_sold'], 2) ?>
                         </div>
                     </div>
