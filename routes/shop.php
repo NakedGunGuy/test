@@ -8,8 +8,9 @@ get('/cart', function () {
     $user = get_logged_in_user();
     $cart_id = get_user_cart_id($user['id']);
     $cart_items = get_cart_items($cart_id);
+    $error = $_GET['error'] ?? null;
 
-    view('shop/cart', ['cart' => $cart_items]);
+    view('shop/cart', ['cart' => $cart_items, 'error' => $error]);
 }, [$getUserAuth]);
 
 post('/cart/add', function () {
@@ -130,6 +131,19 @@ post('/checkout', function () {
         exit("Cart is empty.");
     }
 
+    // Calculate cart total
+    $cart_total = 0;
+    foreach ($cart_items as $item) {
+        $cart_total += $item['price'] * $item['quantity'];
+    }
+
+    // Check Stripe minimum amount (50 euro cents)
+    if (!empty($_ENV['STRIPE_SECRET_KEY']) && $cart_total < 0.50) {
+        // Redirect to cart with error message
+        header('Location: /cart?error=' . urlencode('Order total must be at least €0.50 to process payment.'));
+        exit;
+    }
+
     // Get shipping information
     $shipping_address = [
         'full_name' => $_POST['full_name'] ?? '',
@@ -141,47 +155,158 @@ post('/checkout', function () {
     ];
 
     $order_id = create_order_with_shipping($user['id'], $cart_items, $shipping_address);
+    
+    // Track this order in the session for additional security
+    if (!isset($_SESSION['checkout_orders'])) {
+        $_SESSION['checkout_orders'] = [];
+    }
+    $_SESSION['checkout_orders'][$order_id] = time();
 
-    // For now, let's simulate payment success without Stripe
-    // In a real implementation, you would integrate with Stripe here
+    // Generate secure token for this order
+    $token = generate_order_token($order_id);
     
-    // Mark order as paid
-    update_order_status($order_id, 'paid');
+    // Check if Stripe is configured
+    if (empty($_ENV['STRIPE_SECRET_KEY'])) {
+        // Demo mode - simulate payment success
+        update_order_status($order_id, 'paid');
+        
+        // Clear cart
+        $stmt = $pdo->prepare("DELETE FROM cart_items WHERE cart_id = :cid");
+        $stmt->execute([':cid' => $cart_id]);
+        
+        header('Location: /checkout/success?order_id=' . $order_id . '&token=' . $token);
+        exit;
+    }
     
-    // Clear cart
-    $stmt = $pdo->prepare("DELETE FROM cart_items WHERE cart_id = :cid");
-    $stmt->execute([':cid' => $cart_id]);
-    
-    // Redirect to success page
-    header('Location: /checkout/success?order_id=' . $order_id);
-    exit;
+    // Debug: Check if APP_URL is set
+    if (empty($_ENV['APP_URL'])) {
+        update_order_status($order_id, 'cancelled');
+        header('Location: /checkout/cancel?order_id=' . $order_id . '&error=' . urlencode('APP_URL not configured'));
+        exit;
+    }
+
+    // Real Stripe integration
+    require_once ROOT_PATH . '/vendor/autoload.php';
+    \Stripe\Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
+
+    $lineItems = [];
+    foreach ($cart_items as $item) {
+        $lineItems[] = [
+            'price_data' => [
+                'currency'     => 'eur',
+                'product_data' => ['name' => $item['name']],
+                'unit_amount'  => $item['price'] * 100, // Stripe expects cents
+            ],
+            'quantity' => $item['quantity'],
+        ];
+    }
+
+    try {
+        $session = \Stripe\Checkout\Session::create([
+            'payment_method_types' => ['card'],
+            'line_items'           => $lineItems,
+            'mode'                 => 'payment',
+            'metadata'             => ['order_id' => $order_id],
+            'success_url'          => $_ENV['APP_URL'] . '/checkout/success?order_id=' . $order_id . '&token=' . $token,
+            'cancel_url'           => $_ENV['APP_URL'] . '/checkout/cancel?order_id=' . $order_id . '&token=' . $token,
+        ]);
+
+        // Redirect to Stripe checkout
+        header('Location: ' . $session->url);
+        exit;
+    } catch (\Stripe\Exception\ApiErrorException $e) {
+        // Handle Stripe errors
+        update_order_status($order_id, 'cancelled');
+        header('Location: /checkout/cancel?order_id=' . $order_id . '&token=' . $token . '&error=' . urlencode($e->getMessage()));
+        exit;
+    }
 }, [$getUserAuth]);
 
 get('/checkout/success', function () {
     $order_id = (int)($_GET['order_id'] ?? 0);
-
-    if ($order_id > 0) {
-        update_order_status($order_id, 'paid');
-    }
-
-    // Clear cart
+    $token = $_GET['token'] ?? '';
     $user = get_logged_in_user();
     $pdo = db();
+
+    if ($order_id <= 0) {
+        header('Location: /cart');
+        exit;
+    }
+
+    // Verify the security token
+    if (!verify_order_token($order_id, $token)) {
+        // Invalid token - possible manipulation attempt
+        header('Location: /cart');
+        exit;
+    }
+
+    // Verify order ownership and status
+    $stmt = $pdo->prepare("SELECT user_id, status FROM orders WHERE id = :id LIMIT 1");
+    $stmt->execute([':id' => $order_id]);
+    $order = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$order) {
+        // Order doesn't exist
+        header('Location: /cart');
+        exit;
+    }
+
+    if ($order['user_id'] != $user['id']) {
+        // User doesn't own this order
+        header('Location: /cart');
+        exit;
+    }
+
+    // Additional security: Check if this order was created in this session
+    if (!isset($_SESSION['checkout_orders'][$order_id])) {
+        // Order was not created in this session - possible manipulation
+        header('Location: /cart');
+        exit;
+    }
+
+    if ($order['status'] !== 'pending') {
+        // Order is not pending (already processed or cancelled)
+        view('shop/checkout_success');
+        return;
+    }
+
+    // Only mark as paid if order is pending and belongs to current user
+    update_order_status($order_id, 'paid');
+
+    // Clear cart only on successful payment
     $cart_id = get_user_cart_id($user['id']);
     $stmt = $pdo->prepare("DELETE FROM cart_items WHERE cart_id = :cid");
     $stmt->execute([':cid' => $cart_id]);
+
+    // Remove from session tracking as it's now completed
+    unset($_SESSION['checkout_orders'][$order_id]);
 
     view('shop/checkout_success');
 }, [$getUserAuth]);
 
 get('/checkout/cancel', function () {
     $order_id = (int)($_GET['order_id'] ?? 0);
+    $token = $_GET['token'] ?? '';
+    $error = $_GET['error'] ?? null;
+    $user = get_logged_in_user();
+    $pdo = db();
 
     if ($order_id > 0) {
-        update_order_status($order_id, 'cancelled');
+        // Verify the security token first
+        if (verify_order_token($order_id, $token)) {
+            // Verify order ownership before cancelling
+            $stmt = $pdo->prepare("SELECT user_id, status FROM orders WHERE id = :id LIMIT 1");
+            $stmt->execute([':id' => $order_id]);
+            $order = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($order && $order['user_id'] == $user['id'] && $order['status'] == 'pending') {
+                // Only cancel if user owns the order and it's still pending
+                update_order_status($order_id, 'cancelled');
+            }
+        }
     }
 
-    view('shop/checkout_cancel');
+    view('shop/checkout_cancel', ['error' => $error]);
 }, [$getUserAuth]);
 
 

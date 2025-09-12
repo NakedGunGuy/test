@@ -118,3 +118,47 @@ function getProducts($filters = [], $sort = 'p.id DESC', $limit = null, $offset 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function getProductsCount($filters = []) {
+    $sql = "
+        SELECT COUNT(DISTINCT p.id)
+        FROM products p
+        LEFT JOIN editions e ON p.edition_id = e.id
+        LEFT JOIN cards c ON e.card_id = c.id
+        LEFT JOIN sets s ON e.set_id = s.id
+        WHERE 1=1
+    ";
+
+    $params = [];
+
+    // Apply same filters as getProducts
+    if (isset($filters['id'])) {
+        $sql .= " AND p.id = :id";
+        $params[':id'] = $filters['id'];
+    }
+
+    if (isset($filters['edition_id'])) {
+        $sql .= " AND p.edition_id = :edition_id";
+        $params[':edition_id'] = $filters['edition_id'];
+    }
+
+    if (isset($filters['name'])) {
+        $sql .= " AND p.name LIKE :name";
+        $params[':name'] = "%" . $filters['name'] . "%";
+    }
+
+    if (isset($filters['min_price'])) {
+        $sql .= " AND p.price >= :min_price";
+        $params[':min_price'] = $filters['min_price'];
+    }
+
+    if (isset($filters['max_price'])) {
+        $sql .= " AND p.price <= :max_price";
+        $params[':max_price'] = $filters['max_price'];
+    }
+
+    $stmt = db()->prepare($sql);
+    $stmt->execute($params);
+
+    return (int)$stmt->fetchColumn();
+}
+

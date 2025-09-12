@@ -120,6 +120,8 @@
 <script src="/js/images.js"></script>
 <script src="/js/dialog.js"></script>
 <script src="/js/quantity.js"></script>
+<script src="/js/general.js"></script>
+
 <?= section('js') ?>
 </body>
 </html>

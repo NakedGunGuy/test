@@ -16,9 +16,36 @@ get('/discover', function () {
     ];
     $filters = array_filter($filters);
 
-    $products = getProducts($filters, 'p.id DESC', 50);
+    // Handle per_page setting from session
+    if (isset($_GET['per_page']) && in_array((int)$_GET['per_page'], [10, 25, 50, 100])) {
+        $_SESSION['discover_per_page'] = (int)$_GET['per_page'];
+    }
+    
+    // Pagination parameters
+    $page = max(1, (int)($_GET['page'] ?? 1));
+    $per_page = $_SESSION['discover_per_page'] ?? 10;
+    $offset = ($page - 1) * $per_page;
 
-    view('discover', ['products' => $products], 'default');
+    // Get total count and products
+    $total_products = getProductsCount($filters);
+    $products = getProducts($filters, 'p.id DESC', $per_page, $offset);
+
+    // Calculate pagination info
+    $total_pages = ceil($total_products / $per_page);
+
+    // Get filters without per_page for pagination links
+    $filter_params = array_diff_key($_GET, array_flip(['per_page', 'page']));
+    
+    view('discover', [
+        'products' => $products,
+        'pagination' => [
+            'current_page' => $page,
+            'per_page' => $per_page,
+            'total_products' => $total_products,
+            'total_pages' => $total_pages,
+            'filters' => $filter_params // Pass filters excluding per_page and page
+        ]
+    ], 'default');
 });
 
 get('/login', function () {
@@ -173,4 +200,12 @@ get('/product/{id}', function ($params) {
 get('/cards/image/{slug}', function ($params) {
     $slug = $params['slug'];
     partial('page/products/partials/product_image_dialog', ['slug' => $slug]);
+});
+
+get('/store-maintenance', function () {
+    view('maintenance');
+});
+
+get('/store-closed', function () {
+    view('closed');
 });

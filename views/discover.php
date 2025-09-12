@@ -40,11 +40,21 @@
 
 <div class="section">
     <div class="products-stats">
-        <h3 class="products-count">📄 Products (<?= count($products) ?> found)</h3>
-        <div class="view-toggle">
-            <span class="view-toggle-label">View:</span>
-            <button class="view-toggle-btn active">Grid</button>
-            <button class="view-toggle-btn inactive">List</button>
+        <h3 class="products-count">📄 Products (<?= $pagination['total_products'] ?> found<?= $pagination['total_pages'] > 1 ? ', page ' . $pagination['current_page'] . ' of ' . $pagination['total_pages'] : '' ?>)</h3>
+        <div class="products-controls">
+            <div class="per-page-control">
+                <select aria-label="Show products per page" id="per_page_select" onchange="changePerPage(this.value)" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #C0C0D133; background: #1E1E27; color: #fff; font-size: 14px;">
+                    <option value="10" <?= $pagination['per_page'] == 10 ? 'selected' : '' ?>>10</option>
+                    <option value="25" <?= $pagination['per_page'] == 25 ? 'selected' : '' ?>>25</option>
+                    <option value="50" <?= $pagination['per_page'] == 50 ? 'selected' : '' ?>>50</option>
+                    <option value="100" <?= $pagination['per_page'] == 100 ? 'selected' : '' ?>>100</option>
+                </select>
+            </div>
+            <div class="view-toggle">
+                <span class="view-toggle-label">View:</span>
+                <button class="view-toggle-btn active">Grid</button>
+                <button class="view-toggle-btn inactive">List</button>
+            </div>
         </div>
     </div>
     
@@ -65,4 +75,6 @@
             <?php partial('page/products/partials/products_table_body', ['products' => $products]); ?>
         </div>
     </div>
+    
+    <?php partial('partials/pagination', ['pagination' => $pagination]); ?>
 </div>

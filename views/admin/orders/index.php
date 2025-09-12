@@ -81,6 +81,7 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                 <div class="header-cell">Total</div>
                 <div class="header-cell">Status</div>
                 <div class="header-cell">Actions</div>
+                <div class="header-cell">Details</div>
             </div>
             <div class="grid-body">
                 <?php foreach ($orders as $order): ?>
@@ -128,6 +129,10 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                                     <option value="cancelled" <?= $order['status'] === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
                                 </select>
                             </form>
+                        </div>
+                        
+                        <div class="grid-cell">
+                            <a href="/admin/orders/<?= $order['id'] ?>" class="btn blue btn-small">View Details</a>
                         </div>
                     </div>
                 <?php endforeach; ?>

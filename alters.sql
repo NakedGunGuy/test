@@ -181,3 +181,11 @@ CREATE TABLE IF NOT EXISTS settings (
 
 -- Insert default settings
 INSERT OR IGNORE INTO settings (key, value) VALUES ('low_stock_threshold', '5');
+
+-- Add shipping_address column to orders table if it doesn't exist
+-- (This is needed for Stripe payment integration with shipping info)
+ALTER TABLE orders ADD COLUMN shipping_address TEXT;
+
+-- Add name column to order_items table if it doesn't exist
+-- (This stores the product name at time of order)
+ALTER TABLE order_items ADD COLUMN name TEXT NOT NULL DEFAULT '';

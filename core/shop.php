@@ -133,8 +133,8 @@ function create_order(int $user_id, array $cart_items): int {
 
     // Insert items
     $stmt = $pdo->prepare("
-        INSERT INTO order_items (order_id, product_id, quantity, price)
-        VALUES (:oid, :pid, :qty, :price)
+        INSERT INTO order_items (order_id, product_id, quantity, price, name)
+        VALUES (:oid, :pid, :qty, :price, :name)
     ");
     foreach ($cart_items as $item) {
         $stmt->execute([
@@ -142,6 +142,7 @@ function create_order(int $user_id, array $cart_items): int {
             ':pid'   => $item['product_id'],
             ':qty'   => $item['quantity'],
             ':price' => $item['price'],
+            ':name'  => $item['name'],
         ]);
     }
 
@@ -175,8 +176,8 @@ function create_order_with_shipping(int $user_id, array $cart_items, array $ship
 
     // Insert items
     $stmt = $pdo->prepare("
-        INSERT INTO order_items (order_id, product_id, quantity, price)
-        VALUES (:oid, :pid, :qty, :price)
+        INSERT INTO order_items (order_id, product_id, quantity, price, name)
+        VALUES (:oid, :pid, :qty, :price, :name)
     ");
     foreach ($cart_items as $item) {
         $stmt->execute([
@@ -184,6 +185,7 @@ function create_order_with_shipping(int $user_id, array $cart_items, array $ship
             ':pid'   => $item['product_id'],
             ':qty'   => $item['quantity'],
             ':price' => $item['price'],
+            ':name'  => $item['name'],
         ]);
     }
 
@@ -194,6 +196,15 @@ function update_order_status(int $order_id, string $status): void {
     $pdo = db();
     $stmt = $pdo->prepare("UPDATE orders SET status = :status WHERE id = :id");
     $stmt->execute([':status' => $status, ':id' => $order_id]);
+}
+
+function generate_order_token(int $order_id): string {
+    $secret = $_ENV['APP_SECRET'] ?? 'default_secret_change_me';
+    return hash('sha256', $order_id . '|' . $secret . '|' . date('Y-m-d'));
+}
+
+function verify_order_token(int $order_id, string $token): bool {
+    return hash_equals(generate_order_token($order_id), $token);
 }
 
 function get_product_order_history(int $product_id): array {
@@ -215,7 +226,7 @@ function get_product_order_history(int $product_id): array {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function get_card_variants(string $card_name, int $exclude_product_id = null): array {
+function get_card_variants(string $card_name, ?int $exclude_product_id = null): array {
     $pdo = db();
     $sql = "
         SELECT 

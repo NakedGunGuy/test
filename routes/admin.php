@@ -388,6 +388,63 @@ post('/admin/orders/{id}/status', function ($data) {
     }
 }, [$getAdminAuth]);
 
+// View order details
+get('/admin/orders/{id}', function ($data) {
+    $order_id = $data['id'];
+    
+    // Get order with user information
+    $order_stmt = db()->prepare("
+        SELECT 
+            o.*,
+            u.username,
+            u.email
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        WHERE o.id = :id
+    ");
+    $order_stmt->execute([':id' => $order_id]);
+    $order = $order_stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$order) {
+        http_response_code(404);
+        echo 'Order not found';
+        return;
+    }
+    
+    // Get order items with product details
+    $items_stmt = db()->prepare("
+        SELECT 
+            oi.*,
+            p.name as current_product_name,
+            p.quantity as current_stock,
+            e.collector_number,
+            c.name as card_name,
+            s.name as set_name,
+            p.is_foil
+        FROM order_items oi
+        LEFT JOIN products p ON oi.product_id = p.id
+        LEFT JOIN editions e ON p.edition_id = e.id
+        LEFT JOIN cards c ON e.card_id = c.id
+        LEFT JOIN sets s ON e.set_id = s.id
+        WHERE oi.order_id = :order_id
+        ORDER BY oi.id
+    ");
+    $items_stmt->execute([':order_id' => $order_id]);
+    $items = $items_stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Parse shipping address if it exists
+    $shipping_address = null;
+    if ($order['shipping_address']) {
+        $shipping_address = json_decode($order['shipping_address'], true);
+    }
+    
+    view('admin/orders/detail', [
+        'order' => $order,
+        'items' => $items,
+        'shipping_address' => $shipping_address
+    ], 'admin');
+}, [$getAdminAuth]);
+
 // Admin Analytics
 get('/admin/analytics', function () {
     // Sales data for the last 30 days
