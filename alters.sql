@@ -189,3 +189,21 @@ ALTER TABLE orders ADD COLUMN shipping_address TEXT;
 -- Add name column to order_items table if it doesn't exist
 -- (This stores the product name at time of order)
 ALTER TABLE order_items ADD COLUMN name TEXT NOT NULL DEFAULT '';
+
+-- Create email queue table for asynchronous email sending
+CREATE TABLE IF NOT EXISTS email_queue (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    to_email TEXT NOT NULL,
+    subject TEXT NOT NULL,
+    template TEXT NOT NULL,
+    data TEXT NOT NULL, -- JSON data for template
+    from_email TEXT DEFAULT 'noreply@cardpoint.com',
+    from_name TEXT DEFAULT 'Cardpoint',
+    status TEXT DEFAULT 'pending', -- pending, sent, failed
+    attempts INTEGER DEFAULT 0,
+    max_attempts INTEGER DEFAULT 3,
+    error_message TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    sent_at DATETIME
+);

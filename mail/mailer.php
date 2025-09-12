@@ -17,13 +17,38 @@ function render_mail_template(string $template, array $data = []): string
     return ob_get_clean();
 }
 
+function queue_email(
+    string $to,
+    string $subject,
+    string $template,
+    array $data,
+    string $from = 'noreply@cardpoint.com',
+    string $fromName = 'Cardpoint'
+): bool {
+    $pdo = db();
+    
+    $stmt = $pdo->prepare("
+        INSERT INTO email_queue (to_email, subject, template, data, from_email, from_name)
+        VALUES (:to, :subject, :template, :data, :from, :from_name)
+    ");
+    
+    return $stmt->execute([
+        ':to' => $to,
+        ':subject' => $subject,
+        ':template' => $template,
+        ':data' => json_encode($data),
+        ':from' => $from,
+        ':from_name' => $fromName
+    ]);
+}
+
 function send_mail(
     string $to,
     string $subject,
     string $template,
     array $data,
-    string $from = 'noreply@example.com',
-    string $fromName = 'My App'
+    string $from = 'noreply@cardpoint.com',
+    string $fromName = 'Cardpoint'
 ): bool {
     $mail = new PHPMailer(true);
 

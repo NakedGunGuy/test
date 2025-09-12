@@ -278,10 +278,19 @@ get('/checkout/success', function () {
     $stmt = $pdo->prepare("DELETE FROM cart_items WHERE cart_id = :cid");
     $stmt->execute([':cid' => $cart_id]);
 
+    // Queue order confirmation email
+    send_order_confirmation_email($order_id);
+
     // Remove from session tracking as it's now completed
     unset($_SESSION['checkout_orders'][$order_id]);
 
-    view('shop/checkout_success');
+    // Check if store is in maintenance/closed mode
+    $store_status = get_setting('store_status', 'open');
+    if ($store_status !== 'open') {
+        view('shop/checkout_success_maintenance', ['store_status' => $store_status]);
+    } else {
+        view('shop/checkout_success');
+    }
 }, [$getUserAuth]);
 
 get('/checkout/cancel', function () {

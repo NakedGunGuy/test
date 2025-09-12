@@ -36,9 +36,10 @@ function check_store_status() {
         return;
     }
     
-    // Always allow maintenance/closed status pages
+    // Always allow maintenance/closed status pages and payment callbacks
     $current_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    if (in_array($current_path, ['/store-maintenance', '/store-closed'])) {
+    $payment_paths = ['/store-maintenance', '/store-closed', '/checkout/success', '/checkout/cancel'];
+    if (in_array($current_path, $payment_paths)) {
         return;
     }
     

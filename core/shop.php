@@ -257,3 +257,72 @@ function get_card_variants(string $card_name, ?int $exclude_product_id = null): 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function send_order_confirmation_email(int $order_id): bool {
+    require_once MAIL_PATH . '/mailer.php';
+    
+    $pdo = db();
+    
+    // Get order details
+    $stmt = $pdo->prepare("
+        SELECT o.*, u.username, u.email
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        WHERE o.id = :order_id
+    ");
+    $stmt->execute([':order_id' => $order_id]);
+    $order = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$order) {
+        return false;
+    }
+    
+    // Get order items with product details
+    $stmt = $pdo->prepare("
+        SELECT 
+            oi.*,
+            CASE 
+                WHEN p.edition_id IS NOT NULL THEN
+                    c.name || ' - ' || s.name || ' #' || e.collector_number || 
+                    CASE WHEN e.rarity THEN ' (' || e.rarity || ')' ELSE '' END ||
+                    CASE WHEN p.is_foil = 1 THEN ' [Foil]' ELSE '' END
+                ELSE 
+                    oi.name
+            END as card_details
+        FROM order_items oi
+        LEFT JOIN products p ON oi.product_id = p.id
+        LEFT JOIN editions e ON p.edition_id = e.id
+        LEFT JOIN cards c ON e.card_id = c.id
+        LEFT JOIN sets s ON e.set_id = s.id
+        WHERE oi.order_id = :order_id
+    ");
+    $stmt->execute([':order_id' => $order_id]);
+    $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Parse shipping address
+    $shipping_address = null;
+    if ($order['shipping_address']) {
+        $shipping_address = json_decode($order['shipping_address'], true);
+    }
+    
+    // Prepare email data
+    $email_data = [
+        'order' => [
+            'id' => $order['id'],
+            'status' => $order['status'],
+            'total_amount' => $order['total_amount'],
+            'created_at' => $order['created_at'],
+            'customer_name' => $shipping_address['full_name'] ?? $order['username']
+        ],
+        'items' => $items,
+        'shipping_address' => $shipping_address
+    ];
+    
+    // Queue the email
+    return queue_email(
+        $order['email'],
+        'Order Confirmation #' . $order['id'],
+        'order_confirmation',
+        $email_data
+    );
+}
+

@@ -1,0 +1,4 @@
+1. Run the database migration: Execute the SQL in alters.sql to create the email queue table
+  2. Set up the cronjob: Add this to your server's crontab to run every minute:
+  * * * * * cd /path/to/cardpoint && php console/send_emails.php >> /var/log/cardpoint-emails.log 2>&1
+  3. Configure SMTP: Update mail/mailer.php with production SMTP settings when ready
