@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation</title>
+    <title>Your Order Has Shipped</title>
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
         .header { background: #01AFFC; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }
@@ -13,35 +13,47 @@
         .item:last-child { border-bottom: none; }
         .total { font-weight: bold; font-size: 18px; margin-top: 15px; padding-top: 15px; border-top: 2px solid #01AFFC; }
         .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
-        .button { display: inline-block; padding: 12px 24px; background: #01AFFC; color: white; text-decoration: none; border-radius: 5px; margin: 15px 0; }
+        .shipping-info { background: #e8f7ff; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #01AFFC; }
+        .tracking { background: #fff; padding: 15px; border-radius: 8px; margin: 15px 0; border: 2px solid #01AFFC; text-align: center; }
+        .tracking-number { font-size: 18px; font-weight: bold; color: #01AFFC; margin: 10px 0; }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Order Confirmation</h1>
-        <p>Thank you for your order!</p>
+        <h1>📦 Your Order Has Shipped!</h1>
+        <p>Your package is on its way</p>
     </div>
     
     <div class="content">
         <h2>Hi <?= htmlspecialchars($order['customer_name']) ?>,</h2>
         
-        <p>We've received your order and it's being processed. Here are the details:</p>
+        <p>Great news! Your order has been shipped and is on its way to you.</p>
+        
+        <?php if (!empty($tracking_number)): ?>
+        <div class="tracking">
+            <h3>Tracking Information</h3>
+            <div class="tracking-number"><?= htmlspecialchars($tracking_number) ?></div>
+            <p><small>Use this tracking number to monitor your package's progress</small></p>
+        </div>
+        <?php endif; ?>
         
         <div class="order-details">
             <h3>Order #<?= $order['id'] ?></h3>
             <p><strong>Order Date:</strong> <?= date('M j, Y g:i A', strtotime($order['created_at'])) ?></p>
-            <p><strong>Status:</strong> <?= ucfirst($order['status']) ?></p>
+            <p><strong>Status:</strong> Shipped</p>
             
             <?php if (!empty($shipping_address)): ?>
-            <h4>Shipping Address:</h4>
-            <p>
-                <?= htmlspecialchars($shipping_address['full_name']) ?><br>
-                <?= htmlspecialchars($shipping_address['address']) ?><br>
-                <?= htmlspecialchars($shipping_address['city']) ?>, <?= htmlspecialchars($shipping_address['state']) ?> <?= htmlspecialchars($shipping_address['zip']) ?>
-            </p>
+            <div class="shipping-info">
+                <h4>Shipping To:</h4>
+                <p>
+                    <?= htmlspecialchars($shipping_address['full_name']) ?><br>
+                    <?= htmlspecialchars($shipping_address['address']) ?><br>
+                    <?= htmlspecialchars($shipping_address['city']) ?>, <?= htmlspecialchars($shipping_address['state']) ?> <?= htmlspecialchars($shipping_address['zip']) ?>
+                </p>
+            </div>
             <?php endif; ?>
             
-            <h4>Items Ordered:</h4>
+            <h4>Items Shipped:</h4>
             <?php foreach ($items as $item): ?>
             <div class="item">
                 <div>
@@ -61,7 +73,7 @@
             </div>
         </div>
         
-        <p>We'll send you another email when your order ships. If you have any questions, feel free to contact us.</p>
+        <p>Your package should arrive within the expected delivery timeframe. If you have any questions about your order or need assistance, feel free to contact us.</p>
         
         <div class="footer">
             <p>Thank you for shopping with Cardpoint!</p>

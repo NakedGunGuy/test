@@ -69,6 +69,7 @@ function send_mail(
 
         // Content
         $mail->isHTML(true);
+        $mail->CharSet = 'UTF-8';
         $mail->Subject = $subject;
         $mail->Body    = render_mail_template($template, $data);
 

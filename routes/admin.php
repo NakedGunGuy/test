@@ -369,22 +369,31 @@ get('/admin/orders', function () {
 post('/admin/orders/{id}/status', function ($data) {
     $order_id = $data['id'];
     $status = $_POST['status'] ?? '';
+    $tracking_number = $_POST['tracking_number'] ?? '';
     
-    $valid_statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+    $valid_statuses = ['pending', 'processing', 'shipped', 'cancelled'];
     if (!in_array($status, $valid_statuses)) {
         http_response_code(400);
         echo '❌ Invalid status';
         return;
     }
     
-    $stmt = db()->prepare("UPDATE orders SET status = :status WHERE id = :id");
-    $success = $stmt->execute([':status' => $status, ':id' => $order_id]);
-    
-    if ($success) {
-        echo "✅ Order status updated to " . ucfirst($status);
-    } else {
+    // Use the shop function which handles email notifications
+    try {
+        update_order_status($order_id, $status, $tracking_number);
+        
+        $message = "✅ Order status updated to " . ucfirst($status);
+        if ($status === 'shipped' && $tracking_number) {
+            $message .= " (Tracking: $tracking_number)";
+        }
+        if ($status === 'shipped') {
+            $message .= " - Shipping notification email queued";
+        }
+        
+        echo $message;
+    } catch (Exception $e) {
         http_response_code(500);
-        echo '❌ Failed to update status';
+        echo '❌ Failed to update status: ' . $e->getMessage();
     }
 }, [$getAdminAuth]);
 

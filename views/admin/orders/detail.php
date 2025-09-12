@@ -34,18 +34,37 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             </div>
         </div>
         <div class="status-actions">
-            <form style="display: inline;" 
+            <form style="display: flex; gap: 10px; align-items: center;" 
                   hx-post="/admin/orders/<?= $order['id'] ?>/status" 
-                  hx-trigger="change"
+                  hx-trigger="submit"
                   data-toast="Order status updated!">
-                <select name="status" class="form-input" style="padding: 8px 12px;">
+                <select name="status" class="form-input" style="padding: 8px 12px;" onchange="toggleTrackingField(this)">
                     <option value="pending" <?= $order['status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
                     <option value="processing" <?= $order['status'] === 'processing' ? 'selected' : '' ?>>Processing</option>
                     <option value="shipped" <?= $order['status'] === 'shipped' ? 'selected' : '' ?>>Shipped</option>
-                    <option value="delivered" <?= $order['status'] === 'delivered' ? 'selected' : '' ?>>Delivered</option>
                     <option value="cancelled" <?= $order['status'] === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
                 </select>
+                <input type="text" 
+                       name="tracking_number" 
+                       id="tracking_field" 
+                       placeholder="Tracking number (optional)" 
+                       class="form-input" 
+                       style="padding: 8px 12px; display: <?= $order['status'] === 'shipped' ? 'block' : 'none' ?>;">
+                <button type="submit" class="btn btn-small blue">Update</button>
             </form>
+            
+            <script>
+                function toggleTrackingField(select) {
+                    const trackingField = document.getElementById('tracking_field');
+                    if (select.value === 'shipped') {
+                        trackingField.style.display = 'block';
+                        trackingField.focus();
+                    } else {
+                        trackingField.style.display = 'none';
+                        trackingField.value = '';
+                    }
+                }
+            </script>
         </div>
     </div>
 </div>
