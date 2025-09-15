@@ -137,24 +137,56 @@ post('/checkout', function () {
         $cart_total += $item['price'] * $item['quantity'];
     }
 
-    // Check Stripe minimum amount (50 euro cents)
-    if (!empty($_ENV['STRIPE_SECRET_KEY']) && $cart_total < 0.50) {
-        // Redirect to cart with error message
-        header('Location: /cart?error=' . urlencode('Order total must be at least €0.50 to process payment.'));
-        exit;
-    }
+    // We'll check Stripe minimum after calculating shipping
 
     // Get shipping information
+    $country_code = $_POST['country'] ?? '';
     $shipping_address = [
         'full_name' => $_POST['full_name'] ?? '',
         'email' => $_POST['email'] ?? '',
         'address' => $_POST['address'] ?? '',
         'city' => $_POST['city'] ?? '',
         'state' => $_POST['state'] ?? '',
-        'zip' => $_POST['zip'] ?? ''
+        'zip' => $_POST['zip'] ?? '',
+        'country' => $country_code
     ];
 
-    $order_id = create_order_with_shipping($user['id'], $cart_items, $shipping_address);
+    // Validate required shipping fields
+    foreach ($shipping_address as $field => $value) {
+        if (empty($value)) {
+            header('Location: /cart?error=' . urlencode('Please fill in all shipping fields including country.'));
+            exit;
+        }
+    }
+
+    // Calculate shipping cost server-side (prevent manipulation)
+    $weight_grams = calculate_cart_weight($cart_items);
+    $shipping = calculate_shipping_cost($weight_grams, $country_code);
+    
+    if (!$shipping) {
+        header('Location: /cart?error=' . urlencode('Shipping not available to selected country.'));
+        exit;
+    }
+
+    // Verify shipping calculation matches session (if available)
+    if (isset($_SESSION['shipping_estimate']) && 
+        ($_SESSION['shipping_estimate']['cost'] !== $shipping['cost'] ||
+         $_SESSION['shipping_estimate']['country']['country_code'] !== $country_code)) {
+        // Shipping calculation mismatch - recalculate
+        $_SESSION['shipping_estimate'] = $shipping;
+    }
+
+    // Update cart total with shipping
+    $shipping_cost = $shipping['cost'];
+    $total_with_shipping = $cart_total + $shipping_cost;
+
+    // Check Stripe minimum amount with shipping (50 euro cents)
+    if (!empty($_ENV['STRIPE_SECRET_KEY']) && $total_with_shipping < 0.50) {
+        header('Location: /cart?error=' . urlencode('Order total with shipping must be at least €0.50 to process payment.'));
+        exit;
+    }
+
+    $order_id = create_order_with_shipping($user['id'], $cart_items, $shipping_address, $weight_grams, $shipping_cost, $shipping['tier']['id']);
     
     // Track this order in the session for additional security
     if (!isset($_SESSION['checkout_orders'])) {
@@ -198,6 +230,20 @@ post('/checkout', function () {
                 'unit_amount'  => $item['price'] * 100, // Stripe expects cents
             ],
             'quantity' => $item['quantity'],
+        ];
+    }
+    
+    // Add shipping as a separate line item
+    if ($shipping_cost > 0) {
+        $lineItems[] = [
+            'price_data' => [
+                'currency'     => 'eur',
+                'product_data' => [
+                    'name' => 'Shipping to ' . $shipping['country']['country_name'] . ' (' . $shipping['tier']['tier_name'] . ')'
+                ],
+                'unit_amount'  => $shipping_cost * 100, // Stripe expects cents
+            ],
+            'quantity' => 1,
         ];
     }
 
@@ -316,6 +362,33 @@ get('/checkout/cancel', function () {
     }
 
     view('shop/checkout_cancel', ['error' => $error]);
+}, [$getUserAuth]);
+
+// Calculate shipping cost for checkout
+post('/checkout/calculate-shipping', function () {
+    $user = get_logged_in_user();
+    $cart_id = get_user_cart_id($user['id']);
+    $cart = get_cart_items($cart_id);
+    $country_code = $_POST['country'] ?? '';
+    
+    if (empty($cart) || empty($country_code)) {
+        echo 'Please select a country';
+        return;
+    }
+    
+    $shipping = get_shipping_estimate($cart, $country_code);
+    
+    if ($shipping) {
+        // Store in session for order processing
+        $_SESSION['shipping_estimate'] = $shipping;
+        
+        echo '$' . number_format($shipping['cost'], 2) . ' - Delivery: ' . 
+             $shipping['country']['estimated_days_min'] . '-' . 
+             $shipping['country']['estimated_days_max'] . ' days';
+    } else {
+        unset($_SESSION['shipping_estimate']);
+        echo 'Shipping not available';
+    }
 }, [$getUserAuth]);
 
 

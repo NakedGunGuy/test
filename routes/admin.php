@@ -140,22 +140,13 @@ post('/admin/products/create', function () {
 
 get('/admin/products/edition/{edition_id}', function ($data) {
     $edition_id = $data['edition_id'] ?? null;
-    $stmt = db()->prepare("
-        SELECT 
-            p.*,
-            e.collector_number AS edition_number,
-            e.slug AS edition_slug,
-            c.name AS card_name,
-            s.name AS set_name,
-            p.edition_id IS NULL AS is_custom
-        FROM products p
-        JOIN editions e ON p.edition_id = e.id
-        JOIN cards c ON e.card_id = c.id
-        JOIN sets s ON e.set_id = s.id
-        WHERE p.edition_id = :edition_id
-    ");
-    $stmt->execute([':edition_id' => $edition_id]);
-    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $filters = [
+        'edition_id' => $edition_id,
+    ];
+    $filters = array_filter($filters);
+
+    $products = getProducts($filters, 'p.id DESC');
 
     if ($products) {
         partial('admin/products/partials/product_variations', ['products' => $products]);
@@ -646,4 +637,166 @@ post('/admin/settings/import-cards', function () {
     
     header('Location: /admin/settings');
     exit;
+}, [$getAdminAuth]);
+
+// Card Image Cache Management
+get('/admin/cache-images', function () {
+    view('admin/cache_images', [], 'admin');
+}, [$getAdminAuth]);
+
+post('/admin/cache-images/refresh', function () {
+    try {
+        $db = db();
+        $stmt = $db->query("
+            SELECT DISTINCT slug 
+            FROM editions 
+            WHERE slug IS NOT NULL 
+            AND slug != ''
+        ");
+        
+        $edition_slugs = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        if (!empty($edition_slugs)) {
+            $results = batch_cache_card_images($edition_slugs);
+            $total_new = $results['success'];
+            $already_cached = $results['already_cached'];
+            $failed = $results['failed'];
+            
+            if ($total_new > 0) {
+                session_flash('success', "Successfully cached {$total_new} new images. {$already_cached} were already cached. {$failed} failed.");
+            } else {
+                session_flash('info', "All images are already cached. {$already_cached} images found, {$failed} failed.");
+            }
+        } else {
+            session_flash('info', 'No edition slugs found to cache.');
+        }
+    } catch (Exception $e) {
+        session_flash('error', 'Error caching images: ' . $e->getMessage());
+    }
+    
+    header('Location: /admin/cache-images');
+    exit;
+}, [$getAdminAuth]);
+
+post('/admin/cache-images/clear-old', function () {
+    try {
+        $max_age = (int) ($_POST['max_age'] ?? 30);
+        $files_removed = clear_card_image_cache($max_age);
+        
+        session_flash('success', "Removed {$files_removed} old cached images (older than {$max_age} days).");
+    } catch (Exception $e) {
+        session_flash('error', 'Error clearing old images: ' . $e->getMessage());
+    }
+    
+    header('Location: /admin/cache-images');
+    exit;
+}, [$getAdminAuth]);
+
+post('/admin/cache-images/clear-all', function () {
+    try {
+        $files_removed = clear_card_image_cache(0);
+        session_flash('success', "Cleared all {$files_removed} cached images.");
+    } catch (Exception $e) {
+        session_flash('error', 'Error clearing cache: ' . $e->getMessage());
+    }
+    
+    header('Location: /admin/cache-images');
+    exit;
+}, [$getAdminAuth]);
+
+// Shipping Management
+get('/admin/shipping', function () {
+    view('admin/shipping', [], 'admin');
+}, [$getAdminAuth]);
+
+post('/admin/shipping/weight-tiers/add', function () {
+    $country_id = (int) ($_POST['country_id'] ?? 0);
+    $tier_name = $_POST['tier_name'] ?? '';
+    $max_weight_kg = (float) ($_POST['max_weight_kg'] ?? 0);
+    $price = (float) ($_POST['price'] ?? 0);
+    
+    if ($country_id > 0 && $tier_name && $max_weight_kg > 0 && $price >= 0) {
+        if (add_shipping_weight_tier($country_id, $tier_name, $max_weight_kg, $price)) {
+            session_flash('success', 'Shipping tier added successfully');
+        } else {
+            session_flash('error', 'Failed to add shipping tier');
+        }
+    } else {
+        session_flash('error', 'Invalid tier data provided');
+    }
+    
+    header('Location: /admin/shipping');
+    exit;
+}, [$getAdminAuth]);
+
+post('/admin/shipping/weight-tiers/update/{id}', function ($id) {
+    $country_id = (int) ($_POST['country_id'] ?? 0);
+    $tier_name = $_POST['tier_name'] ?? '';
+    $max_weight_kg = (float) ($_POST['max_weight_kg'] ?? 0);
+    $price = (float) ($_POST['price'] ?? 0);
+    $is_enabled = isset($_POST['is_enabled']);
+    
+    if ($country_id > 0 && $tier_name && $max_weight_kg > 0 && $price >= 0) {
+        if (update_shipping_weight_tier((int)$id, $country_id, $tier_name, $max_weight_kg, $price, $is_enabled)) {
+            session_flash('success', 'Shipping tier updated successfully');
+        } else {
+            session_flash('error', 'Failed to update shipping tier');
+        }
+    } else {
+        session_flash('error', 'Invalid tier data provided');
+    }
+    
+    header('Location: /admin/shipping');
+    exit;
+}, [$getAdminAuth]);
+
+post('/admin/shipping/weight-tiers/delete/{id}', function ($id) {
+    if (delete_shipping_weight_tier((int)$id)) {
+        session_flash('success', 'Shipping tier deleted successfully');
+    } else {
+        session_flash('error', 'Failed to delete shipping tier');
+    }
+    
+    header('Location: /admin/shipping');
+    exit;
+}, [$getAdminAuth]);
+
+post('/admin/shipping/countries/update/{id}', function ($id) {
+    $country_name = $_POST['country_name'] ?? '';
+    $estimated_days_min = (int) ($_POST['estimated_days_min'] ?? 7);
+    $estimated_days_max = (int) ($_POST['estimated_days_max'] ?? 14);
+    $is_enabled = isset($_POST['is_enabled']);
+    
+    if ($country_name && $estimated_days_min > 0 && $estimated_days_max >= $estimated_days_min) {
+        if (update_shipping_country((int)$id, $country_name, $estimated_days_min, $estimated_days_max, $is_enabled)) {
+            session_flash('success', 'Shipping country updated successfully');
+        } else {
+            session_flash('error', 'Failed to update shipping country');
+        }
+    } else {
+        session_flash('error', 'Invalid country data provided');
+    }
+    
+    header('Location: /admin/shipping');
+    exit;
+}, [$getAdminAuth]);
+
+post('/admin/shipping/calculate', function () {
+    $cards = (int) ($_POST['test_cards'] ?? 0);
+    $country_code = $_POST['test_country'] ?? '';
+    
+    if ($cards > 0 && $country_code) {
+        $weight_grams = $cards * CARD_WEIGHT_GRAMS;
+        $shipping = calculate_shipping_cost($weight_grams, $country_code);
+        
+        if ($shipping) {
+            echo "💰 <strong>$" . number_format($shipping['cost'], 2) . "</strong> ";
+            echo "({$shipping['tier']['tier_name']}) ";
+            echo "📅 {$shipping['country']['estimated_days_min']}-{$shipping['country']['estimated_days_max']} days";
+        } else {
+            echo "❌ No shipping available for this weight/country combination";
+        }
+    } else {
+        echo "⚠️ Please enter valid cards and country";
+    }
 }, [$getAdminAuth]);

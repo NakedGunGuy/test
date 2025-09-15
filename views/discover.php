@@ -103,7 +103,7 @@
                                 height="60" width="60"
                                 src="<?= $dataUri ?>"
                                 alt="Card image"
-                                data-src="https://api.gatcg.com/cards/images/<?= $product['edition_slug'] ?>.jpg"
+                                data-src="<?= card_image($product['edition_slug']) ?>"
                             />
                         </div>
                         <div class="list-item-main">
@@ -156,7 +156,7 @@
                             hx-trigger="click"
                             src="<?= $dataUri ?>"
                             alt="Card image"
-                            data-src="https://api.gatcg.com/cards/images/<?= $product['edition_slug'] ?>.jpg"
+                            data-src="<?= card_image($product['edition_slug']) ?>"
                         />
                     </div>
 

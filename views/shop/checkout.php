@@ -25,18 +25,22 @@ Checkout - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                     </div>
                 <?php endforeach; ?>
                 
-                <div class="order-total">
+                <div class="order-total" id="order-total">
                     <div class="total-row">
                         <span>Subtotal:</span>
                         <span>$<?= number_format($total, 2) ?></span>
                     </div>
                     <div class="total-row">
+                        <span>Weight:</span>
+                        <span><?= calculate_cart_weight($cart) ?>g (<?= count($cart) ? array_sum(array_column($cart, 'quantity')) : 0 ?> cards)</span>
+                    </div>
+                    <div class="total-row">
                         <span>Shipping:</span>
-                        <span>Free</span>
+                        <span id="shipping-cost">Select country first</span>
                     </div>
                     <div class="total-row final">
                         <span>Total:</span>
-                        <span>$<?= number_format($total, 2) ?></span>
+                        <span id="final-total">$<?= number_format($total, 2) ?></span>
                     </div>
                 </div>
             </div>
@@ -70,13 +74,28 @@ Checkout - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">State</label>
+                        <label class="form-label">State/Province</label>
                         <input type="text" name="state" class="form-input" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">ZIP Code</label>
+                        <label class="form-label">ZIP/Postal Code</label>
                         <input type="text" name="zip" class="form-input" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Country</label>
+                        <select name="country" id="country-select" class="form-input" required 
+                                hx-post="/checkout/calculate-shipping" 
+                                hx-target="#shipping-cost" 
+                                hx-trigger="change"
+                                hx-include="closest form">
+                            <option value="">Select Country</option>
+                            <?php foreach (get_shipping_countries() as $country): ?>
+                            <option value="<?= $country['country_code'] ?>"><?= htmlspecialchars($country['country_name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="form-help" id="shipping-estimate">Select a country to see shipping cost and delivery estimate</div>
                     </div>
                 </div>
             </div>
@@ -96,8 +115,35 @@ Checkout - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 
             <div class="checkout-actions">
                 <a href="/cart" class="btn black">← Back to Cart</a>
-                <button type="submit" class="btn blue">Complete Order</button>
+                <button type="submit" class="btn blue" id="complete-order-btn">Complete Order</button>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+const subtotal = <?= $total ?>;
+
+// Update total when shipping cost is calculated
+document.body.addEventListener('htmx:afterRequest', function(evt) {
+    if (evt.detail.elt.id === 'country-select') {
+        const response = evt.detail.xhr.responseText.trim();
+        
+        if (response.includes('$')) {
+            // Extract shipping cost from response
+            const match = response.match(/\$(\d+\.?\d*)/);
+            if (match) {
+                const shippingCost = parseFloat(match[1]);
+                const finalTotal = subtotal + shippingCost;
+                document.getElementById('final-total').textContent = '$' + finalTotal.toFixed(2);
+                
+                // Update shipping estimate
+                document.getElementById('shipping-estimate').innerHTML = '✅ ' + response;
+            }
+        } else {
+            // No shipping available or error
+            document.getElementById('shipping-estimate').innerHTML = '❌ ' + response;
+        }
+    }
+});
+</script>

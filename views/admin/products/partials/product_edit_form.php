@@ -2,7 +2,7 @@
         'title' => 'Edit Product',
 ]) ?>
 
-<div class="modal content">
+<div class="content">
     <form
         id="product_edit_form"
         hx-post="/admin/products/update/<?= $product['id'] ?>" 

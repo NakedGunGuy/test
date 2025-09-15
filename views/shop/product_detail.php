@@ -7,7 +7,7 @@
 <?php end_section('title'); ?>
 <?php start_section('page_title'); ?>Product Details<?php end_section('page_title'); ?>
 
-<div class="product-container">
+<div class="product-container" style="grid-template-columns: 2fr 1fr;">
     <!-- Product Image & Info -->
     <div>
         <h1 class="product-title"><?= htmlspecialchars($product['name'] ?? $product['card_name']) ?></h1>
@@ -27,7 +27,7 @@
                         height="349" 
                         src="<?= $dataUri ?>" 
                         alt="<?= htmlspecialchars($product['name'] ?? $product['card_name']) ?>" 
-                        data-src="https://api.gatcg.com/cards/images/<?= htmlspecialchars($product['edition_slug']) ?>.jpg"
+                        data-src="<?= card_image($product['edition_slug']) ?>"
                     />
                 </div>
                 <div class="product-meta-container">

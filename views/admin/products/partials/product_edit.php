@@ -1,5 +1,5 @@
 <button
-    class="btn-text"
+    class="btn blue"
     hx-get="/admin/products/update/<?= htmlspecialchars($product_id) ?>"
     hx-target="#dialog"
     hx-swap="innerHTML"

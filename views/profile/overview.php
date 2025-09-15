@@ -27,21 +27,21 @@ Profile - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                     <div class="card stat">
                         <div class="icon">📦</div>
                         <div class="info">
-                            <div class="number">0</div>
+                            <div class="number"><?= $stats['total_orders'] ?? 0 ?></div>
                             <div class="label">Total Orders</div>
                         </div>
                     </div>
                     <div class="card stat">
                         <div class="icon">💳</div>
                         <div class="info">
-                            <div class="number">$0.00</div>
+                            <div class="number">$<?= number_format($stats['total_spent'] ?? 0, 2) ?></div>
                             <div class="label">Total Spent</div>
                         </div>
                     </div>
                     <div class="card stat">
                         <div class="icon">🏆</div>
                         <div class="info">
-                            <div class="number">New</div>
+                            <div class="number"><?= $user_status ?? 'New' ?></div>
                             <div class="label">Status</div>
                         </div>
                     </div>

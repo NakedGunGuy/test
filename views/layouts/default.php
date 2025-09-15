@@ -62,10 +62,6 @@
         <section>
             <ul style="display: flex; gap: 1rem; align-items: center;">
                 <?php $user = get_logged_in_user(); if ($user): ?>
-                    <li class="welcome-user">
-                        <div class="online-dot"></div>
-                        Welcome, <?= htmlspecialchars($user['username']) ?>
-                    </li>
                     <li>
                         <a class="btn black" href="/profile">Profile</a>
                     </li>
@@ -89,13 +85,12 @@
 <!-- Mobile Bottom Navigation -->
 <div class="mobile-bottom-nav">
     <div class="mobile-nav-container">
+        <a href="/" class="mobile-nav-item">
+            <span class="mobile-nav-icon"><img height="64" src="/assets/logo.png"></span>
+        </a>
         <a href="/discover" class="mobile-nav-item <?= $currentUrl === '/discover' ? 'active' : '' ?>">
             <span class="mobile-nav-icon">🔍</span>
             <span class="mobile-nav-text">Discover</span>
-        </a>
-        <a href="/cards" class="mobile-nav-item <?= str_starts_with($currentUrl, '/cards') ? 'active' : '' ?>">
-            <span class="mobile-nav-icon">🃏</span>
-            <span class="mobile-nav-text">Cards</span>
         </a>
         <?php if (get_logged_in_user()): ?>
             <a href="/cart" class="mobile-nav-item <?= str_starts_with($currentUrl, '/cart') ? 'active' : '' ?>">

@@ -64,3 +64,14 @@ function parse_yaml_file($path)
 
     throw new Exception('YAML extension not installed. Install ext-yaml.');
 }
+
+/**
+ * Get cached card image URL
+ * 
+ * @param string $edition_slug The edition slug for the card
+ * @return string The local URL path to the cached image
+ */
+function card_image($edition_slug) 
+{
+    return get_cached_card_image($edition_slug);
+}

@@ -12,10 +12,11 @@
 
 <nav>
     <section>
-        <div class="brand-container">
-            <a href="/" class="brand-logo">Cardpoint</a>
-            <div class="brand-subtitle">Admin Panel</div>
-        </div>
+        <a href="/" class="brand-container">
+            <img height="64" src="/assets/logo.png">
+            <span>CARD</span>
+            <span>POINT</span>
+        </a>
         <ul>
             <li><a href="/admin" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin') && $_SERVER['REQUEST_URI'] === '/admin' ? 'active' : '' ?>">
                 <span class="nav-icon">📊</span>Dashboard</a></li>
@@ -25,6 +26,10 @@
                 <span class="nav-icon">📋</span>Orders</a></li>
             <li><a href="/admin/analytics" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/analytics') ? 'active' : '' ?>">
                 <span class="nav-icon">📈</span>Analytics</a></li>
+            <li><a href="/admin/cache-images" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/cache-images') ? 'active' : '' ?>">
+                <span class="nav-icon">🖼️</span>Image Cache</a></li>
+            <li><a href="/admin/shipping" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/shipping') ? 'active' : '' ?>">
+                <span class="nav-icon">🚚</span>Shipping</a></li>
             <li><a href="/admin/settings" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/settings') ? 'active' : '' ?>">
                 <span class="nav-icon">⚙️</span>Settings</a></li>
         </ul>

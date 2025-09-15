@@ -149,27 +149,34 @@ function create_order(int $user_id, array $cart_items): int {
     return $order_id;
 }
 
-function create_order_with_shipping(int $user_id, array $cart_items, array $shipping_address): int {
+function create_order_with_shipping(int $user_id, array $cart_items, array $shipping_address, int $weight_grams = 0, float $shipping_cost = 0, int $shipping_tier_id = null): int {
     $pdo = db();
 
-    // Calculate total
-    $total = 0;
+    // Calculate subtotal
+    $subtotal = 0;
     foreach ($cart_items as $item) {
-        $total += $item['price'] * $item['quantity'];
+        $subtotal += $item['price'] * $item['quantity'];
     }
+
+    // Total includes shipping
+    $total = $subtotal + $shipping_cost;
 
     // Create shipping address string
     $shipping_string = json_encode($shipping_address);
 
-    // Insert order
+    // Insert order with shipping information
     $stmt = $pdo->prepare("
-        INSERT INTO orders (user_id, total_amount, shipping_address, status)
-        VALUES (:uid, :total, :shipping, 'pending')
+        INSERT INTO orders (user_id, total_amount, shipping_address, status, shipping_country, shipping_weight_grams, shipping_cost, shipping_tier_id)
+        VALUES (:uid, :total, :shipping, 'pending', :country, :weight, :shipping_cost, :tier_id)
     ");
     $stmt->execute([
-        ':uid'      => $user_id,
-        ':total'    => $total,
-        ':shipping' => $shipping_string,
+        ':uid'           => $user_id,
+        ':total'         => $total,
+        ':shipping'      => $shipping_string,
+        ':country'       => $shipping_address['country'] ?? null,
+        ':weight'        => $weight_grams,
+        ':shipping_cost' => $shipping_cost,
+        ':tier_id'       => $shipping_tier_id
     ]);
 
     $order_id = (int)$pdo->lastInsertId();

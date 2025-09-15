@@ -1,6 +1,5 @@
 <button
-    class="btn-text"
-    style="color: #FF6B6B;"
+    class="btn black"
     hx-get="/admin/products/confirm-delete/<?= htmlspecialchars($product_id) ?>"
     hx-target="#dialog"
     hx-swap="innerHTML"

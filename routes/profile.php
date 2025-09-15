@@ -7,7 +7,39 @@ $getUserAuth = function() {
 // Profile overview page
 get('/profile', function () {
     $user = get_logged_in_user();
-    view('profile/overview', ['user' => $user], 'default');
+    
+    // Get user statistics using the same calculation as order details
+    $db = db();
+    $stmt = $db->prepare("
+        SELECT 
+            COUNT(DISTINCT o.id) as total_orders,
+            COALESCE(SUM(oi.price * oi.quantity), 0) as total_spent,
+            COUNT(DISTINCT CASE WHEN o.status = 'pending' THEN o.id END) as pending_orders,
+            COUNT(DISTINCT CASE WHEN o.status = 'delivered' THEN o.id END) as delivered_orders
+        FROM orders o
+        LEFT JOIN order_items oi ON o.id = oi.order_id
+        WHERE o.user_id = :user_id
+    ");
+    $stmt->execute([':user_id' => $user['id']]);
+    $stats = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Determine user status based on order history
+    $status = 'New';
+    if ($stats['total_orders'] > 0) {
+        if ($stats['delivered_orders'] >= 10) {
+            $status = 'VIP';
+        } elseif ($stats['delivered_orders'] >= 5) {
+            $status = 'Premium';
+        } elseif ($stats['delivered_orders'] >= 1) {
+            $status = 'Member';
+        }
+    }
+    
+    view('profile/overview', [
+        'user' => $user, 
+        'stats' => $stats,
+        'user_status' => $status
+    ], 'default');
 }, [$getUserAuth]);
 
 // Account settings page

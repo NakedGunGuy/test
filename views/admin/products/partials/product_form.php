@@ -8,7 +8,7 @@
         method="POST"
         hx-post="/admin/products/create"
         hx-target="#products-table"
-        hx-swap="outerHTML"
+        hx-swap="innerHTML"
         data-toast="Product created successfully!"
         data-close-modal="true"
     >
@@ -31,8 +31,7 @@
                 id="description"
                 name="description"
                 placeholder="Product description..."
-                rows="3">
-            </textarea>
+                rows="3"></textarea>
         </div>
 
         <div class="form-group">

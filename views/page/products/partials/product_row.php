@@ -15,7 +15,7 @@ $dataUri = 'data:image/svg+xml;base64,' . base64_encode($svg);
             height="40" width="40" 
             src="<?= $dataUri ?>" 
             alt="Card image" 
-            data-src="https://api.gatcg.com/cards/images/<?= $product['edition_slug'] ?>.jpg" 
+            data-src="<?= card_image($product['edition_slug']) ?>" 
         />
         <span>
             <a href="/product/<?= $product['id'] ?>">

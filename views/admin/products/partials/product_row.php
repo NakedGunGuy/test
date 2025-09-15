@@ -4,12 +4,12 @@
         <?php if ($product['is_custom']): ?>
             <div style="font-size: 12px; color: #C0C0D1;">Custom Product</div>
         <?php else: ?>
-            <div style="font-size: 12px; color: #C0C0D1;"><?= htmlspecialchars($product['set_name']) ?> #<?= htmlspecialchars($product['edition_number']) ?></div>
+            <div style="font-size: 12px; color: #C0C0D1;"></div>
         <?php endif; ?>
     </div>
     
     <div class="grid-cell">
-        <?= htmlspecialchars($product['set_name'] ?? 'Custom') ?>
+        <?= htmlspecialchars($product['set_name']) ?> #<?= htmlspecialchars($product['edition_number']) ?>
     </div>
     
     <div class="grid-cell">
@@ -38,7 +38,7 @@
         <?php endif; ?>
     </div>
     
-    <div class="grid-cell">
+    <div class="grid-cell" style="gap: 0.5rem">
         <?php
             if (!empty($actions)) {
                 partial('admin/products/partials/product_actions', ['product_id' => $product['id'], 'actions' => $actions]); 
