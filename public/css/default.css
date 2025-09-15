@@ -12,9 +12,9 @@
 }
 
 /* Performance optimizations */
-html {
-    scroll-behavior: smooth;
-}
+/*html, * {*/
+/*    scroll-behavior: smooth;*/
+/*}*/
 
 ol, ul, menu {
     list-style: none;
@@ -2539,6 +2539,11 @@ main::-webkit-scrollbar-thumb:hover {
 /* View Container Styles */
 .view-container.hidden {
     display: none;
+}
+
+.view-container {
+    overflow-x: scroll;
+    overflow-y: hidden;
 }
 
 /* List View Styles */
