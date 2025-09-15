@@ -3344,3 +3344,151 @@ main::-webkit-scrollbar-thumb:hover {
     }
 }
 
+/* Shipping Admin Specific Styles */
+.shipping-country-card {
+    background: #1E1E27;
+    border: 1px solid #C0C0D133;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.country-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #C0C0D133;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.country-info h4 {
+    margin: 0;
+    color: #01AFFC;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.country-code {
+    background: #07070A;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #C0C0D1;
+    font-weight: normal;
+}
+
+.country-meta {
+    color: #C0C0D1;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+.country-settings {
+    padding: 1rem 1.5rem;
+    background: #07070A;
+    border-bottom: 1px solid #C0C0D133;
+}
+
+.weight-tiers {
+    padding: 1rem;
+}
+
+.tier-card {
+    border: 1px solid #C0C0D133;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    background: #07070A;
+    padding: 1rem;
+}
+
+.tier-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto auto;
+    gap: 1rem;
+    align-items: center;
+}
+
+.tier-name-group {
+    flex: 2;
+}
+
+.input-with-unit {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.input-with-unit .unit {
+    color: #C0C0D1;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.tier-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tier-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #C0C0D1;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.calculation-result {
+    padding: 1rem;
+    background: #07070A;
+    border: 1px solid #C0C0D133;
+    border-radius: 8px;
+    color: #C0C0D1;
+    font-family: monospace;
+}
+
+/* Mobile responsiveness for shipping admin */
+@media (max-width: 768px) {
+    .tier-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .tier-actions {
+        grid-column: 1;
+        justify-content: flex-start;
+    }
+    
+    .country-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .country-actions {
+        align-self: flex-end;
+    }
+}
+

@@ -706,7 +706,13 @@ post('/admin/cache-images/clear-all', function () {
 
 // Shipping Management
 get('/admin/shipping', function () {
-    view('admin/shipping', [], 'admin');
+    $countries = get_all_shipping_countries();
+    $weight_tiers = get_all_shipping_weight_tiers();
+    
+    view('admin/shipping', [
+        'countries' => $countries,
+        'weight_tiers' => $weight_tiers
+    ], 'admin');
 }, [$getAdminAuth]);
 
 post('/admin/shipping/weight-tiers/add', function () {
@@ -717,16 +723,31 @@ post('/admin/shipping/weight-tiers/add', function () {
     
     if ($country_id > 0 && $tier_name && $max_weight_kg > 0 && $price >= 0) {
         if (add_shipping_weight_tier($country_id, $tier_name, $max_weight_kg, $price)) {
-            session_flash('success', 'Shipping tier added successfully');
+            // Get the newly added tier
+            $db = db();
+            $stmt = $db->prepare("
+                SELECT swt.*, sc.country_name, sc.country_code 
+                FROM shipping_weight_tiers swt
+                JOIN shipping_countries sc ON swt.country_id = sc.id
+                WHERE swt.country_id = :country_id
+                ORDER BY swt.id DESC
+                LIMIT 1
+            ");
+            $stmt->execute([':country_id' => $country_id]);
+            $tier = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            // Return the new tier card
+            if ($tier) {
+                partial('admin/shipping/partials/tier_card', ['tier' => $tier]);
+            }
         } else {
-            session_flash('error', 'Failed to add shipping tier');
+            http_response_code(400);
+            echo 'Failed to add shipping tier';
         }
     } else {
-        session_flash('error', 'Invalid tier data provided');
+        http_response_code(400);
+        echo 'Invalid tier data provided';
     }
-    
-    header('Location: /admin/shipping');
-    exit;
 }, [$getAdminAuth]);
 
 post('/admin/shipping/weight-tiers/update/{id}', function ($id) {
@@ -738,27 +759,38 @@ post('/admin/shipping/weight-tiers/update/{id}', function ($id) {
     
     if ($country_id > 0 && $tier_name && $max_weight_kg > 0 && $price >= 0) {
         if (update_shipping_weight_tier((int)$id, $country_id, $tier_name, $max_weight_kg, $price, $is_enabled)) {
-            session_flash('success', 'Shipping tier updated successfully');
+            // Get updated tier data
+            $db = db();
+            $stmt = $db->prepare("
+                SELECT swt.*, sc.country_name, sc.country_code 
+                FROM shipping_weight_tiers swt
+                JOIN shipping_countries sc ON swt.country_id = sc.id
+                WHERE swt.id = :id
+            ");
+            $stmt->execute([':id' => $id]);
+            $tier = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($tier) {
+                partial('admin/shipping/partials/tier_card', ['tier' => $tier]);
+            }
         } else {
-            session_flash('error', 'Failed to update shipping tier');
+            http_response_code(400);
+            echo 'Failed to update shipping tier';
         }
     } else {
-        session_flash('error', 'Invalid tier data provided');
+        http_response_code(400);
+        echo 'Invalid tier data provided';
     }
-    
-    header('Location: /admin/shipping');
-    exit;
 }, [$getAdminAuth]);
 
 post('/admin/shipping/weight-tiers/delete/{id}', function ($id) {
     if (delete_shipping_weight_tier((int)$id)) {
-        session_flash('success', 'Shipping tier deleted successfully');
+        // Return nothing for successful delete (HTMX will remove the element)
+        http_response_code(200);
     } else {
-        session_flash('error', 'Failed to delete shipping tier');
+        http_response_code(400);
+        echo 'Failed to delete shipping tier';
     }
-    
-    header('Location: /admin/shipping');
-    exit;
 }, [$getAdminAuth]);
 
 post('/admin/shipping/countries/update/{id}', function ($id) {
@@ -769,16 +801,23 @@ post('/admin/shipping/countries/update/{id}', function ($id) {
     
     if ($country_name && $estimated_days_min > 0 && $estimated_days_max >= $estimated_days_min) {
         if (update_shipping_country((int)$id, $country_name, $estimated_days_min, $estimated_days_max, $is_enabled)) {
-            session_flash('success', 'Shipping country updated successfully');
+            // Get updated country data
+            $db = db();
+            $stmt = $db->prepare("SELECT * FROM shipping_countries WHERE id = :id");
+            $stmt->execute([':id' => $id]);
+            $country = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($country) {
+                partial('admin/shipping/partials/country_settings', ['country' => $country]);
+            }
         } else {
-            session_flash('error', 'Failed to update shipping country');
+            http_response_code(400);
+            echo 'Failed to update shipping country';
         }
     } else {
-        session_flash('error', 'Invalid country data provided');
+        http_response_code(400);
+        echo 'Invalid country data provided';
     }
-    
-    header('Location: /admin/shipping');
-    exit;
 }, [$getAdminAuth]);
 
 post('/admin/shipping/calculate', function () {
@@ -798,5 +837,59 @@ post('/admin/shipping/calculate', function () {
         }
     } else {
         echo "⚠️ Please enter valid cards and country";
+    }
+}, [$getAdminAuth]);
+
+// Bulk add default weight tiers to a country
+post('/admin/shipping/weight-tiers/bulk-add/{country_id}', function ($country_id) {
+    $country_id = (int)$country_id;
+    
+    if ($country_id <= 0) {
+        http_response_code(400);
+        echo 'Invalid country selected';
+        return;
+    }
+    
+    // Default weight tiers to add
+    $default_tiers = [
+        ['name' => 'Up to 0.5kg', 'weight' => 0.5, 'price' => 4.99],
+        ['name' => 'Up to 1kg', 'weight' => 1.0, 'price' => 7.99],
+        ['name' => 'Up to 2kg', 'weight' => 2.0, 'price' => 12.99],
+        ['name' => 'Up to 5kg', 'weight' => 5.0, 'price' => 18.99],
+    ];
+    
+    $added_count = 0;
+    foreach ($default_tiers as $index => $tier) {
+        if (add_shipping_weight_tier($country_id, $tier['name'], $tier['weight'], $tier['price'], $index + 1)) {
+            $added_count++;
+        }
+    }
+    
+    if ($added_count > 0) {
+        // Get the country and its new tiers
+        $db = db();
+        $stmt = $db->prepare("SELECT * FROM shipping_countries WHERE id = :id");
+        $stmt->execute([':id' => $country_id]);
+        $country = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $stmt = $db->prepare("
+            SELECT swt.*, sc.country_name, sc.country_code 
+            FROM shipping_weight_tiers swt
+            JOIN shipping_countries sc ON swt.country_id = sc.id
+            WHERE swt.country_id = :country_id
+            ORDER BY swt.sort_order ASC, swt.max_weight_kg ASC
+        ");
+        $stmt->execute([':country_id' => $country_id]);
+        $tiers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Return the tier list
+        echo '<div class="weight-tiers">';
+        foreach ($tiers as $tier) {
+            partial('admin/shipping/partials/tier_card', ['tier' => $tier]);
+        }
+        echo '</div>';
+    } else {
+        http_response_code(400);
+        echo 'Failed to add default weight tiers';
     }
 }, [$getAdminAuth]);
