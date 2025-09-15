@@ -2124,13 +2124,17 @@ textarea.form-input {
 
 .search-results {
     position: absolute;
-    z-index: 100;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
     background: linear-gradient(145deg, #000000 0%, #1a1a1a 100%);
     border: 1px solid rgba(0, 174, 239, 0.2);
     border-radius: 12px;
     margin-top: 4px;
+    max-height: 300px;
     overflow-y: auto;
-    top: 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .summary-section {
@@ -2431,21 +2435,6 @@ main::-webkit-scrollbar-thumb:hover {
     border: 1px solid rgba(0, 174, 239, 0.1);
 }
 
-.search-results {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: linear-gradient(145deg, #000000 0%, #0f0f0f 100%);
-    border: 1px solid rgba(0, 174, 239, 0.2);
-    border-radius: 12px;
-    margin-top: 4px;
-    max-height: 300px;
-    overflow-y: auto;
-    z-index: 100;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
-}
 
 /* Section Components */
 .section-header {

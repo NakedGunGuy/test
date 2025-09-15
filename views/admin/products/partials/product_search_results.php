@@ -8,6 +8,8 @@
 >
     <div style="font-weight: 600; color: white;">
         <?= htmlspecialchars($product['name']) ?>
+        </br>
+        <?= htmlspecialchars($product['set_name']) ?>
     </div>
 </div>
 <?php endforeach; ?>

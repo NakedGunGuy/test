@@ -2,14 +2,15 @@
 <?php start_section('title'); ?>Discover Cards - <?= htmlspecialchars($_ENV['APP_NAME']) ?><?php end_section('title'); ?>
 <?php start_section('page_title'); ?>Discover<?php end_section('page_title'); ?>
 
-<div class="section" style="margin-bottom: 2rem;">
+<div class="section" style="margin-bottom: 2rem; z-index: 5; position:relative; ">
     <h3 class="section-header">
         <span class="section-header-icon">🔍</span>Search & Filter
     </h3>
     <form method="get" class="search-form" style="grid-template-columns: 2fr 1fr 1fr auto auto;">
-        <div class="form-group" style="position:relative; margin-bottom: 0;">
+        <div class="form-group" style="position: relative; margin-bottom: 0;">
             <label class="form-label">Search Cards</label>
             <input
+                id="search-input"
                 class="form-input"
                 name="name"
                 hx-get="/products/search"
@@ -18,8 +19,9 @@
                 hx-swap="innerHTML"
                 value="<?= htmlspecialchars($_GET['name'] ?? '') ?>"
                 placeholder="Enter card name..."
+                autocomplete="off"
             >
-            <div id="product-results" class="search-results"></div>
+            <div id="product-results" class="search-results" style="display: none;"></div>
         </div>
         
         <div class="form-group" style="margin-bottom: 0;">
@@ -249,6 +251,47 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    // Handle search results
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('product-results');
+
+    if (searchInput && searchResults) {
+        // Show search results when they get content
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList') {
+                    if (searchResults.innerHTML.trim() !== '') {
+                        searchResults.style.display = 'block';
+                    } else {
+                        searchResults.style.display = 'none';
+                    }
+                }
+            });
+        });
+        observer.observe(searchResults, { childList: true, subtree: true });
+
+        // Hide search results when clicking away
+        document.addEventListener('click', function(event) {
+            if (!searchInput.contains(event.target) && !searchResults.contains(event.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+
+        // Show search results when focusing input (if it has content)
+        searchInput.addEventListener('focus', function() {
+            if (searchResults.innerHTML.trim() !== '') {
+                searchResults.style.display = 'block';
+            }
+        });
+
+        // Hide search results when input is cleared
+        searchInput.addEventListener('input', function() {
+            if (this.value.trim() === '') {
+                searchResults.style.display = 'none';
+            }
+        });
+    }
 });
 </script>
 <?php end_section('js'); ?>
