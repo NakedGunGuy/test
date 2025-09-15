@@ -220,6 +220,12 @@ post('/set-view-preference', function () {
     }
 });
 
+get('/products/search', function () {
+    $name = $_GET['name'] ?? '';
+    $products = $name ? getProducts(['name' => $name], null, 10) : [];
+    partial('admin/products/partials/product_search_results', ['products' => $products]);
+});
+
 get('/store-maintenance', function () {
     view('maintenance');
 });

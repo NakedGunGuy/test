@@ -1,9 +1,14 @@
 <?php foreach ($products as $product): ?>
 <div
-    class="px-3 py-2 hover:bg-gray-100 cursor-pointer product-result"
+    class="search-result-item product-result"
     data-name="<?= htmlspecialchars($product['name']) ?>"
+    style="padding: 12px; cursor: pointer; border-bottom: 1px solid rgba(0, 174, 239, 0.15); transition: all 0.2s ease;"
+    onmouseover="this.style.background='rgba(0, 174, 239, 0.05)'"
+    onmouseout="this.style.background='transparent'"
 >
-    <?= htmlspecialchars($product['name']) ?>
+    <div style="font-weight: 600; color: white;">
+        <?= htmlspecialchars($product['name']) ?>
+    </div>
 </div>
 <?php endforeach; ?>
 

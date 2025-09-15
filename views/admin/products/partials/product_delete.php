@@ -1,5 +1,6 @@
 <button
-    class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+    class="btn-text"
+    style="color: #FF6B6B;"
     hx-get="/admin/products/confirm-delete/<?= htmlspecialchars($product_id) ?>"
     hx-target="#dialog"
     hx-swap="innerHTML"

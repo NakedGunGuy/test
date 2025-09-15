@@ -7,12 +7,12 @@
         <span class="section-header-icon">🔍</span>Search & Filter
     </h3>
     <form method="get" class="search-form" style="grid-template-columns: 2fr 1fr 1fr auto auto;">
-        <div class="form-group" style="margin-bottom: 0;">
+        <div class="form-group" style="position:relative; margin-bottom: 0;">
             <label class="form-label">Search Cards</label>
             <input
                 class="form-input"
                 name="name"
-                hx-get="/admin/products/search"
+                hx-get="/products/search"
                 hx-trigger="keyup changed delay:300ms"
                 hx-target="#product-results"
                 hx-swap="innerHTML"
