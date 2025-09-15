@@ -6,7 +6,7 @@
     <h3 class="section-header">
         <span class="section-header-icon">🔍</span>Search & Filter
     </h3>
-    <form method="get" class="search-form">
+    <form method="get" class="search-form" style="grid-template-columns: 2fr 1fr 1fr auto auto;">
         <div class="form-group" style="margin-bottom: 0;">
             <label class="form-label">Search Cards</label>
             <input
@@ -32,9 +32,9 @@
             <input class="form-input" type="number" name="max_price" placeholder="€1000" value="<?= htmlspecialchars($_GET['max_price'] ?? '') ?>"/>
         </div>
         
-        <button type="submit" class="btn blue filter-button">Filter</button>
-        
-        <a href="<?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?>" class="btn black reset-button">Reset</a>
+        <button type="submit" class="btn blue filter-button" style="box-sizing: border-box; height: auto; line-height: normal;">Filter</button>
+
+        <a href="<?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?>" class="btn black reset-button" style="box-sizing: border-box; height: auto; line-height: normal; display: inline-flex; align-items: center;">Reset</a>
     </form>
 </div>
 
@@ -52,29 +52,203 @@
             </div>
             <div class="view-toggle">
                 <span class="view-toggle-label">View:</span>
-                <button class="view-toggle-btn active">Grid</button>
-                <button class="view-toggle-btn inactive">List</button>
+                <button class="view-toggle-btn <?= ($_SESSION['view_preference'] ?? 'grid') === 'grid' ? 'active' : 'inactive' ?>" data-view="grid">Grid</button>
+                <button class="view-toggle-btn <?= ($_SESSION['view_preference'] ?? 'grid') === 'list' ? 'active' : 'inactive' ?>" data-view="list">List</button>
+                <button class="view-toggle-btn <?= ($_SESSION['view_preference'] ?? 'grid') === 'box' ? 'active' : 'inactive' ?>" data-view="box">Box</button>
             </div>
         </div>
     </div>
     
-    <div class="grid">
-        <div class="grid-header">
-            <div class="header-cell">
-                <span class="grid-header-with-icon">
-                    <span>🃏</span>Card Name
-                </span>
+    <!-- Grid View -->
+    <div id="grid-view" class="view-container <?= ($_SESSION['view_preference'] ?? 'grid') === 'grid' ? '' : 'hidden' ?>">
+        <div class="grid">
+            <div class="grid-header" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;">
+                <div class="header-cell">
+                    <span class="grid-header-with-icon">
+                        <span>🃏</span>Card Name
+                    </span>
+                </div>
+                <div class="header-cell">Edition</div>
+                <div class="header-cell">Price</div>
+                <div class="header-cell">Stock</div>
+                <div class="header-cell">Foil</div>
+                <div class="header-cell">Actions</div>
             </div>
-            <div class="header-cell">Edition</div>
-            <div class="header-cell">Price</div>
-            <div class="header-cell">Stock</div>
-            <div class="header-cell">Foil</div>
-            <div class="header-cell">Actions</div>
+            <div id="products-table" class="grid-body">
+                <?php partial('page/products/partials/products_table_body', ['products' => $products]); ?>
+            </div>
         </div>
-        <div id="products-table" class="grid-body">
-            <?php partial('page/products/partials/products_table_body', ['products' => $products]); ?>
+    </div>
+
+    <!-- List View -->
+    <div id="list-view" class="view-container <?= ($_SESSION['view_preference'] ?? 'grid') === 'list' ? '' : 'hidden' ?>">
+        <div class="list-container">
+            <?php foreach ($products as $product): ?>
+                <?php
+                $svg = '
+                <svg width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="60" height="60" rx="8" ry="8" fill="rgb(39, 39, 39)" />
+                </svg>';
+                $dataUri = 'data:image/svg+xml;base64,' . base64_encode($svg);
+                ?>
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-image">
+                            <img
+                                hx-get="/cards/image/<?= $product['edition_slug'] ?>"
+                                hx-target="#dialog"
+                                hx-trigger="click"
+                                height="60" width="60"
+                                src="<?= $dataUri ?>"
+                                alt="Card image"
+                                data-src="https://api.gatcg.com/cards/images/<?= $product['edition_slug'] ?>.jpg"
+                            />
+                        </div>
+                        <div class="list-item-main">
+                            <h3 class="list-item-title">
+                                <a href="/product/<?= $product['id'] ?>"><?= htmlspecialchars($product['name']) ?></a>
+                            </h3>
+                            <p class="list-item-details"><?= htmlspecialchars($product['set_name']) ?> • €<?= number_format($product['price'], 2) ?></p>
+                            <div class="list-item-meta">
+                                <span class="stock-badge <?= $product['quantity'] > 0 ? ($product['quantity'] <= 5 ? 'low' : 'in-stock') : 'out-of-stock' ?>">
+                                    <?= $product['quantity'] > 0 ? $product['quantity'] . ' in stock' : 'Out of stock' ?>
+                                </span>
+                                <?php if ($product['is_foil']): ?>
+                                    <span class="foil-badge">✨ Foil</span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="list-item-actions">
+                            <?php if ($product['quantity'] > 0): ?>
+                                <form hx-post="/cart/add" hx-swap="outerHTML" class="add-to-cart-form">
+                                    <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                                    <div class="quantity-selector">
+                                        <input type="number" name="quantity" value="1" min="1" max="<?= $product['quantity'] ?>" class="qty-input">
+                                        <button type="submit" class="btn blue btn-small">Add to Cart</button>
+                                    </div>
+                                </form>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <!-- Box View -->
+    <div id="box-view" class="view-container <?= ($_SESSION['view_preference'] ?? 'grid') === 'box' ? '' : 'hidden' ?>">
+        <div class="box-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+            <?php foreach ($products as $product): ?>
+                <?php
+                $svg = '
+                <svg width="100%" height="280" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="100%" height="280" rx="8" ry="8" fill="rgb(39, 39, 39)" />
+                </svg>';
+                $dataUri = 'data:image/svg+xml;base64,' . base64_encode($svg);
+                ?>
+                <div class="product-card">
+                    <div class="product-card-image">
+                        <img
+                            hx-get="/cards/image/<?= $product['edition_slug'] ?>"
+                            hx-target="#dialog"
+                            hx-trigger="click"
+                            src="<?= $dataUri ?>"
+                            alt="Card image"
+                            data-src="https://api.gatcg.com/cards/images/<?= $product['edition_slug'] ?>.jpg"
+                        />
+                    </div>
+
+                    <div class="product-card-header">
+                        <h3 class="product-card-title">
+                            <a href="/product/<?= $product['id'] ?>"><?= htmlspecialchars($product['name']) ?></a>
+                        </h3>
+                        <div class="product-card-subtitle"><?= htmlspecialchars($product['set_name']) ?></div>
+                    </div>
+
+                    <div class="product-card-body">
+                        <div class="product-card-price">€<?= number_format($product['price'], 2) ?></div>
+
+                        <div class="product-card-details">
+                            <div class="stock-info">
+                                <span class="stock-badge <?= $product['quantity'] > 0 ? ($product['quantity'] <= 5 ? 'low' : 'in-stock') : 'out-of-stock' ?>">
+                                    <?= $product['quantity'] > 0 ? $product['quantity'] . ' in stock' : 'Out of stock' ?>
+                                </span>
+                            </div>
+
+                            <?php if ($product['is_foil']): ?>
+                                <div class="foil-info">
+                                    <span class="foil-badge">✨ Foil</span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div class="product-card-footer">
+                        <?php if ($product['quantity'] > 0): ?>
+                            <form hx-post="/cart/add" hx-swap="outerHTML" class="add-to-cart-form">
+                                <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                                <div class="quantity-selector" style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <input type="number" name="quantity" value="1" min="1" max="<?= $product['quantity'] ?>" class="qty-input" style="width: 60px;">
+                                    <button type="submit" class="btn blue btn-small" style="flex: 1;">Add to Cart</button>
+                                </div>
+                            </form>
+                        <?php else: ?>
+                            <button disabled class="btn btn-disabled" style="width: 100%;">Out of Stock</button>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
     </div>
     
     <?php partial('partials/pagination', ['pagination' => $pagination]); ?>
 </div>
+
+<?php start_section('js'); ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle view toggle buttons
+    const viewButtons = document.querySelectorAll('.view-toggle-btn');
+    const viewContainers = {
+        grid: document.getElementById('grid-view'),
+        list: document.getElementById('list-view'),
+        box: document.getElementById('box-view')
+    };
+
+    // Add click event listeners to all view toggle buttons
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const selectedView = this.getAttribute('data-view');
+
+            // Update button states
+            viewButtons.forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('inactive');
+            });
+            this.classList.remove('inactive');
+            this.classList.add('active');
+
+            // Show/hide view containers
+            Object.keys(viewContainers).forEach(view => {
+                if (view === selectedView) {
+                    viewContainers[view].classList.remove('hidden');
+                } else {
+                    viewContainers[view].classList.add('hidden');
+                }
+            });
+
+            // Save preference to session
+            fetch('/set-view-preference', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'view=' + encodeURIComponent(selectedView)
+            }).catch(error => {
+                console.error('Error saving view preference:', error);
+            });
+        });
+    });
+});
+</script>
+<?php end_section('js'); ?>

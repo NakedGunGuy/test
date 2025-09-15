@@ -32,7 +32,7 @@
             ><?= htmlspecialchars($product['description']) ?></textarea>
         </div>
         
-        <div class="grid form">
+        <div class="grid form" style="grid-template-columns: 1fr 1fr;">
             <div class="form-group">
                 <label class="form-label">Price ($)</label>
                 <input 

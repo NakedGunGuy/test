@@ -69,7 +69,7 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
     </div>
 </div>
 
-<div class="order-layout">
+<div class="order-layout" style="grid-template-columns: 1fr 1fr;">
     <!-- Customer Information -->
     <div class="order-section">
         <h2 class="section-subtitle">Customer Information</h2>
@@ -129,7 +129,7 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
     
     <div class="shipping-list">
         <?php foreach ($items as $item): ?>
-            <div class="shipping-item">
+            <div class="shipping-item" style="grid-template-columns: 1fr auto auto auto;">
                 <div class="item-info">
                     <div class="item-name">
                         <?= htmlspecialchars($item['name']) ?>
@@ -184,7 +184,6 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 <style>
 .order-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
     gap: 20px;
     margin-bottom: 30px;
 }
@@ -295,7 +294,6 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 
 .shipping-item {
     display: grid;
-    grid-template-columns: 1fr auto auto auto;
     gap: 20px;
     align-items: center;
     padding: 20px;
@@ -389,7 +387,6 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 
 @media (max-width: 768px) {
     .order-layout {
-        grid-template-columns: 1fr;
     }
     
     .order-status-banner {
@@ -399,7 +396,6 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
     }
     
     .shipping-item {
-        grid-template-columns: 1fr;
         gap: 10px;
         text-align: center;
     }

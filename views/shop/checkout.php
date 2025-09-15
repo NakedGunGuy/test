@@ -48,7 +48,7 @@ Checkout - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         <form method="POST" action="/checkout">
             <div class="section">
                 <h2 class="section-subtitle">Shipping Information</h2>
-                <div class="grid form">
+                <div class="grid form" style="grid-template-columns: 1fr 1fr;">
                     <div class="form-group">
                         <label class="form-label">Full Name</label>
                         <input type="text" name="full_name" class="form-input" value="<?= htmlspecialchars($user['username']) ?>" required>

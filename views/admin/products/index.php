@@ -26,7 +26,7 @@ Products - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 
         <!-- Search and Filters -->
         <form method="get" style="margin-bottom: 2rem;">
-            <div class="grid form">
+            <div class="grid form" style="grid-template-columns: 1fr 1fr;">
                 <div style="position: relative;">
                     <label class="form-label">Search Products</label>
                     <input
@@ -61,7 +61,7 @@ Products - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 
         <!-- Products Table -->
         <div class="grid">
-            <div class="grid-header">
+            <div class="grid-header" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;">
                 <div class="header-cell">Product</div>
                 <div class="header-cell">Edition</div>
                 <div class="header-cell">Price</div>

@@ -18,7 +18,7 @@
         <div class="">
             <h2 class="section-subtitle">Shopping Cart</h2>
             <div class="cart-grid">
-                <div class="cart-header">
+                <div class="cart-header" style="grid-template-columns: 2fr 1fr 1fr 1fr auto;">
                     <div class="header-cell">Product</div>
                     <div class="header-cell">Price</div>
                     <div class="header-cell">Qty</div>
@@ -27,7 +27,7 @@
                 </div>
                 <div class="cart-body">
                 <?php foreach ($cart as $item): ?>
-                    <div class="cart-row" id="cart-item-<?= $item['product_id'] ?>">
+                    <div class="cart-row" id="cart-item-<?= $item['product_id'] ?>" style="grid-template-columns: 2fr 1fr 1fr 1fr auto;">
                         <div class="cart-cell" data-label="Product">
                             <div class="product-name"><?= htmlspecialchars($item['name']) ?></div>
                         </div>

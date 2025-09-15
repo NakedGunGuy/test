@@ -20,6 +20,11 @@ get('/discover', function () {
     if (isset($_GET['per_page']) && in_array((int)$_GET['per_page'], [10, 25, 50, 100])) {
         $_SESSION['discover_per_page'] = (int)$_GET['per_page'];
     }
+
+    // Handle view preference from session (default to 'grid')
+    if (!isset($_SESSION['view_preference'])) {
+        $_SESSION['view_preference'] = 'grid';
+    }
     
     // Pagination parameters
     $page = max(1, (int)($_GET['page'] ?? 1));
@@ -200,6 +205,19 @@ get('/product/{id}', function ($params) {
 get('/cards/image/{slug}', function ($params) {
     $slug = $params['slug'];
     partial('page/products/partials/product_image_dialog', ['slug' => $slug]);
+});
+
+post('/set-view-preference', function () {
+    $view = $_POST['view'] ?? '';
+
+    if (in_array($view, ['grid', 'list', 'box'])) {
+        $_SESSION['view_preference'] = $view;
+        http_response_code(200);
+        echo 'View preference updated';
+    } else {
+        http_response_code(400);
+        echo 'Invalid view preference';
+    }
 });
 
 get('/store-maintenance', function () {

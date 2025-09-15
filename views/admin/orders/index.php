@@ -12,7 +12,7 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 <!-- Order Statistics -->
 <div class="section">
     <h2 class="section-subtitle">Order Statistics (Last 30 Days)</h2>
-    <div class="grid stats">
+    <div class="grid stats" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
         <div class="card stat">
             <div class="icon">📋</div>
             <div class="info">
@@ -74,7 +74,7 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         </div>
     <?php else: ?>
         <div class="grid">
-            <div class="grid-header">
+            <div class="grid-header" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;">
                 <div class="header-cell">Order</div>
                 <div class="header-cell">Customer</div>
                 <div class="header-cell">Items</div>
@@ -85,7 +85,7 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             </div>
             <div class="grid-body">
                 <?php foreach ($orders as $order): ?>
-                    <div class="grid-row">
+                    <div class="grid-row" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;">
                         <div class="grid-cell">
                             <div style="font-weight: 600;">#<?= $order['id'] ?></div>
                             <div style="font-size: 12px; color: #C0C0D1; margin-top: 2px;">

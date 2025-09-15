@@ -23,7 +23,7 @@ Profile - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             <!-- Quick Stats -->
             <div class="section">
                 <h3 class="section-subtitle">Account Overview</h3>
-                <div class="grid stats">
+                <div class="grid stats" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
                     <div class="card stat">
                         <div class="icon">📦</div>
                         <div class="info">
@@ -53,7 +53,7 @@ Profile - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         <div class="section">
             <h2 class="section-title">Quick Actions</h2>
             
-            <div class="grid actions">
+            <div class="grid actions" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
                 <a href="/profile/settings" class="card action">
                     <span class="icon">⚙️</span>
                     <div class="content">

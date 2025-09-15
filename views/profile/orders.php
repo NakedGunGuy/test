@@ -16,7 +16,7 @@ Order History - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             <!-- Order Filters/Stats -->
             <div class="section">
                 <h3 class="section-subtitle">Order Summary</h3>
-                <div class="grid orders">
+                <div class="grid orders" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
                     <div class="stat order">
                         <span class="number"><?= count($orders) ?></span>
                         <span class="label">Total Orders</span>
@@ -55,7 +55,7 @@ Order History - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                 <a href="/discover" class="btn blue">Browse Products</a>
             </div>
         <?php else: ?>
-            <div class="grid orders list">
+            <div class="grid orders list" style="grid-template-columns: 1fr;">
                 <?php foreach ($orders as $order): ?>
                     <div class="card order">
                         <div class="header">

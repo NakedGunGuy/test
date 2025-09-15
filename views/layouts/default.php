@@ -25,11 +25,6 @@
                         <span class="nav-icon">🔍</span>Discover
                     </a>    
                 </li>
-                <li>
-                    <a href="/cards" class="<?= str_starts_with($currentUrl, '/cards') ? 'active' : '' ?>">
-                        <span class="nav-icon">🃏</span>Cards
-                    </a>
-                </li>
             </ul>
         </section>
         <section>

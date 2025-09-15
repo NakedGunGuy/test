@@ -14,7 +14,7 @@ Settings - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
     <!-- Store Information -->
     <div class="section">
         <h2 class="section-subtitle">Store Information</h2>
-        <div class="grid form">
+        <div class="grid form" style="grid-template-columns: 1fr 1fr;">
             <div class="form-group">
                 <label class="form-label">Store Name</label>
                 <input type="text" name="store_name" class="form-input" value="<?= htmlspecialchars($_ENV['APP_NAME'] ?? 'Cardpoint') ?>" readonly>
@@ -36,7 +36,7 @@ Settings - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
     <!-- Order Settings -->
     <div class="section">
         <h2 class="section-subtitle">Order Settings</h2>
-        <div class="grid form">
+        <div class="grid form" style="grid-template-columns: 1fr 1fr;">
             <div class="form-group">
                 <label class="form-label">Default Order Status</label>
                 <select name="default_order_status" class="form-input">
@@ -57,7 +57,7 @@ Settings - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
     <!-- Email Settings -->
     <div class="section">
         <h2 class="section-subtitle">Email Settings</h2>
-        <div class="grid form">
+        <div class="grid form" style="grid-template-columns: 1fr 1fr;">
             <div class="form-group">
                 <label class="form-label">Order Notification Email</label>
                 <input type="email" name="notification_email" class="form-input" value="<?= htmlspecialchars($settings['notification_email'] ?? '') ?>" placeholder="admin@cardpoint.com">
@@ -106,7 +106,7 @@ Settings - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 <!-- Maintenance Actions -->
 <div class="section">
     <h2 class="section-subtitle">Maintenance</h2>
-    <div class="grid actions" style="max-width: 500px;">
+    <div class="grid actions" style="max-width: 500px; grid-template-columns: 1fr;">
         <div class="card action">
             <span class="icon">🗑️</span>
             <div class="content">

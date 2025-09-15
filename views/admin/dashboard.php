@@ -5,7 +5,7 @@ Admin Dashboard - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 <!-- Quick Stats -->
 <div class="section">
     <h2 class="section-subtitle">Store Overview</h2>
-    <div class="grid stats">
+    <div class="grid stats" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
         <div class="card stat">
             <div class="icon">📦</div>
             <div class="info">
@@ -71,7 +71,7 @@ Admin Dashboard - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 <!-- Quick Actions -->
 <div class="section">
     <h2 class="section-subtitle">Quick Actions</h2>
-    <div class="grid actions">
+    <div class="grid actions" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
         <a href="/admin/products" class="card action">
             <span class="icon">📦</span>
             <div class="content">

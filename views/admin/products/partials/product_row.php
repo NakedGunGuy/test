@@ -1,4 +1,4 @@
-<div class="grid-row">
+<div class="grid-row" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;">
     <div class="grid-cell">
         <div style="font-weight: 600;"><?= htmlspecialchars($product['name']) ?></div>
         <?php if ($product['is_custom']): ?>

@@ -12,7 +12,7 @@ Analytics - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 <!-- Overview Statistics -->
 <div class="section">
     <h2 class="section-subtitle">Store Overview</h2>
-    <div class="grid stats">
+    <div class="grid stats" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
         <div class="card stat">
             <div class="icon">📋</div>
             <div class="info">
@@ -105,7 +105,7 @@ Analytics - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         </div>
     <?php else: ?>
         <div class="grid">
-            <div class="grid-header">
+            <div class="grid-header" style="grid-template-columns: 2fr 1fr 1fr 1fr;">
                 <div class="header-cell">Date</div>
                 <div class="header-cell">Orders</div>
                 <div class="header-cell">Revenue</div>
@@ -113,7 +113,7 @@ Analytics - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             </div>
             <div class="grid-body">
                 <?php foreach ($daily_sales as $day): ?>
-                    <div class="grid-row">
+                    <div class="grid-row" style="grid-template-columns: 2fr 1fr 1fr 1fr;">
                         <div class="grid-cell">
                             <?= date('M j, Y', strtotime($day['date'])) ?>
                         </div>
@@ -151,7 +151,7 @@ Analytics - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         </div>
     <?php else: ?>
         <div class="grid">
-            <div class="grid-header">
+            <div class="grid-header" style="grid-template-columns: 2fr 1fr 1fr 1fr;">
                 <div class="header-cell">Product</div>
                 <div class="header-cell">Units Sold</div>
                 <div class="header-cell">Revenue</div>
@@ -159,7 +159,7 @@ Analytics - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             </div>
             <div class="grid-body">
                 <?php foreach ($top_products as $product): ?>
-                    <div class="grid-row">
+                    <div class="grid-row" style="grid-template-columns: 2fr 1fr 1fr 1fr;">
                         <div class="grid-cell">
                             <span style="font-weight: 600;"><?= htmlspecialchars($product['name']) ?></span>
                         </div>

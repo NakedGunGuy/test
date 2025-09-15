@@ -4,8 +4,36 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
         if (!dlg.open) {
             dlg.showModal();
         }
+
+        // Set up enhanced dialog functionality
+        setupDialogClose(dlg);
     }
 });
+
+function setupDialogClose(dlg) {
+    // Skip if already set up
+    if (dlg.dataset.dialogListenersSetup) {
+        return;
+    }
+
+    // Close on backdrop click
+    dlg.addEventListener('click', (event) => {
+        // Only close if clicking on the dialog itself, not its children
+        if (event.target === dlg) {
+            dlg.close();
+        }
+    });
+
+    // Close on Escape key
+    dlg.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            dlg.close();
+        }
+    });
+
+    // Mark as set up
+    dlg.dataset.dialogListenersSetup = 'true';
+}
 
 document.body.addEventListener("htmx:afterRequest", function(event) {
     const elt = event.detail.elt;

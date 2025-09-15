@@ -6,7 +6,7 @@ $svg = '
 $dataUri = 'data:image/svg+xml;base64,' . base64_encode($svg);
 ?>
 
-<div id="product-<?= $product['id'] ?>" class="grid-row" hx-swap-oob="true">
+<div id="product-<?= $product['id'] ?>" class="grid-row" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;" hx-swap-oob="true">
     <div class="grid-cell" style="border-color: rgba(0, 174, 239, 0.15);">
         <img 
             hx-get="/cards/image/<?= $product['edition_slug'] ?>"
