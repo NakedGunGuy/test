@@ -2223,25 +2223,6 @@ textarea.form-input {
     text-align: center;
 }
 
-/* Admin security note */
-.admin-security-note {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #666;
-    font-size: 0.875rem;
-    margin: 0.5rem 0;
-}
-
-.admin-footer-note {
-    color: #666;
-    font-size: 0.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
 .return-link {
     color: #00AEEF;
     text-decoration: none;

@@ -1,6 +1,6 @@
 <?php start_section('title'); ?>Admin Login - <?= htmlspecialchars($_ENV['APP_NAME']) ?><?php end_section('title'); ?>
 
-<div class="auth-container" style="background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(26, 26, 26, 0.8) 100%); backdrop-filter: blur(10px);">
+<div class="auth-container">
     <div class="auth-wrapper">
         <!-- Header Section -->
         <div class="auth-header">
@@ -48,21 +48,12 @@
                         placeholder="Enter secure password"
                         required>
                 </div>
-
-                <div class="admin-security-note">
-                    <div class="online-dot"></div>
-                    <span>Secure admin authentication required</span>
-                </div>
-
                 <button type="submit" class="btn blue btn-full admin-auth-button">
                     🚀 Access Admin Portal
                 </button>
             </form>
             
             <div class="auth-footer admin-auth-footer">
-                <p class="admin-footer-note">
-                    <span>🔒</span>This is a secure administrative area
-                </p>
                 <a href="/" class="return-link">← Return to main site</a>
             </div>
         </div>
