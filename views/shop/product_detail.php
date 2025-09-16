@@ -1,10 +1,17 @@
 <?php /** @var array $product */ ?>
 <?php /** @var array $order_history */ ?>
 <?php /** @var array $card_variants */ ?>
+<?php /** @var array $seo_data */ ?>
+<?php /** @var array $schemas */ ?>
 
-<?php start_section('title'); ?>
-<?= htmlspecialchars($product['name'] ?? $product['card_name']) ?> - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
-<?php end_section('title'); ?>
+<?php if (isset($seo_data)): ?>
+    <?php start_section('seo_data'); echo serialize($seo_data); end_section('seo_data'); ?>
+<?php endif; ?>
+
+<?php if (isset($schemas)): ?>
+    <?php start_section('schemas'); echo serialize($schemas); end_section('schemas'); ?>
+<?php endif; ?>
+
 <?php start_section('page_title'); ?>Product Details<?php end_section('page_title'); ?>
 
 <div class="product-container" style="grid-template-columns: 2fr 1fr;">

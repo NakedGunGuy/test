@@ -3,11 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= section('title', htmlspecialchars($_ENV['APP_NAME'])) ?></title>
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    <link rel="apple-touch-icon" href="/assets/logo.png">
+
+    <?php
+    // Get SEO data for current page
+    $seo_data_raw = section('seo_data');
+    if ($seo_data_raw) {
+        $seo_data = unserialize($seo_data_raw);
+    } else {
+        $seo_data = get_seo_meta('home');
+    }
+
+    $schemas_raw = section('schemas');
+    if ($schemas_raw) {
+        $schemas = unserialize($schemas_raw);
+    } else {
+        $schemas = [
+            generate_schema_markup('organization'),
+            generate_schema_markup('website')
+        ];
+    }
+    ?>
+
+    <title><?= htmlspecialchars($seo_data['title']) ?></title>
+
+    <?= render_meta_tags($seo_data) ?>
 
     <link rel="stylesheet" href="/css/default.css" media="all">
 
     <?= section('css') ?>
+
+    <?= render_schema_markup(array_filter($schemas)) ?>
 </head>
 <body hx-ext="preload" data-htmx-log-level="debug">
     <?php

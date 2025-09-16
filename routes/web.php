@@ -5,7 +5,11 @@ try {
 } catch (Exception $e) {}
 
 route('/', function () {
-	view('home', ['appName' => $_ENV['APP_NAME']]);
+    $seo_data = get_seo_meta('home');
+    view('home', [
+        'appName' => $_ENV['APP_NAME'],
+        'seo_data' => $seo_data
+    ]);
 });
 
 get('/discover', function () {
@@ -40,7 +44,9 @@ get('/discover', function () {
 
     // Get filters without per_page for pagination links
     $filter_params = array_diff_key($_GET, array_flip(['per_page', 'page']));
-    
+
+    $seo_data = get_seo_meta('discover');
+
     view('discover', [
         'products' => $products,
         'pagination' => [
@@ -49,7 +55,8 @@ get('/discover', function () {
             'total_products' => $total_products,
             'total_pages' => $total_pages,
             'filters' => $filter_params // Pass filters excluding per_page and page
-        ]
+        ],
+        'seo_data' => $seo_data
     ], 'default');
 });
 
@@ -194,11 +201,25 @@ get('/product/{id}', function ($params) {
     if (!$product['is_custom'] && $product['card_name']) {
         $card_variants = get_card_variants($product['card_name'], $product_id);
     }
-    
+
+    // Prepare SEO data and schema markup
+    $seo_data = get_seo_meta('product', ['product' => $product]);
+    $breadcrumbs = [
+        ['name' => 'Home', 'url' => '/'],
+        ['name' => 'Discover', 'url' => '/discover'],
+        ['name' => $product['card_name'] ?? $product['name'], 'url' => '/product/' . $product_id]
+    ];
+
     view('shop/product_detail', [
         'product' => $product,
         'order_history' => $order_history,
-        'card_variants' => $card_variants
+        'card_variants' => $card_variants,
+        'seo_data' => $seo_data,
+        'schemas' => [
+            generate_schema_markup('organization'),
+            generate_schema_markup('product', ['product' => $product]),
+            generate_schema_markup('breadcrumblist', ['breadcrumbs' => $breadcrumbs])
+        ]
     ]);
 });
 
