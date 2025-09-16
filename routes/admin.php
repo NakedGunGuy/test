@@ -48,6 +48,34 @@ get('/admin/logout', function () {
     exit;
 });
 
+// SEO Management
+get('/admin/seo', function () {
+    // Check if sitemap is accessible
+    $base_url = rtrim($_ENV['APP_URL'] ?? 'https://cardpoint.example.com', '/');
+    $sitemap_url = $base_url . '/sitemap.xml';
+    $robots_url = $base_url . '/robots.txt';
+
+    // Get product count for sitemap
+    $pdo = db();
+    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM products WHERE quantity > 0");
+    $stmt->execute();
+    $product_count = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
+
+    view('admin/seo/index', [
+        'sitemap_url' => $sitemap_url,
+        'robots_url' => $robots_url,
+        'product_count' => $product_count
+    ], 'admin');
+}, [$getAdminAuth]);
+
+// Generate and download sitemap
+get('/admin/seo/sitemap/generate', function () {
+    header('Content-Type: application/xml; charset=UTF-8');
+    header('Content-Disposition: attachment; filename="sitemap.xml"');
+    echo generate_sitemap();
+    exit;
+}, [$getAdminAuth]);
+
 get('/admin/products', function () {
     $filters = [
         'name' => $_GET['name'] ?? null,

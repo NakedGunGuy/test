@@ -1,5 +1,10 @@
 <?php /** @var array $products */ ?>
-<?php start_section('title'); ?>Discover Cards - <?= htmlspecialchars($_ENV['APP_NAME']) ?><?php end_section('title'); ?>
+<?php /** @var array $seo_data */ ?>
+
+<?php if (isset($seo_data)): ?>
+    <?php start_section('seo_data'); echo serialize($seo_data); end_section('seo_data'); ?>
+<?php endif; ?>
+
 <?php start_section('page_title'); ?>Discover<?php end_section('page_title'); ?>
 
 <div class="section" style="margin-bottom: 2rem; z-index: 5; position:relative; ">

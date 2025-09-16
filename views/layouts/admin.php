@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title><?= section('title', htmlspecialchars($_ENV['APP_NAME'])) ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    <link rel="apple-touch-icon" href="/assets/logo.png">
     <link rel="stylesheet" href="/css/default.css" media="all">
 
     <?= section('css') ?>
@@ -30,6 +32,8 @@
                 <span class="nav-icon">🖼️</span>Image Cache</a></li>
             <li><a href="/admin/shipping" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/shipping') ? 'active' : '' ?>">
                 <span class="nav-icon">🚚</span>Shipping</a></li>
+            <li><a href="/admin/seo" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/seo') ? 'active' : '' ?>">
+                <span class="nav-icon">🔍</span>SEO</a></li>
             <li><a href="/admin/settings" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/settings') ? 'active' : '' ?>">
                 <span class="nav-icon">⚙️</span>Settings</a></li>
         </ul>

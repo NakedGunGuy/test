@@ -4,207 +4,257 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Cardpoint is an e-commerce web application for selling Trading Card Game (TCG) cards, primarily focused on Grand Archive TCG. The platform serves as an online store where Cardpoint company sells physical TCG cards to customers.
+Cardpoint is a modern e-commerce platform for Trading Card Game (TCG) cards, specifically focused on Grand Archive TCG. Built with PHP and HTMX, it provides a seamless shopping experience for physical TCG cards with comprehensive admin management.
 
-### Database & Console
-- **Import Cards**: `php console/import_cards.php` - Import cards from external API
+### Core Stack
+- **Backend**: Custom PHP MVC framework (lightweight, no external dependencies)
+- **Frontend**: HTMX for dynamic interactions, pure CSS for styling
+- **Database**: SQLite with PDO (prepared statements)
+- **Assets**: Vanilla JavaScript for enhanced UX
+- **Email**: PHPMailer for notifications
+
+### Console Commands
+- **Import Cards**: `php console/import_cards.php` - Import card data from developer API
 - **Create Admin User**: `php console/create_admin_user.php` - Create admin user account
 - **Create User**: `php console/create_user.php` - Create regular user account
-- **Database Schema**: `alters.sql` contains the SQLite schema
+- **Cache Images**: `php console/cache_card_images.php` - Pre-cache card images
+- **Send Emails**: `php console/send_emails.php` - Process email queue
+- **Database Schema**: `alters.sql` contains the complete SQLite schema
 
 ### Dependencies
-- **Install**: `composer install` - Install PHP dependencies (PHPMailer)
+- **Install**: `composer install` - Install PHP dependencies (PHPMailer only)
 
-## Styling Guidelines
+## Design System & Styling
 
-### CSS Framework
-- **NO TAILWIND CSS** - The project has moved away from Tailwind CSS
-- **Pure CSS Only** - Use custom CSS in `public/css/style.css` and `public/css/default.css`
-- **Existing Class Reuse** - Always check and reuse existing CSS classes before creating new ones
+### CSS Architecture
+- **No Framework**: Pure CSS only - NO TAILWIND CSS
+- **Main Stylesheet**: `public/css/default.css` - All styles consolidated here
+- **Design Philosophy**: Dark theme with modern gradients and clean typography
+- **Class Reuse**: Always check existing classes before creating new ones
 
-### Button System
-- **Base class**: `.btn` (flex layout, padding, border-radius, transitions)
-- **Color variants**: `.btn.blue`, `.btn.black`, `.btn.red`
-- **Size variants**: `.btn-small`, `.btn-full`
-- **Style variants**: `.btn-outline`, `.btn-disabled`, `.btn-text`
+### Color Palette
+- **Background**: Gradient from `#000000` to `#0a0a0a`
+- **Cards/Sections**: `rgba(0, 174, 239, 0.05)` with gradient overlays
+- **Primary**: `#00AEEF` (Blue gradient from `#00AEEF` to `#0098d4`)
+- **Text**: `#FFFFFF` primary, inherited colors
+- **Borders**: `rgba(0, 174, 239, 0.2)` for main borders, `rgba(0, 174, 239, 0.3)` for headers
 
-### Layout Classes
-- **Containers**: `.product-container`, `.product-section`, `.purchase-card`
-- **Typography**: `.product-title`, `.section-title`, `.section-subtitle`, `.meta-label`
-- **Cards**: `.product-section` (dark background, border, padding, border-radius)
-
-### Design System
-- **Colors**: Dark theme (`#07070A` body, `#1E1E27` cards, `#01AFFC` primary)
-- **Border Radius**: Consistent `12px` throughout
-- **Borders**: `#C0C0D133` for subtle borders
+### Typography & Layout
+- **Font Stack**: `-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, 'Helvetica Neue', Arial, sans-serif`
+- **Border Radius**: Consistent `12px` for buttons, `16px` for cards
+- **Spacing**: CSS Grid and Flexbox for layouts
 - **Transitions**: `all 0.2s ease` for hover effects
-- **Shadows**: `0 4px 10px rgba(255, 255, 255, 0.1)` for hover states
+- **Shadows**: `0 8px 32px rgba(0, 0, 0, 0.6)` for main containers
 
-### Component Patterns
-- **Action Items**: Icon + content + arrow pattern
-- **Stats Cards**: Icon + number + label structure  
-- **Modal System**: Overlay + modal + header + content structure
-- **Form Layout**: Label + input + help text + actions
+### Component System
+- **Buttons**: `.btn` base class with variants (`.btn.blue`, `.btn.black`, `.btn.red`)
+- **Navigation**: Fixed sidebar navigation with active states
+- **Cards**: Gradient backgrounds with subtle borders
+- **Forms**: Consistent input styling with validation states
+- **Mobile**: Responsive bottom navigation for mobile devices
 
-## Architecture
+### Layout Architecture
+- **Sidebar Navigation**: Fixed 300px width with brand and menu items
+- **Main Content**: Gradient background container with header and main sections
+- **Mobile Navigation**: Bottom navigation bar for mobile screens
+- **Dialog System**: Modal overlays using native `<dialog>` element
 
-### Core Framework
-- **Custom PHP MVC**: Lightweight custom framework without external dependencies
-- **Entry Point**: `public/index.php` handles all requests
-- **Bootstrap**: `bootstrap.php` defines constants and initializes environment
-- **Database**: SQLite database in `database/database.sqlite`
+## Technical Architecture
 
-### Directory Structure
-- `core/` - Core framework components (router, database, helpers, session management)
-- `routes/` - Route definitions (web.php, admin.php, shop.php, profile.php)
-- `views/` - PHP templates with layout system
-- `content/` - YAML-based content management for pages
-- `console/` - CLI scripts for maintenance tasks
-- `public/` - Web root with assets and entry point
-- `cards/` - Card-specific functionality and queries
-- `mail/` - Email functionality using PHPMailer
+### Framework Structure
+- **Entry Point**: `public/index.php` - Handles all HTTP requests
+- **Bootstrap**: `bootstrap.php` - Constants, environment, compression
+- **Autoloading**: `core/autoload.php` and `routes/autoload.php`
+- **Database**: SQLite in `database/database.sqlite`
+
+### Directory Organization
+```
+├── core/           # Framework components
+│   ├── router.php      # Custom routing system
+│   ├── database.php    # PDO database layer
+│   ├── helpers.php     # Template engine & utilities
+│   ├── session.php     # Session management
+│   ├── user.php        # User authentication
+│   ├── admin.php       # Admin authentication
+│   ├── products.php    # Product management
+│   ├── shop.php        # Shopping cart logic
+│   └── settings.php    # Application settings
+├── routes/         # Route definitions
+│   ├── web.php         # Public routes
+│   ├── admin.php       # Admin panel routes
+│   ├── shop.php        # Shopping/cart routes
+│   └── profile.php     # User profile routes
+├── views/          # PHP templates
+│   ├── layouts/        # Layout templates
+│   ├── partials/       # Reusable components
+│   ├── admin/          # Admin panel views
+│   ├── shop/           # Shopping views
+│   └── profile/        # User profile views
+├── content/        # YAML-based CMS
+├── console/        # CLI scripts
+├── public/         # Web root
+│   ├── css/           # Stylesheets
+│   ├── js/            # JavaScript files
+│   └── assets/        # Static files
+└── cards/          # Card-specific functionality
+```
 
 ### Routing System
-- Custom router in `core/router.php` with parameter binding
-- Route definitions use `get()` and `post()` functions
-- Pattern-based routing with middleware support: `get('/user/{id}', $callback, $middleware)`
-- Automatic route loading via `routes/autoload.php`
+- **Pattern Matching**: `get('/user/{id}', $callback, $middleware)`
+- **Parameter Binding**: Automatic parameter extraction
+- **Middleware Support**: Authentication and authorization
+- **YAML Pages**: Dynamic page routing from `content/pages/`
 
-### View System  
-- Template engine in `core/helpers.php`
-- Layout inheritance with section management
-- Views use `view($template, $data, $layout)` function
-- Supports partials and content sections
+### Template Engine
+- **Function**: `view($template, $data, $layout)`
+- **Sections**: `start_section()` and `end_section()` for content blocks
+- **Partials**: `partial($template, $data)` for reusable components
+- **Layouts**: Layout inheritance system
 
-### Content Management
-- YAML-based page system in `content/pages/`
-- Hierarchical page structure with slug-based routing
-- Pages support custom views and layouts
-- Page tree built dynamically from YAML files
+### Authentication System
+- **User Auth**: Session-based with `core/user.php`
+- **Admin Auth**: Separate admin accounts with `core/admin.php`
+- **Middleware**: `require_user_auth()` and `require_admin_auth()`
+- **Security**: Login attempt limiting, secure sessions
 
-### User System
-- Session-based authentication in `core/session.php`
-- User management in `core/user.php`
-- Admin functionality in `core/admin.php`
-- Role-based access control
-- Separate admin user accounts (`admin_users` table) with dedicated login system
-- Admin authentication middleware for protected routes
+## HTMX Integration
 
-### Card & Product System
-- **Card Data**: Imported from game developers' API via `console/import_cards.php`
-- **Card Schema**: Comprehensive SQLite schema with editions, elements, effects, costs, etc.
-- **Products**: Site admins create sellable products based on card/edition combinations
-- **Inventory Management**: Products have stock levels and pricing separate from card data
-- **Search & Discovery**: Card queries and search in `cards/query.php`
-- **Shop Functionality**: Core shopping logic in `core/products.php` and `core/shop.php`
+### Core Patterns
+- **Dynamic Updates**: `hx-get`, `hx-post` for seamless interactions
+- **Target Swapping**: `hx-target` for updating specific page sections
+- **Out-of-Band**: `hx-swap-oob="true"` for multi-target updates
+- **Preloading**: Global `hx-ext="preload"` for better UX
+- **Debounced Search**: `hx-trigger="keyup changed delay:200ms"`
 
-### HTMX Integration
-- **Frontend Framework**: Heavily relies on HTMX for dynamic interactions
-- **HTMX Script**: `public/js/htmx.min.js` loaded in layouts
-- **Body Attributes**: `hx-ext="preload"` enabled globally in default layout
-- **Dialog System**: Custom dialog.js handles modal interactions with HTMX
-- **Toast Notifications**: JavaScript toast system triggered by HTMX responses
-- **Out-of-Band Swaps**: Used for cart badge updates (`hx-swap-oob="true"`)
-- **Partial Updates**: Extensive use of partials for HTMX target swapping
+### JavaScript Integration
+- **HTMX Core**: `public/js/htmx.min.js`
+- **Dialog System**: `public/js/dialog.js` - Modal management
+- **Image Handling**: `public/js/images.js` - Lazy loading
+- **Quantity Controls**: `public/js/quantity.js` - Cart interactions
+- **General Utils**: `public/js/general.js` - Utility functions
 
-### HTMX Patterns Used
-- **Search with Debounce**: `hx-trigger="keyup changed delay:200ms"` for live search
-- **Form Submissions**: `hx-post` for login, register, cart operations
-- **Modal Loading**: `hx-get` to load content into `#dialog` target
-- **Cart Management**: Dynamic cart updates without page refresh
-- **Product Management**: Admin CRUD operations via HTMX
-- **Image Loading**: Lazy loading for card images
+### HTMX Response Patterns
+- **Multi-target Updates**: Cart badge + product list + purchase section
+- **Error Handling**: HTTP status codes with user-friendly messages
+- **Redirects**: `HX-Redirect` header for navigation
+- **Partial Rendering**: Targeted component updates
 
-### Configuration
-- Environment variables in `.env` file
-- Debug mode controls error reporting
-- Path constants defined in `bootstrap.php`
+## Database Schema
 
-## Development Notes
+### Card Data Structure
+```sql
+cards           # Core card information (name, element, effects, stats)
+├── sets        # Card sets with prefix and language
+├── editions    # Specific printings (collector number, rarity, illustrator)
+├── types       # Card types (many-to-many via card_types)
+├── subtypes    # Card subtypes (many-to-many via card_subtypes)
+└── classes     # Card classes (many-to-many via card_classes)
+```
 
-### Database Schema
-SQLite database with foreign key support enabled. All database queries use prepared statements via PDO.
+### E-commerce Structure
+```sql
+products        # Sellable items (linked to editions or custom)
+├── users       # Customer accounts
+├── admin_users # Admin accounts (separate system)
+├── carts/cart_items    # Shopping cart system
+├── orders/order_items  # Order management with shipping
+└── settings    # Application configuration
+```
 
-#### Card Data Structure
-- **`cards`**: Core card information (name, element, effects, costs, stats)
-- **`sets`**: Card sets with prefix and language
-- **`editions`**: Specific printings of cards (collector number, rarity, illustrator)
-- **`types`/`card_types`**: Card types (many-to-many relationship)
-- **`subtypes`/`card_subtypes`**: Card subtypes (many-to-many relationship) 
-- **`classes`/`card_classes`**: Card classes (many-to-many relationship)
+### Key Relationships
+- **Cards → Editions** (1:many) - Multiple printings per card
+- **Editions → Products** (1:many) - Multiple variants (foil/condition)
+- **Users → Carts → Cart Items → Products** - Shopping flow
+- **Users → Orders → Order Items → Products** - Purchase history
 
-#### E-commerce Structure
-- **`products`**: Sellable items linked to editions or custom products
-  - `edition_id` (NULL for custom products)
-  - `price`, `quantity`, `description`, `is_foil`
-- **`users`**: Customer accounts
-- **`admin_users`**: Admin accounts (separate from regular users)
-- **`carts`/`cart_items`**: Shopping cart system
-- **`orders`/`order_items`**: Order management with status tracking
+## Feature Completeness
 
-#### Key Relationships
-- Cards → Editions (1:many) - One card can have multiple printings
-- Editions → Products (1:many) - One edition can have multiple product variants (foil/non-foil, different conditions)
-- Users → Carts → Cart Items → Products
-- Users → Orders → Order Items → Products
+### ✅ Fully Implemented
+- **Card Data Import**: Complete API integration with Grand Archive
+- **User Management**: Registration, authentication, profiles
+- **Admin Dashboard**: Comprehensive management interface with analytics
+- **Product Management**: Full CRUD with stock tracking
+- **Shopping System**: Cart, checkout, order management
+- **Search & Discovery**: Advanced filtering and search
+- **Order Processing**: Status tracking from pending to delivered
+- **Responsive Design**: Mobile-optimized with bottom navigation
+- **Image Management**: Lazy loading and caching system
+- **Security**: CSRF protection, input validation, secure sessions
 
-### Assets
-- Tailwind CSS compilation required for styling changes
-- Custom CSS in `public/css/style.css`
-- JavaScript in `public/js/`
-- Static assets in `public/assets/`
+### ⚠️ Partially Implemented
+- **Payment Processing**: Stripe integration ready, currently in demo mode
+- **Email Notifications**: PHPMailer configured, needs SMTP setup
+- **SEO Optimization**: Basic meta tags, needs comprehensive SEO implementation
 
-### Email
-- PHPMailer integration for email functionality
-- Configuration in `mail/mailer.php`
+### ❌ Missing Features
+- **Sitemap Generation**: No XML sitemap for search engines
+- **Meta Tag Management**: Missing product-specific and dynamic meta tags
+- **Schema Markup**: No structured data for rich snippets
+- **Social Media Integration**: Missing Open Graph and Twitter Card tags
+- **Canonical URLs**: No canonical URL management
+- **Robots.txt**: Missing search engine directives
+- **Performance Monitoring**: No analytics or performance tracking
+- **Bulk Operations**: Limited bulk product management tools
+- **Advanced Reporting**: Basic analytics, needs detailed reporting
+- **Customer Support**: No integrated support ticket system
 
-### Security
-- CSRF protection available
-- Session management with flash messages
-- Input validation and sanitization
-- Prepared statements for database queries
+## SEO Implementation Status
 
-## Development Roadmap
+### Current SEO Issues
+- **No XML Sitemap**: Search engines cannot efficiently crawl the site
+- **Generic Meta Tags**: All pages use same title/description from APP_NAME
+- **Missing Schema Markup**: No structured data for products
+- **No Canonical URLs**: Risk of duplicate content issues
+- **Missing robots.txt**: No search engine crawler guidance
+- **No Social Meta Tags**: Poor social media sharing experience
 
-### Remaining Features to Implement
-- **Payment Gateway Integration**:
-  - Stripe or other payment processor integration
-  - Real payment processing (currently in demo mode)
-  - Payment webhooks and confirmation handling
-- **Email System Enhancement**:
-  - SMTP configuration for email notifications
-  - Order confirmation emails
-  - Admin notification emails for new orders
-  - Password reset emails
-- **Additional Admin Features**:
-  - Bulk product operations
-  - Advanced inventory management
-  - Customer management dashboard
-  - Detailed reporting and export functionality
+### Recommended SEO Improvements
+1. **Generate XML Sitemap**: Include all products, categories, and static pages
+2. **Dynamic Meta Tags**: Product-specific titles, descriptions, and images
+3. **Schema Markup**: Product, Organization, and BreadcrumbList schemas
+4. **Canonical URLs**: Prevent duplicate content across product variants
+5. **robots.txt**: Guide search engine crawling priorities
+6. **Open Graph Tags**: Improve social media sharing
+7. **Performance Optimization**: Image compression, caching headers
+8. **Internal Linking**: Improve site architecture for SEO
 
-### Current State
-- ✅ Card data import from developer API
-- ✅ Basic product management (admin can create products from cards)
-- ✅ User authentication and profiles
-- ✅ Shopping cart with HTMX interactions
-- ✅ Search and discovery features
-- ✅ **Enhanced Admin Dashboard** with comprehensive features:
-  - Store overview with real-time statistics (products, orders, revenue)
-  - Complete product management (CRUD operations, stock tracking)
-  - Order management system with status tracking
-  - Sales analytics and reporting dashboard
-  - Store settings and configuration
-  - Database backup and card import tools
-- ✅ **Product Detail Pages** - Individual card/product pages with:
-  - Product images and metadata
-  - Order history for specific products
-  - Card variants and edition filtering
-  - Purchase functionality integrated with cart
-- ✅ **Complete E-commerce System**:
-  - Full cart and checkout process
-  - Order creation and management
-  - Shipping address collection
-  - Order status tracking (pending, processing, shipped, delivered, cancelled)
-  - Demo payment processing (ready for payment gateway integration)
-- ❌ **Payment Gateway Integration** - Currently using demo/simulation mode
-- ❌ **Email Notifications** - System ready but needs SMTP configuration
+## Development Commands
+
+### Environment Setup
+- **Install Dependencies**: `composer install`
+- **Create Admin**: `php console/create_admin_user.php`
+- **Import Cards**: `php console/import_cards.php`
+- **Cache Images**: `php console/cache_card_images.php`
+
+### Database Management
+- **Schema File**: `alters.sql` - Complete SQLite schema
+- **Backup**: Admin panel includes database backup functionality
+- **Foreign Keys**: Enabled with cascade relationships
+
+### Security Features
+- **Session Management**: Secure session handling with flash messages
+- **Input Validation**: Server-side validation with prepared statements
+- **CSRF Protection**: Available but needs implementation
+- **Rate Limiting**: Login attempt limiting by IP
+- **SQL Injection Protection**: All queries use prepared statements
+
+## Configuration
+
+### Environment Variables (.env)
+```
+APP_NAME="Cardpoint"
+DEBUG=true
+APP_URL=                    # Required for Stripe integration
+STRIPE_SECRET_KEY=          # Payment processing
+STRIPE_PUBLISHABLE_KEY=     # Frontend payments
+SMTP_HOST=                  # Email configuration
+SMTP_PORT=                  # Email configuration
+SMTP_USERNAME=              # Email configuration
+SMTP_PASSWORD=              # Email configuration
+```
+
+### Performance Features
+- **GZIP Compression**: Automatic response compression
+- **Image Caching**: Card image caching system
+- **Session Optimization**: Efficient session management
+- **Database Optimization**: Indexed queries and foreign keys
