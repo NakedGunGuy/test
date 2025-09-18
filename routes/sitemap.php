@@ -2,6 +2,15 @@
 
 // XML Sitemap route
 get('/sitemap.xml', function () {
+    // Disable error output for clean XML
+    ini_set('display_errors', 0);
+    error_reporting(0);
+
+    // Clear any existing output buffer
+    if (ob_get_level()) {
+        ob_clean();
+    }
+
     header('Content-Type: application/xml; charset=UTF-8');
     echo generate_sitemap();
     exit;

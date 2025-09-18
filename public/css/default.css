@@ -543,6 +543,8 @@ input:focus {
     display: flex;
     gap: 1rem;
     justify-content: center;
+    margin-top: 2rem;
+    flex-wrap: wrap;
 }
 
 @media (max-width: 600px) {
@@ -562,11 +564,23 @@ input:focus {
     display: grid;
     gap: 3rem;
     margin-bottom: 3rem;
+    align-items: start;
+}
+
+.product-container > div:last-child {
+    position: sticky;
+    top: 2rem;
 }
 
 @media (max-width: 768px) {
     .product-container {
         gap: 1.5rem;
+        grid-template-columns: 1fr;
+    }
+
+    .product-container > div:last-child {
+        position: static;
+        order: -1;
     }
 }
 
@@ -636,8 +650,7 @@ input:focus {
     border-radius: 12px;
     padding: 2rem;
     border: 1px solid rgba(0, 174, 239, 0.3);
-    position: sticky;
-    top: 2rem;
+    margin-bottom: 2rem;
 }
 
 .quantity-form {
@@ -790,14 +803,52 @@ input:focus {
 }
 
 .btn-small {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     padding: 8px 12px;
     border-radius: 12px;
     font-size: 14px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
     font-weight: 700;
     min-width: auto;
     transition: all 0.2s ease;
+}
+
+.btn-small.blue {
+    background: linear-gradient(135deg, #00AEEF 0%, #0098d4 100%);
+    color: white;
+}
+
+.btn-small.blue:hover {
+    background: linear-gradient(135deg, #0098d4 0%, #0082b8 100%);
+    transform: translateY(-1px);
+}
+
+.btn-small.red {
+    background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+    color: white;
+}
+
+.btn-small.red:hover {
+    background: linear-gradient(135deg, #ff3742 0%, #ff2731 100%);
+    transform: translateY(-1px);
+}
+
+.btn-small.black {
+    background: linear-gradient(135deg, #2f3542 0%, #40394a 100%);
+    color: white;
+    border: 1px solid rgba(192, 192, 209, 0.2);
+}
+
+.btn-small.black:hover {
+    background: linear-gradient(135deg, #40394a 0%, #57606f 100%);
+    transform: translateY(-1px);
 }
 
 /* Alert Messages */
@@ -1335,6 +1386,71 @@ input:focus {
 textarea.form-input {
     resize: vertical;
     min-height: 80px;
+}
+
+/* Select Dropdown Styling */
+select.form-input {
+    background: linear-gradient(145deg, #0a0a0a 0%, #1a1a1a 100%);
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23C0C0D1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 13L3 8h10l-5 5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+select.form-input:hover {
+    background-color: #1a1a1a;
+    border-color: rgba(0, 174, 239, 0.4);
+}
+
+select.form-input:focus {
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%2301AFFC" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 13L3 8h10l-5 5z"/></svg>');
+}
+
+/* Style all select elements consistently */
+select {
+    width: 100%;
+    padding: 12px 16px;
+    background: linear-gradient(145deg, #0a0a0a 0%, #1a1a1a 100%);
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23C0C0D1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 13L3 8h10l-5 5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    border: 1px solid rgba(0, 174, 239, 0.2);
+    border-radius: 12px;
+    font-size: 16px;
+    color: white;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    padding-right: 40px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+select:hover {
+    background-color: #1a1a1a;
+    border-color: rgba(0, 174, 239, 0.4);
+}
+
+select:focus {
+    outline: none;
+    border-color: #01AFFC;
+    box-shadow: 0 4px 10px rgba(1, 175, 252, 0.1);
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%2301AFFC" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 13L3 8h10l-5 5z"/></svg>');
+}
+
+/* Specific small select styling */
+select.form-input-small {
+    padding: 8px 12px;
+    padding-right: 32px;
+    font-size: 14px;
+    background-size: 14px;
+    background-position: right 8px center;
 }
 
 .form-help {
@@ -3388,7 +3504,7 @@ main::-webkit-scrollbar-thumb:hover {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr auto auto;
     gap: 1rem;
-    align-items: center;
+    align-items: end;
 }
 
 .tier-name-group {
@@ -3409,13 +3525,16 @@ main::-webkit-scrollbar-thumb:hover {
 
 .tier-status {
     display: flex;
-    align-items: center;
+    align-items: end;
     justify-content: center;
+    padding-bottom: 0.5rem;
 }
 
 .tier-actions {
     display: flex;
     gap: 0.5rem;
+    align-items: end;
+    padding-bottom: 0.5rem;
 }
 
 .checkbox-wrapper {
@@ -3423,6 +3542,19 @@ main::-webkit-scrollbar-thumb:hover {
     align-items: center;
     gap: 0.5rem;
     cursor: pointer;
+}
+
+.form-error {
+    margin-top: 1rem;
+}
+
+.error-message {
+    background: rgba(255, 71, 87, 0.1);
+    border: 1px solid rgba(255, 71, 87, 0.3);
+    color: #ff4757;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
 }
 
 .checkbox-wrapper input[type="checkbox"] {

@@ -33,16 +33,16 @@ function generate_sitemap() {
 
     // Product pages
     $stmt = $pdo->prepare("
-        SELECT p.id, p.updated_at
+        SELECT p.id, p.created_at
         FROM products p
         WHERE p.quantity > 0
-        ORDER BY p.updated_at DESC
+        ORDER BY p.created_at DESC
     ");
     $stmt->execute();
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($products as $product) {
-        $lastmod = $product['updated_at'] ? date('Y-m-d', strtotime($product['updated_at'])) : date('Y-m-d');
+        $lastmod = $product['created_at'] ? date('Y-m-d', strtotime($product['created_at'])) : date('Y-m-d');
         $urls[] = [
             'loc' => $base_url . '/product/' . $product['id'],
             'lastmod' => $lastmod,

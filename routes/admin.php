@@ -764,9 +764,24 @@ post('/admin/shipping/weight-tiers/add', function () {
             $stmt->execute([':country_id' => $country_id]);
             $tier = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            // Return the new tier card
+            // Get all tiers for this country to return the complete tier list
             if ($tier) {
-                partial('admin/shipping/partials/tier_card', ['tier' => $tier]);
+                $stmt = $db->prepare("
+                    SELECT swt.*, sc.country_name, sc.country_code
+                    FROM shipping_weight_tiers swt
+                    JOIN shipping_countries sc ON swt.country_id = sc.id
+                    WHERE swt.country_id = :country_id
+                    ORDER BY swt.max_weight_kg ASC
+                ");
+                $stmt->execute([':country_id' => $country_id]);
+                $all_tiers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // Return the complete tier list with out-of-band swap
+                echo '<div class="weight-tiers" data-country-tiers="' . $country_id . '" id="country-tiers-' . $country_id . '" hx-swap-oob="true">';
+                foreach ($all_tiers as $tier_item) {
+                    partial('admin/shipping/partials/tier_card', ['tier' => $tier_item]);
+                }
+                echo '</div>';
             }
         } else {
             http_response_code(400);

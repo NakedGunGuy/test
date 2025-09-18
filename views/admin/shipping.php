@@ -52,7 +52,7 @@ foreach ($weight_tiers as $tier) {
                 </div>
 
                 <!-- Weight Tiers -->
-                <div class="weight-tiers" data-country-tiers="<?= $country['id'] ?>">
+                <div class="weight-tiers" data-country-tiers="<?= $country['id'] ?>" id="country-tiers-<?= $country['id'] ?>">
                     <?php if (isset($tiers_by_country[$country['id']]) && !empty($tiers_by_country[$country['id']])): ?>
                         <?php foreach ($tiers_by_country[$country['id']] as $tier): ?>
                             <?php partial('admin/shipping/partials/tier_card', ['tier' => $tier]); ?>
@@ -121,12 +121,30 @@ function toggleCountrySettings(countryId) {
     }
 }
 
+// Validate form before submission
+document.body.addEventListener('htmx:configRequest', function(evt) {
+    if (evt.target.matches('#add-tier-form')) {
+        const countryId = evt.target.querySelector('[name=country_id]').value;
+        if (!countryId) {
+            document.getElementById('form-error').innerHTML = '<div class="error-message">Please select a country first</div>';
+            evt.preventDefault();
+            return;
+        }
+
+        // Clear any previous errors
+        document.getElementById('form-error').innerHTML = '';
+    }
+});
+
 // Auto-clear form after successful add
 document.body.addEventListener('htmx:afterRequest', function(evt) {
     if (evt.detail.xhr.status === 200 && evt.target.matches('form[hx-post*="/weight-tiers/add"]')) {
         // Clear form inputs
         const form = evt.target;
         form.reset();
+
+        // Clear any error messages
+        document.getElementById('form-error').innerHTML = '';
     }
 });
 </script>

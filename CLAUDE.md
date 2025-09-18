@@ -19,6 +19,7 @@ Cardpoint is a modern e-commerce platform for Trading Card Game (TCG) cards, spe
 - **Create User**: `php console/create_user.php` - Create regular user account
 - **Cache Images**: `php console/cache_card_images.php` - Pre-cache card images
 - **Send Emails**: `php console/send_emails.php` - Process email queue
+- **Generate Sitemap**: `php console/generate_sitemap.php` - Generate XML sitemap for SEO
 - **Database Schema**: `alters.sql` contains the complete SQLite schema
 
 ### Dependencies

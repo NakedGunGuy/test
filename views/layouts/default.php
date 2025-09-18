@@ -49,7 +49,7 @@
             </a>
             <ul>
                 <li>
-                    <a href="/discover" class="<?= $currentUrl === '/discover' ? 'active' : '' ?>">
+                    <a href="/discover" class="<?= str_starts_with($currentUrl, '/discover') ? 'active' : '' ?>">
                         <span class="nav-icon">🔍</span>Discover
                     </a>    
                 </li>
@@ -115,7 +115,7 @@
         <a href="/" class="mobile-nav-item">
             <span class="mobile-nav-icon"><img height="64" src="/assets/logo.png"></span>
         </a>
-        <a href="/discover" class="mobile-nav-item <?= $currentUrl === '/discover' ? 'active' : '' ?>">
+        <a href="/discover" class="mobile-nav-item <?= str_starts_with($currentUrl, '/discover') ? 'active' : '' ?>">
             <span class="mobile-nav-icon">🔍</span>
             <span class="mobile-nav-text">Discover</span>
         </a>

@@ -1,10 +1,6 @@
-<form hx-post="/admin/shipping/weight-tiers/add" 
-      hx-swap="afterbegin" 
-      hx-on="htmx:configRequest: 
-          const countryId = this.querySelector('[name=country_id]').value;
-          event.detail.target = document.querySelector(`[data-country-tiers='${countryId}']`);
-      "
-      hx-on="htmx:afterRequest: if(event.detail.xhr.status === 200) this.reset()"
+<form hx-post="/admin/shipping/weight-tiers/add"
+      hx-target="this"
+      hx-swap="none"
       id="add-tier-form">
     <div class="grid form" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1rem; align-items: end;">
         <div class="form-group">
@@ -32,4 +28,5 @@
         </div>
         <button type="submit" class="btn blue">Add Tier</button>
     </div>
+    <div id="form-error" class="form-error"></div>
 </form>
