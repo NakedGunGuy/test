@@ -1,28 +1,28 @@
 <?php start_section('title'); ?>Login - <?= htmlspecialchars($_ENV['APP_NAME']) ?><?php end_section('title'); ?>
-<?php start_section('page_title'); ?>Login<?php end_section('page_title'); ?>
+<?php start_section('page_title'); ?><?= t('nav.login') ?><?php end_section('page_title'); ?>
 
 <div class="auth-container">
     <div class="auth-wrapper">
         <!-- Header Section -->
         <div class="auth-header">
             <div class="auth-icon">🔐</div>
-            <h1 class="auth-title">Welcome Back</h1>
-            <p class="auth-description">Sign in to your account to continue</p>
+            <h1 class="auth-title"><?= t('auth.welcome_back') ?></h1>
+            <p class="auth-description"><?= t('auth.sign_in_description') ?></p>
         </div>
 
         <!-- Login Form -->
         <div class="section auth-form">
             <form
-                hx-post="/login"
+                hx-post="<?= url('login') ?>"
                 hx-target="body"
                 hx-swap="none"
-                data-toast="Login successful!"
+                data-toast="<?= t('toast.login_successful') ?>"
                 class="form-container"
             >
                 <div class="form-group">
                     <label class="form-label" for="username">
                         <span class="form-label-with-icon">
-                            <span>👤</span>Username
+                            <span>👤</span><?= t('form.username') ?>
                         </span>
                     </label>
                     <input 
@@ -30,14 +30,14 @@
                         name="username" 
                         id="username" 
                         class="form-input"
-                        placeholder="Enter your username"
+                        placeholder="<?= t('placeholder.enter_username') ?>"
                         required>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label" for="password">
                         <span class="form-label-with-icon">
-                            <span>🔑</span>Password
+                            <span>🔑</span><?= t('form.password') ?>
                         </span>
                     </label>
                     <input 
@@ -45,7 +45,7 @@
                         name="password" 
                         id="password" 
                         class="form-input"
-                        placeholder="Enter your password"
+                        placeholder="<?= t('placeholder.enter_password') ?>"
                         required>
                 </div>
 

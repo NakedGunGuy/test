@@ -13,7 +13,7 @@ end_section('title');
     <!-- Add New Country -->
     <div class="section">
         <h3 class="section-subtitle">Add New Shipping Country</h3>
-            <form hx-post="/admin/shipping/countries/add" hx-target="#countries-table" hx-swap="outerHTML">
+            <form hx-post="<?= url('admin/shipping/countries/add') ?>" hx-target="#countries-table" hx-swap="outerHTML">
                 <div class="grid form" style="grid-template-columns: 1fr 2fr 1fr 1fr auto; gap: 1rem; align-items: end;">
                     <div class="form-group">
                         <label for="country_code" class="form-label">Country Code</label>

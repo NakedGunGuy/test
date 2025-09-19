@@ -241,6 +241,7 @@ post('/set-view-preference', function () {
     }
 });
 
+
 get('/products/search', function () {
     $name = $_GET['name'] ?? '';
     $products = $name ? getProducts(['name' => $name], null, 10) : [];

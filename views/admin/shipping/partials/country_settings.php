@@ -1,4 +1,4 @@
-<form hx-post="/admin/shipping/countries/update/<?= $country['id'] ?>" 
+<form hx-post="<?= url('admin/shipping/countries/update/' . $country['id']) ?>" 
       hx-swap="outerHTML" 
       hx-target="this">
     <input type="hidden" name="country_name" value="<?= htmlspecialchars($country['country_name']) ?>">

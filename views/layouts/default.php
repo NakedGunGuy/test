@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= get_current_language() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,15 +42,15 @@
     ?>
     <nav>
         <section>
-            <a href="/" class="brand-container">
+            <a href="<?= url('') ?>" class="brand-container">
                 <img height="64" src="/assets/logo.png">
                 <span>CARD</span>
                 <span>POINT</span>
             </a>
             <ul>
                 <li>
-                    <a href="/discover" class="<?= str_starts_with($currentUrl, '/discover') ? 'active' : '' ?>">
-                        <span class="nav-icon">🔍</span>Discover
+                    <a href="<?= url('discover') ?>" class="<?= str_starts_with($currentUrl, '/discover') ? 'active' : '' ?>">
+                        <span class="nav-icon">🔍</span><?= t('nav.discover') ?>
                     </a>    
                 </li>
             </ul>
@@ -60,7 +60,7 @@
                 <li>
                     <div class="search-box">
                         <span class="search-icon">🔍</span>
-                        <span class="search-placeholder">Search cards...</span>
+                        <span class="search-placeholder"><?= t('common.search_cards') ?></span>
                     </div>
                 </li>
                 <li>
@@ -73,8 +73,8 @@
                     ?>
                 </li>
                 <li>
-                    <a href="/profile" class="<?= str_starts_with($currentUrl, '/profile') ? 'active' : '' ?>">
-                        <span class="nav-icon">👤</span>Account
+                    <a href="<?= url('profile') ?>" class="<?= str_starts_with($currentUrl, '/profile') ? 'active' : '' ?>">
+                        <span class="nav-icon">👤</span><?= t('nav.account') ?>
                     </a>
                 </li>
             </ul>
@@ -84,20 +84,23 @@
 <div>
     <header>
         <section>
-            <div class="page-title"><?= section('page_title', htmlspecialchars($_ENV['APP_NAME'])) ?></div>
+            <div class="page-title"><?= section('page_title', t('common.home')) ?></div>
         </section>
         <section>
             <ul style="display: flex; gap: 1rem; align-items: center;">
+                <li>
+                    <?php partial('partials/language_toggle'); ?>
+                </li>
                 <?php $user = get_logged_in_user(); if ($user): ?>
                     <li>
-                        <a class="btn black" href="/profile">Profile</a>
+                        <a class="btn black" href="<?= url('profile') ?>"><?= t('nav.profile') ?></a>
                     </li>
                 <?php else: ?>
                     <li>
-                        <a class="btn black" href="/login">Login</a>
+                        <a class="btn black" href="<?= url('login') ?>"><?= t('nav.login') ?></a>
                     </li>
                     <li>
-                        <a class="btn blue" href="/register">Sign Up</a>
+                        <a class="btn blue" href="<?= url('register') ?>"><?= t('nav.signup') ?></a>
                     </li>
                 <?php endif; ?>
             </ul>
@@ -112,22 +115,22 @@
 <!-- Mobile Bottom Navigation -->
 <div class="mobile-bottom-nav">
     <div class="mobile-nav-container">
-        <a href="/" class="mobile-nav-item">
+        <a href="<?= url('') ?>" class="mobile-nav-item">
             <span class="mobile-nav-icon"><img height="64" src="/assets/logo.png"></span>
         </a>
-        <a href="/discover" class="mobile-nav-item <?= str_starts_with($currentUrl, '/discover') ? 'active' : '' ?>">
+        <a href="<?= url('discover') ?>" class="mobile-nav-item <?= str_starts_with($currentUrl, '/discover') ? 'active' : '' ?>">
             <span class="mobile-nav-icon">🔍</span>
-            <span class="mobile-nav-text">Discover</span>
+            <span class="mobile-nav-text"><?= t('nav.discover') ?></span>
         </a>
         <?php if (get_logged_in_user()): ?>
-            <a href="/cart" class="mobile-nav-item <?= str_starts_with($currentUrl, '/cart') ? 'active' : '' ?>">
+            <a href="<?= url('cart') ?>" class="mobile-nav-item <?= str_starts_with($currentUrl, '/cart') ? 'active' : '' ?>">
                 <span class="mobile-nav-icon">🛒</span>
-                <span class="mobile-nav-text">Cart</span>
+                <span class="mobile-nav-text"><?= t('nav.cart') ?></span>
             </a>
         <?php endif; ?>
-        <a href="/profile" class="mobile-nav-item <?= str_starts_with($currentUrl, '/profile') ? 'active' : '' ?>">
+        <a href="<?= url('profile') ?>" class="mobile-nav-item <?= str_starts_with($currentUrl, '/profile') ? 'active' : '' ?>">
             <span class="mobile-nav-icon">👤</span>
-            <span class="mobile-nav-text">Account</span>
+            <span class="mobile-nav-text"><?= t('nav.account') ?></span>
         </a>
     </div>
 </div>

@@ -118,7 +118,7 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                         
                         <div class="grid-cell">
                             <form style="display: inline;" 
-                                  hx-post="/admin/orders/<?= $order['id'] ?>/status" 
+                                  hx-post="<?= url('admin/orders/' . $order['id'] . '/status') ?>" 
                                   hx-trigger="change"
                                   data-toast="Order status updated!">
                                 <select name="status" class="form-input" style="width: auto; padding: 4px 8px; font-size: 12px;">

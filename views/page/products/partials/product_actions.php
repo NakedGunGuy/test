@@ -12,7 +12,7 @@
 ?>
 
 <form
-        hx-post="/cart/add"
+        hx-post="<?= url('cart/add') ?>"
         hx-swap="outerHTML"
         class="add-to-cart-form">
     <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
@@ -21,7 +21,7 @@
         <input type="number" id="qty-actions-<?= $product['id'] ?>" name="quantity" value="1" min="1" max="<?= $product['quantity'] ?>" class="qty-input" readonly>
         <button type="button" class="qty-btn" onclick="changeQuantity('actions-<?= $product['id'] ?>', 1)">+</button>
     </div>
-    <button type="submit" class="btn blue btn-small">Add to Cart</button>
+    <button type="submit" class="btn blue btn-small"><?= t('button.add_to_cart') ?></button>
 </form>
 
 

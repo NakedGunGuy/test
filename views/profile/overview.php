@@ -28,14 +28,14 @@ Profile - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                         <div class="icon">📦</div>
                         <div class="info">
                             <div class="number"><?= $stats['total_orders'] ?? 0 ?></div>
-                            <div class="label">Total Orders</div>
+                            <div class="label"><?= t('profile.total_orders') ?></div>
                         </div>
                     </div>
                     <div class="card stat">
                         <div class="icon">💳</div>
                         <div class="info">
                             <div class="number">$<?= number_format($stats['total_spent'] ?? 0, 2) ?></div>
-                            <div class="label">Total Spent</div>
+                            <div class="label"><?= t('profile.total_spent') ?></div>
                         </div>
                     </div>
                     <div class="card stat">
@@ -57,7 +57,7 @@ Profile - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                 <a href="/profile/settings" class="card action">
                     <span class="icon">⚙️</span>
                     <div class="content">
-                        <div class="title">Account Settings</div>
+                        <div class="title"><?= t('profile.account_settings') ?></div>
                         <div class="desc">Update your profile information and password</div>
                     </div>
                     <span class="arrow">→</span>
@@ -66,7 +66,7 @@ Profile - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                 <a href="/profile/orders" class="card action">
                     <span class="icon">📦</span>
                     <div class="content">
-                        <div class="title">Order History</div>
+                        <div class="title"><?= t('profile.order_history') ?></div>
                         <div class="desc">View your past orders and track shipments</div>
                     </div>
                     <span class="arrow">→</span>
@@ -84,7 +84,7 @@ Profile - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                 <a href="/cart" class="card action">
                     <span class="icon">🛍️</span>
                     <div class="content">
-                        <div class="title">View Cart</div>
+                        <div class="title"><?= t('button.view_cart') ?></div>
                         <div class="desc">Check your current cart and checkout</div>
                     </div>
                     <span class="arrow">→</span>

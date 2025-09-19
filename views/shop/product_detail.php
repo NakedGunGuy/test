@@ -12,7 +12,7 @@
     <?php start_section('schemas'); echo serialize($schemas); end_section('schemas'); ?>
 <?php endif; ?>
 
-<?php start_section('page_title'); ?>Product Details<?php end_section('page_title'); ?>
+<?php start_section('page_title'); ?><?= t('product.details') ?><?php end_section('page_title'); ?>
 
 <div class="product-container" style="grid-template-columns: 2fr 1fr;">
     <!-- Product Image & Info -->
@@ -39,20 +39,20 @@
                 </div>
                 <div class="product-meta-container">
                     <div class="meta-item">
-                        <div class="meta-label">Set</div>
+                        <div class="meta-label"><?= t('product.set') ?></div>
                         <div><?= htmlspecialchars($product['set_name']) ?></div>
                     </div>
                     <div class="meta-item">
-                        <div class="meta-label">Number</div>
+                        <div class="meta-label"><?= t('product.number') ?></div>
                         <div><?= htmlspecialchars($product['edition_number']) ?></div>
                     </div>
                     <div class="meta-item">
-                        <div class="meta-label">Rarity</div>
-                        <div><?= htmlspecialchars($product['rarity'] ?? 'N/A') ?></div>
+                        <div class="meta-label"><?= t('product.rarity') ?></div>
+                        <div><?= htmlspecialchars($product['rarity'] ?? t('common.na')) ?></div>
                     </div>
                     <div class="meta-item">
-                        <div class="meta-label">Foil</div>
-                        <div><?= $product['is_foil'] ? 'Yes' : 'No' ?></div>
+                        <div class="meta-label"><?= t('product.foil') ?></div>
+                        <div><?= $product['is_foil'] ? t('common.yes') : t('common.no') ?></div>
                     </div>
                 </div>
             </div>
@@ -60,7 +60,7 @@
         
         <?php if ($product['description']): ?>
             <div class="product-section">
-                <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Description</h3>
+                <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;"><?= t('product.description') ?></h3>
                 <p><?= nl2br(htmlspecialchars($product['description'])) ?></p>
             </div>
         <?php endif; ?>
@@ -71,23 +71,23 @@
         <?php partial('shop/partials/product_purchase_section', ['product' => $product]); ?>
         
         <div class="action-buttons">
-            <a href="/discover" class="btn-outline">Continue Shopping</a>
-            <a href="/cart" class="btn black" style="flex: 1; text-align: center;">View Cart</a>
+            <a href="<?= url('discover') ?>" class="btn-outline"><?= t('product.continue_shopping') ?></a>
+            <a href="<?= url('cart') ?>" class="btn black" style="flex: 1; text-align: center;"><?= t('button.view_cart') ?></a>
         </div>
     </div>
 </div>
 
 <!-- Order History Section -->
 <?php if (!empty($order_history)): ?>
-    <h2 class="section-title">Recent Orders</h2>
+    <h2 class="section-title"><?= t('product.recent_orders') ?></h2>
     <table>
         <thead>
             <tr>
-                <th>Order Date</th>
-                <th>Customer</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Status</th>
+                <th><?= t('product.order_date') ?></th>
+                <th><?= t('product.customer') ?></th>
+                <th><?= t('cart.quantity') ?></th>
+                <th><?= t('products.price') ?></th>
+                <th><?= t('common.status') ?></th>
             </tr>
         </thead>
         <tbody>
@@ -110,7 +110,7 @@
 
 <!-- Card Variants Section -->
 <?php if (!empty($card_variants)): ?>
-    <h2 class="section-title">Other Editions & Variants</h2>
+    <h2 class="section-title"><?= t('product.other_editions') ?></h2>
     <div class="variants-grid">
         <?php foreach ($card_variants as $variant): ?>
             <div class="variant-card">
@@ -120,13 +120,13 @@
                     </a>
                 </h3>
                 <div class="variant-meta">
-                    <div class="variant-meta-item">Rarity: <?= htmlspecialchars($variant['rarity'] ?? 'N/A') ?></div>
-                    <div class="variant-meta-item">Foil: <?= $variant['is_foil'] ? 'Yes' : 'No' ?></div>
-                    <div class="variant-meta-item">Price: <span class="variant-price">$<?= number_format($variant['price'], 2) ?></span></div>
-                    <div class="variant-meta-item">Stock: <?= $variant['quantity'] > 0 ? $variant['quantity'] . ' available' : 'Out of stock' ?></div>
+                    <div class="variant-meta-item"><?= t('product.rarity') ?>: <?= htmlspecialchars($variant['rarity'] ?? t('common.na')) ?></div>
+                    <div class="variant-meta-item"><?= t('product.foil') ?>: <?= $variant['is_foil'] ? t('common.yes') : t('common.no') ?></div>
+                    <div class="variant-meta-item"><?= t('products.price') ?>: <span class="variant-price">$<?= number_format($variant['price'], 2) ?></span></div>
+                    <div class="variant-meta-item"><?= t('products.stock') ?>: <?= $variant['quantity'] > 0 ? t('product.available', ['count' => $variant['quantity']]) : t('products.out_of_stock') ?></div>
                 </div>
                 <a href="/product/<?= $variant['id'] ?>" class="btn blue btn-small">
-                    View Details
+                    <?= t('product.view_details') ?>
                 </a>
             </div>
         <?php endforeach; ?>

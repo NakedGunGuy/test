@@ -56,7 +56,7 @@
                         <div class="actions">
                             <?php if ($country['is_enabled']): ?>
                             <button type="button"
-                                    hx-post="/admin/shipping/countries/update/<?= $country['id'] ?>"
+                                    hx-post="<?= url('admin/shipping/countries/update/' . $country['id']) ?>"
                                     hx-vals='{"is_enabled": false, "country_name": "<?= htmlspecialchars($country['country_name']) ?>", "estimated_days_min": <?= $country['estimated_days_min'] ?>, "estimated_days_max": <?= $country['estimated_days_max'] ?>}'
                                     hx-target="#countries-table"
                                     hx-swap="outerHTML"
@@ -66,7 +66,7 @@
                             </button>
                             <?php else: ?>
                             <button type="button"
-                                    hx-post="/admin/shipping/countries/update/<?= $country['id'] ?>"
+                                    hx-post="<?= url('admin/shipping/countries/update/' . $country['id']) ?>"
                                     hx-vals='{"is_enabled": true, "country_name": "<?= htmlspecialchars($country['country_name']) ?>", "estimated_days_min": <?= $country['estimated_days_min'] ?>, "estimated_days_max": <?= $country['estimated_days_max'] ?>}'
                                     hx-target="#countries-table"
                                     hx-swap="outerHTML"
@@ -85,7 +85,7 @@
 
                             <?php if ($order_count == 0): ?>
                             <button type="button"
-                                    hx-post="/admin/shipping/countries/delete/<?= $country['id'] ?>"
+                                    hx-post="<?= url('admin/shipping/countries/delete/' . $country['id']) ?>"
                                     hx-target="#countries-table"
                                     hx-swap="outerHTML"
                                     hx-confirm="Are you sure you want to delete <?= htmlspecialchars($country['country_name']) ?>? This will also delete all weight tiers for this country."

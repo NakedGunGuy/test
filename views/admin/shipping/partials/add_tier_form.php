@@ -1,4 +1,4 @@
-<form hx-post="/admin/shipping/weight-tiers/add"
+<form hx-post="<?= url('admin/shipping/weight-tiers/add') ?>"
       hx-target="this"
       hx-swap="none"
       id="add-tier-form">

@@ -5,7 +5,7 @@
         <!-- Header Section -->
         <div class="auth-header">
             <div class="auth-icon admin-auth-icon">⚡</div>
-            <h1 class="auth-title">Admin Portal</h1>
+            <h1 class="auth-title"><?= t('auth.admin_portal') ?></h1>
             <p class="auth-description">Secure access to administrative functions</p>
         </div>
 
@@ -22,7 +22,7 @@
                 <div class="form-group">
                     <label class="form-label" for="username">
                         <span class="form-label-with-icon">
-                            <span>👤</span>Administrator Username
+                            <span>👤</span><?= t('auth.admin_username') ?>
                         </span>
                     </label>
                     <input 
@@ -30,14 +30,14 @@
                         name="username" 
                         id="username" 
                         class="form-input"
-                        placeholder="Enter admin username"
+                        placeholder="<?= t('placeholder.enter_admin_username') ?>"
                         required>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label" for="password">
                         <span class="form-label-with-icon">
-                            <span>🔐</span>Administrator Password
+                            <span>🔐</span><?= t('auth.admin_password') ?>
                         </span>
                     </label>
                     <input 
@@ -45,11 +45,11 @@
                         name="password" 
                         id="password" 
                         class="form-input"
-                        placeholder="Enter secure password"
+                        placeholder="<?= t('placeholder.enter_secure_password') ?>"
                         required>
                 </div>
                 <button type="submit" class="btn blue btn-full admin-auth-button">
-                    🚀 Access Admin Portal
+                    <?= t('auth.access_admin_portal') ?>
                 </button>
             </form>
             

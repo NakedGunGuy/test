@@ -6,7 +6,7 @@
     <form
         id="product_form"
         method="POST"
-        hx-post="/admin/products/create"
+        hx-post="<?= url('admin/products/create') ?>"
         hx-target="#products-table"
         hx-swap="innerHTML"
         data-toast="Product created successfully!"

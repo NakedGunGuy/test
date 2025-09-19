@@ -14,7 +14,7 @@
 
 <div class="form-actions">
     <button type="button"
-        hx-post="/admin/products/delete/<?= $product_id ?>"
+        hx-post="<?= url('admin/products/delete/' . $product_id) ?>"
         hx-target="#products-table"
         hx-swap="InnerHtml"
         data-toast="Product deleted successfully!"

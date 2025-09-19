@@ -50,14 +50,14 @@ $stats = get_card_image_cache_stats();
     <div class="section">
         <h3 class="section-subtitle">Cache Management</h3>
         <div class="grid actions">
-            <form hx-post="/admin/cache-images/refresh" hx-swap="outerHTML" hx-target="this">
+            <form hx-post="<?= url('admin/cache-images/refresh') ?>" hx-swap="outerHTML" hx-target="this">
                 <button type="submit" class="btn blue">
                     🔄 Cache All Missing Images
                 </button>
                 <div class="form-help">Download and cache any missing card images from the API</div>
             </form>
 
-            <form hx-post="/admin/cache-images/clear-old" hx-swap="outerHTML" hx-target="this">
+            <form hx-post="<?= url('admin/cache-images/clear-old') ?>" hx-swap="outerHTML" hx-target="this">
                 <div class="form-group">
                     <label for="max_age" class="form-label">Clear Old Images</label>
                     <select name="max_age" id="max_age" class="form-input">
@@ -72,7 +72,7 @@ $stats = get_card_image_cache_stats();
                 <div class="form-help">Remove cached images older than the selected time period</div>
             </form>
 
-            <form hx-post="/admin/cache-images/clear-all" hx-swap="outerHTML" hx-target="this" 
+            <form hx-post="<?= url('admin/cache-images/clear-all') ?>" hx-swap="outerHTML" hx-target="this" 
                   hx-confirm="Are you sure you want to clear ALL cached images? This cannot be undone.">
                 <button type="submit" class="btn red">
                     ⚠️ Clear All Cache

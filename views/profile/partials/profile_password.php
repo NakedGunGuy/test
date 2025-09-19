@@ -1,12 +1,12 @@
 <form
-    hx-post="/profile/password"
+    hx-post="<?= url('profile/password') ?>"
     hx-target="#profile-password"
     hx-swap="outerHTML"
-    data-toast="Password changed successfully!"
+    data-toast="<?= t('toast.password_changed') ?>"
     class="password-form"
 >
     <div class="form-group">
-        <label for="current_password" class="form-label">Current Password</label>
+        <label for="current_password" class="form-label"><?= t('form.current_password') ?></label>
         <input 
             type="password" 
             id="current_password"
@@ -17,7 +17,7 @@
     </div>
     
     <div class="form-group">
-        <label for="new_password" class="form-label">New Password</label>
+        <label for="new_password" class="form-label"><?= t('form.new_password') ?></label>
         <input 
             type="password" 
             id="new_password"
@@ -30,7 +30,7 @@
     </div>
     
     <div class="form-group">
-        <label for="confirm_password" class="form-label">Confirm New Password</label>
+        <label for="confirm_password" class="form-label"><?= t('form.confirm_new_password') ?></label>
         <input 
             type="password" 
             id="confirm_password"
@@ -43,7 +43,7 @@
     
     <div class="form-actions">
         <button type="submit" class="btn red">
-            Change Password
+            <?= t('button.change_password') ?>
         </button>
     </div>
 </form>

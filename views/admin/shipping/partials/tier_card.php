@@ -1,5 +1,5 @@
 <div class="tier-card">
-    <form hx-post="/admin/shipping/weight-tiers/update/<?= $tier['id'] ?>" 
+    <form hx-post="<?= url('admin/shipping/weight-tiers/update/' . $tier['id']) ?>" 
           hx-swap="outerHTML" 
           hx-target="this">
         <input type="hidden" name="country_id" value="<?= $tier['country_id'] ?>">
@@ -31,7 +31,7 @@
             <div class="tier-actions form-group">
                 <button type="submit" class="btn-small blue">Save</button>
                 <button type="button" 
-                        hx-post="/admin/shipping/weight-tiers/delete/<?= $tier['id'] ?>" 
+                        hx-post="<?= url('admin/shipping/weight-tiers/delete/' . $tier['id']) ?>" 
                         hx-confirm="Delete this shipping tier?"
                         hx-swap="delete"
                         hx-target="closest .tier-card"

@@ -5,15 +5,15 @@
     <?php start_section('seo_data'); echo serialize($seo_data); end_section('seo_data'); ?>
 <?php endif; ?>
 
-<?php start_section('page_title'); ?>Discover<?php end_section('page_title'); ?>
+<?php start_section('page_title'); ?><?= t('nav.discover') ?><?php end_section('page_title'); ?>
 
 <div class="section" style="margin-bottom: 2rem; z-index: 5; position:relative; ">
     <h3 class="section-header">
-        <span class="section-header-icon">🔍</span>Search & Filter
+        <span class="section-header-icon">🔍</span><?= t('products.search_filter') ?>
     </h3>
     <form method="get" class="search-form" style="grid-template-columns: 2fr 1fr 1fr auto auto;">
         <div class="form-group" style="position: relative; margin-bottom: 0;">
-            <label class="form-label">Search Cards</label>
+            <label class="form-label"><?= t('products.search_cards') ?></label>
             <input
                 id="search-input"
                 class="form-input"
@@ -23,34 +23,34 @@
                 hx-target="#product-results"
                 hx-swap="innerHTML"
                 value="<?= htmlspecialchars($_GET['name'] ?? '') ?>"
-                placeholder="Enter card name..."
+                placeholder="<?= t('products.enter_card_name') ?>"
                 autocomplete="off"
             >
             <div id="product-results" class="search-results" style="display: none;"></div>
         </div>
         
         <div class="form-group" style="margin-bottom: 0;">
-            <label class="form-label">Min Price</label>
+            <label class="form-label"><?= t('products.min_price') ?></label>
             <input class="form-input" type="number" name="min_price" placeholder="€0" value="<?= htmlspecialchars($_GET['min_price'] ?? '') ?>"/>
         </div>
         
         <div class="form-group" style="margin-bottom: 0;">
-            <label class="form-label">Max Price</label>
+            <label class="form-label"><?= t('products.max_price') ?></label>
             <input class="form-input" type="number" name="max_price" placeholder="€1000" value="<?= htmlspecialchars($_GET['max_price'] ?? '') ?>"/>
         </div>
         
-        <button type="submit" class="btn blue filter-button" style="box-sizing: border-box; height: auto; line-height: normal;">Filter</button>
+        <button type="submit" class="btn blue filter-button" style="box-sizing: border-box; height: auto; line-height: normal;"><?= t('common.filter') ?></button>
 
-        <a href="<?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?>" class="btn black reset-button" style="box-sizing: border-box; height: auto; line-height: normal; display: inline-flex; align-items: center;">Reset</a>
+        <a href="<?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?>" class="btn black reset-button" style="box-sizing: border-box; height: auto; line-height: normal; display: inline-flex; align-items: center;"><?= t('common.reset') ?></a>
     </form>
 </div>
 
 <div class="section">
     <div class="products-stats">
-        <h3 class="products-count">📄 Products (<?= $pagination['total_products'] ?> found<?= $pagination['total_pages'] > 1 ? ', page ' . $pagination['current_page'] . ' of ' . $pagination['total_pages'] : '' ?>)</h3>
+        <h3 class="products-count">📄 <?= t('products.products_found', ['count' => $pagination['total_products']]) ?><?= $pagination['total_pages'] > 1 ? ', page ' . $pagination['current_page'] . ' of ' . $pagination['total_pages'] : '' ?></h3>
         <div class="products-controls">
             <div class="per-page-control">
-                <select aria-label="Show products per page" id="per_page_select" onchange="changePerPage(this.value)" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #C0C0D133; background: #1E1E27; color: #fff; font-size: 14px;">
+                <select aria-label="<?= t('aria.show_products_per_page') ?>" id="per_page_select" onchange="changePerPage(this.value)" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #C0C0D133; background: #1E1E27; color: #fff; font-size: 14px;">
                     <option value="10" <?= $pagination['per_page'] == 10 ? 'selected' : '' ?>>10</option>
                     <option value="25" <?= $pagination['per_page'] == 25 ? 'selected' : '' ?>>25</option>
                     <option value="50" <?= $pagination['per_page'] == 50 ? 'selected' : '' ?>>50</option>
@@ -58,10 +58,10 @@
                 </select>
             </div>
             <div class="view-toggle">
-                <span class="view-toggle-label">View:</span>
-                <button class="view-toggle-btn <?= ($_SESSION['view_preference'] ?? 'grid') === 'grid' ? 'active' : 'inactive' ?>" data-view="grid">Grid</button>
-                <button class="view-toggle-btn <?= ($_SESSION['view_preference'] ?? 'grid') === 'list' ? 'active' : 'inactive' ?>" data-view="list">List</button>
-                <button class="view-toggle-btn <?= ($_SESSION['view_preference'] ?? 'grid') === 'box' ? 'active' : 'inactive' ?>" data-view="box">Box</button>
+                <span class="view-toggle-label"><?= t('products.view') ?></span>
+                <button class="view-toggle-btn <?= ($_SESSION['view_preference'] ?? 'grid') === 'grid' ? 'active' : 'inactive' ?>" data-view="grid"><?= t('products.grid') ?></button>
+                <button class="view-toggle-btn <?= ($_SESSION['view_preference'] ?? 'grid') === 'list' ? 'active' : 'inactive' ?>" data-view="list"><?= t('products.list') ?></button>
+                <button class="view-toggle-btn <?= ($_SESSION['view_preference'] ?? 'grid') === 'box' ? 'active' : 'inactive' ?>" data-view="box"><?= t('products.box') ?></button>
             </div>
         </div>
     </div>
@@ -72,14 +72,14 @@
             <div class="grid-header" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;">
                 <div class="header-cell">
                     <span class="grid-header-with-icon">
-                        <span>🃏</span>Card Name
+                        <span>🃏</span><?= t('products.card_name') ?>
                     </span>
                 </div>
-                <div class="header-cell">Edition</div>
-                <div class="header-cell">Price</div>
-                <div class="header-cell">Stock</div>
-                <div class="header-cell">Foil</div>
-                <div class="header-cell">Actions</div>
+                <div class="header-cell"><?= t('products.edition') ?></div>
+                <div class="header-cell"><?= t('products.price') ?></div>
+                <div class="header-cell"><?= t('products.stock') ?></div>
+                <div class="header-cell"><?= t('products.foil') ?></div>
+                <div class="header-cell"><?= t('products.actions') ?></div>
             </div>
             <div id="products-table" class="grid-body">
                 <?php partial('page/products/partials/products_table_body', ['products' => $products]); ?>
@@ -107,7 +107,7 @@
                                 hx-trigger="click"
                                 height="60" width="60"
                                 src="<?= $dataUri ?>"
-                                alt="Card image"
+                                alt="<?= t('placeholder.card_image') ?>"
                                 data-src="<?= card_image($product['edition_slug']) ?>"
                             />
                         </div>
@@ -127,11 +127,11 @@
                         </div>
                         <div class="list-item-actions">
                             <?php if ($product['quantity'] > 0): ?>
-                                <form hx-post="/cart/add" hx-swap="outerHTML" class="add-to-cart-form">
+                                <form hx-post="<?= url('cart/add') ?>" hx-swap="outerHTML" class="add-to-cart-form">
                                     <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
                                     <div class="quantity-selector">
                                         <input type="number" name="quantity" value="1" min="1" max="<?= $product['quantity'] ?>" class="qty-input">
-                                        <button type="submit" class="btn blue btn-small">Add to Cart</button>
+                                        <button type="submit" class="btn blue btn-small"><?= t('button.add_to_cart') ?></button>
                                     </div>
                                 </form>
                             <?php endif; ?>
@@ -192,15 +192,15 @@
 
                     <div class="product-card-footer">
                         <?php if ($product['quantity'] > 0): ?>
-                            <form hx-post="/cart/add" hx-swap="outerHTML" class="add-to-cart-form">
+                            <form hx-post="<?= url('cart/add') ?>" hx-swap="outerHTML" class="add-to-cart-form">
                                 <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
                                 <div class="quantity-selector" style="display: flex; gap: 0.5rem; align-items: center;">
                                     <input type="number" name="quantity" value="1" min="1" max="<?= $product['quantity'] ?>" class="qty-input" style="width: 60px;">
-                                    <button type="submit" class="btn blue btn-small" style="flex: 1;">Add to Cart</button>
+                                    <button type="submit" class="btn blue btn-small" style="flex: 1;"><?= t('button.add_to_cart') ?></button>
                                 </div>
                             </form>
                         <?php else: ?>
-                            <button disabled class="btn btn-disabled" style="width: 100%;">Out of Stock</button>
+                            <button disabled class="btn btn-disabled" style="width: 100%;"><?= t('status.out_of_stock') ?></button>
                         <?php endif; ?>
                     </div>
                 </div>

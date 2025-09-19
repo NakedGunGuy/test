@@ -35,7 +35,7 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         </div>
         <div class="status-actions">
             <form style="display: flex; gap: 10px; align-items: center;" 
-                  hx-post="/admin/orders/<?= $order['id'] ?>/status" 
+                  hx-post="<?= url('admin/orders/' . $order['id'] . '/status') ?>" 
                   hx-trigger="submit"
                   data-toast="Order status updated!">
                 <select name="status" class="form-input" style="padding: 8px 12px;" onchange="toggleTrackingField(this)">

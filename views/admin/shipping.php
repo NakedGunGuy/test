@@ -95,7 +95,7 @@ foreach ($weight_tiers as $tier) {
                     </select>
                 </div>
                 <button type="button" 
-                        hx-post="/admin/shipping/calculate" 
+                        hx-post="<?= url('admin/shipping/calculate') ?>" 
                         hx-include="#test_cards, #test_country"
                         hx-target="#shipping-result"
                         class="btn blue">Calculate Shipping</button>

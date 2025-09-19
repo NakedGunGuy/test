@@ -5,7 +5,7 @@
 <div class="content">
     <form
         id="product_edit_form"
-        hx-post="/admin/products/update/<?= $product['id'] ?>" 
+        hx-post="<?= url('admin/products/update/' . $product['id']) ?>" 
         hx-target="#products-table"
         hx-swap="outerHTML"
         data-toast="Product updated successfully!"

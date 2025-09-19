@@ -5,9 +5,9 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
         </div>
-        <h3>No orders yet</h3>
-        <p>Start shopping to see your orders here.</p>
-        <a href="/discover" class="btn blue">Browse Products</a>
+        <h3><?= t('profile.no_orders_yet') ?></h3>
+        <p><?= t('profile.start_shopping') ?></p>
+        <a href="<?= url('discover') ?>" class="btn blue"><?= t('button.browse_products') ?></a>
     </div>
 <?php else: ?>
     <div class="orders-list">
@@ -15,7 +15,7 @@
             <div class="order-card">
                 <div class="order-header">
                     <div class="order-info">
-                        <h4>Order #<?= $order['id'] ?></h4>
+                        <h4><?= t('profile.order_number', ['id' => $order['id']]) ?></h4>
                         <p><?= date('F j, Y g:i A', strtotime($order['created_at'])) ?></p>
                     </div>
                     <span class="status-badge status-<?= $order['status'] ?>">
@@ -51,7 +51,7 @@
                         hx-target="#order-details-content"
                         onclick="document.getElementById('order-details-modal').classList.remove('hidden')"
                     >
-                        View Details →
+                        <?= t('profile.view_details') ?>
                     </button>
                 </div>
             </div>
@@ -62,7 +62,7 @@
     <div id="order-details-modal" class="modal-overlay hidden">
         <div class="modal">
             <div class="modal-header">
-                <h3>Order Details</h3>
+                <h3><?= t('profile.order_details') ?></h3>
                 <button 
                     class="modal-close"
                     onclick="document.getElementById('order-details-modal').classList.add('hidden')"

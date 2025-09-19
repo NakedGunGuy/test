@@ -4,7 +4,7 @@ Checkout - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 <?php start_section('page_title'); ?>Checkout<?php end_section('page_title'); ?>
 
 <div class="section" style="margin-bottom: 2rem;">
-    <a href="/cart" class="btn text back">← Back to Cart</a>
+    <a href="<?= url('cart') ?>" class="btn text back">← Back to Cart</a>
     <h1 class="section-title" style="margin-top: 0;">Checkout</h1>
     <p style="color: #C0C0D1;">Review your order and complete your purchase</p>
 </div>
@@ -49,44 +49,44 @@ Checkout - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 
     <!-- Checkout Form -->
     <div class="checkout-form">
-        <form method="POST" action="/checkout">
+        <form method="POST" action="<?= url('checkout') ?>">
             <div class="section">
                 <h2 class="section-subtitle">Shipping Information</h2>
                 <div class="grid form" style="grid-template-columns: 1fr 1fr;">
                     <div class="form-group">
-                        <label class="form-label">Full Name</label>
+                        <label class="form-label"><?= t('form.full_name') ?></label>
                         <input type="text" name="full_name" class="form-input" value="<?= htmlspecialchars($user['username']) ?>" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Email Address</label>
+                        <label class="form-label"><?= t('form.email_address') ?></label>
                         <input type="email" name="email" class="form-input" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required>
                     </div>
                     
                     <div class="form-group span-full">
-                        <label class="form-label">Address</label>
-                        <input type="text" name="address" class="form-input" placeholder="123 Main Street" required>
+                        <label class="form-label"><?= t('form.address') ?></label>
+                        <input type="text" name="address" class="form-input" placeholder="<?= t('placeholder.address_example') ?>" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">City</label>
+                        <label class="form-label"><?= t('form.city') ?></label>
                         <input type="text" name="city" class="form-input" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">State/Province</label>
+                        <label class="form-label"><?= t('form.state') ?></label>
                         <input type="text" name="state" class="form-input" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">ZIP/Postal Code</label>
+                        <label class="form-label"><?= t('form.zip') ?></label>
                         <input type="text" name="zip" class="form-input" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Country</label>
+                        <label class="form-label"><?= t('form.country') ?></label>
                         <select name="country" id="country-select" class="form-input" required 
-                                hx-post="/checkout/calculate-shipping" 
+                                hx-post="<?= url('checkout/calculate-shipping') ?>" 
                                 hx-target="#shipping-cost" 
                                 hx-trigger="change"
                                 hx-include="closest form">
