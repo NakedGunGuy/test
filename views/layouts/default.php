@@ -38,7 +38,7 @@
 </head>
 <body hx-ext="preload" data-htmx-log-level="debug">
     <?php
-        $currentUrl = $_SERVER['REQUEST_URI'];
+        $currentUrl = get_uri_without_language();
     ?>
     <nav>
         <section>
