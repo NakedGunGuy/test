@@ -14,6 +14,11 @@ foreach ($weight_tiers as $tier) {
     <div class="section-header">
         <span class="section-header-icon">🚚</span>
         Shipping Settings
+        <div class="section-header-actions">
+            <a href="/admin/shipping/countries" class="btn blue">
+                🌍 Manage Countries
+            </a>
+        </div>
     </div>
 
     <!-- Quick Add Weight Tier -->
@@ -25,14 +30,14 @@ foreach ($weight_tiers as $tier) {
     <!-- Weight Tiers by Country -->
     <div class="section">
         <h3 class="section-subtitle">Weight Tiers by Country</h3>
-        <p class="form-help">Manage shipping costs for each country. Cards weigh 2g each on average.</p>
+        <p class="form-help" style="margin-bottom: 20px;">Manage shipping costs for each country. Cards weigh 2g each on average.</p>
         
         <?php foreach ($countries as $country): ?>
             <?php if ($country['is_enabled']): ?>
             <div class="shipping-country-card">
                 <div class="country-header">
                     <div class="country-info">
-                        <h4>🌍 <?= htmlspecialchars($country['country_name']) ?> 
+                        <h4><?= htmlspecialchars($country['country_name']) ?>
                             <span class="country-code"><?= htmlspecialchars($country['country_code']) ?></span>
                         </h4>
                         <div class="country-meta">

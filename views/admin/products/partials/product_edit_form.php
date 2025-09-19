@@ -66,16 +66,29 @@
                 <?php endif; ?>
             </div>
         </div>
-        
-        <div class="form-group">
-            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                <input
-                    name="is_foil"
-                    type="checkbox"
-                    <?= $product['is_foil'] ? 'checked' : '' ?>
-                >
-                <span class="form-label" style="margin-bottom: 0;">Foil Version</span>
-            </label>
+
+        <div class="grid form" style="grid-template-columns: 1fr 1fr;">
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input
+                        name="is_foil"
+                        type="checkbox"
+                        <?= $product['is_foil'] ? 'checked' : '' ?>
+                    >
+                    <span class="form-label" style="margin-bottom: 0;">Foil Version</span>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input
+                            name="is_used"
+                            type="checkbox"
+                        <?= $product['is_used'] ? 'checked' : '' ?>
+                    >
+                    <span class="form-label" style="margin-bottom: 0;">Used</span>
+                </label>
+            </div>
         </div>
     </form>
 </div>
@@ -85,10 +98,5 @@
             form="product_edit_form"
             class="btn blue">
         Update Product
-    </button>
-    <button type="button" 
-            onclick="closeDialog()" 
-            class="btn black">
-        Cancel
     </button>
 </div>

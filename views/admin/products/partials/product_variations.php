@@ -19,7 +19,15 @@
 </div>
 
 <div class="form-actions">
-    <button type="button" onclick="closeDialog()" class="btn black">
-        Close
-    </button>
+    <button
+            class="btn blue"
+            hx-get="/admin/products/edition/<?= htmlspecialchars($edition_id) ?>/new"
+            hx-target="#dialog"
+            hx-swap="innerHTML"
+    >Create New</button>
+    <form method="dialog">
+        <button type="submit" class="btn black">
+            Close
+        </button>
+    </form>
 </div>

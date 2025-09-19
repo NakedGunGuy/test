@@ -16,13 +16,15 @@
     <button type="button"
         hx-post="/admin/products/delete/<?= $product_id ?>"
         hx-target="#products-table"
-        hx-swap="outerHTML"
+        hx-swap="InnerHtml"
         data-toast="Product deleted successfully!"
         data-close-modal="true"
         class="btn red">
         Delete Product
     </button>
-    <button type="button" onclick="closeDialog()" class="btn black">
-        Cancel
-    </button>
+    <form method="dialog">
+        <button type="submit" class="btn black">
+            Cancel
+        </button>
+    </form>
 </div>

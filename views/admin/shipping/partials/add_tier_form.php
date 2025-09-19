@@ -23,10 +23,10 @@
             <input type="number" id="max_weight_kg" name="max_weight_kg" class="form-input" step="0.01" min="0.01" placeholder="0.5" required>
         </div>
         <div class="form-group">
-            <label for="price" class="form-label">Price (USD)</label>
+            <label for="price" class="form-label">Price (EUR)</label>
             <input type="number" id="price" name="price" class="form-input" step="0.01" min="0" placeholder="4.99" required>
         </div>
-        <button type="submit" class="btn blue">Add Tier</button>
+        <button type="submit" class="btn blue" style="margin-bottom: 1.5rem;">Add Tier</button>
     </div>
     <div id="form-error" class="form-error"></div>
 </form>

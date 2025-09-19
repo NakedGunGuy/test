@@ -2,9 +2,9 @@
     'title' => 'Add Product',
 ]) ?>
 
-<div class="dialog-content">
+<div class="dialog-content" style="width: 700px;">
     <div class="form-group">
-        <label class="form-label">Search Edition</label>
+        <label class="form-label" for="q">Search Edition</label>
         <input
             name="q"
             hx-get="/admin/editions/search"
@@ -13,15 +13,10 @@
             hx-swap="innerHTML"
             class="form-input"
             placeholder="Type to search for cards..."
+            id="q"
         >
         <div class="form-help">Search for a card edition to create a product</div>
     </div>
 
     <div id="edition-results" class="search-results" style="position: relative; top: 0; max-height: 200px;"></div>
-</div>
-
-<div class="form-actions">
-    <button type="button" onclick="closeDialog()" class="btn black">
-        Close
-    </button>
 </div>

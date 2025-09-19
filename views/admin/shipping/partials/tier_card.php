@@ -19,16 +19,16 @@
                 <label class="form-label">Price</label>
                 <div class="input-with-unit">
                     <input type="number" name="price" class="form-input" step="0.01" min="0" value="<?= $tier['price'] ?>" required>
-                    <span class="unit">USD</span>
+                    <span class="unit">EUR</span>
                 </div>
             </div>
-            <div class="form-group tier-status">
+            <div class="form-group tier-status" style="padding-bottom: 0.75rem;">
                 <label class="checkbox-wrapper">
                     <input type="checkbox" name="is_enabled" value="1" <?= $tier['is_enabled'] ? 'checked' : '' ?>>
-                    <span class="form-label">Enabled</span>
+                    <span class="form-label" style="margin: 0;">Enabled</span>
                 </label>
             </div>
-            <div class="tier-actions">
+            <div class="tier-actions form-group">
                 <button type="submit" class="btn-small blue">Save</button>
                 <button type="button" 
                         hx-post="/admin/shipping/weight-tiers/delete/<?= $tier['id'] ?>" 

@@ -128,6 +128,7 @@ post('/admin/products/create', function () {
     $price       = $_POST['price'] ?? null;
     $quantity    = $_POST['quantity'] ?? null;
     $is_foil     = $_POST['is_foil'] ?? 0;
+    $is_used     = $_POST['is_used'] ?? 0;
 
     $errors = [];
 
@@ -149,7 +150,7 @@ post('/admin/products/create', function () {
         return;
     }
 
-    insert_product($edition_id, $name, $description, $price, $quantity, $is_foil);
+    insert_product($edition_id, $name, $description, $price, $quantity, $is_foil, $is_used);
 
     $filters = array_filter([
         'name'      => $_GET['name'] ?? null,
@@ -177,7 +178,7 @@ get('/admin/products/edition/{edition_id}', function ($data) {
     $products = getProducts($filters, 'p.id DESC');
 
     if ($products) {
-        partial('admin/products/partials/product_variations', ['products' => $products]);
+        partial('admin/products/partials/product_variations', ['products' => $products, 'edition_id' => $edition_id]);
     } else {
         $stmt = db()->prepare("
             SELECT e.*, c.name AS card_name, s.name AS set_name
@@ -191,6 +192,24 @@ get('/admin/products/edition/{edition_id}', function ($data) {
 
         partial('admin/products/partials/product_form', ['edition' => $edition]);
     }
+}, [$getAdminAuth]);
+
+get('/admin/products/edition/{edition_id}/new', function ($data) {
+    $edition_id = $data['edition_id'] ?? null;
+
+
+    $stmt = db()->prepare("
+        SELECT e.*, c.name AS card_name, s.name AS set_name
+        FROM editions e
+        JOIN cards c ON e.card_id = c.id
+        JOIN sets s ON e.set_id = s.id
+        WHERE e.id = :id
+    ");
+    $stmt->execute([':id' => $edition_id]);
+    $edition = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    partial('admin/products/partials/product_form', ['edition' => $edition]);
+
 }, [$getAdminAuth]);
 
 get('/admin/products', function () {
@@ -886,13 +905,13 @@ post('/admin/shipping/calculate', function () {
 // Bulk add default weight tiers to a country
 post('/admin/shipping/weight-tiers/bulk-add/{country_id}', function ($country_id) {
     $country_id = (int)$country_id;
-    
+
     if ($country_id <= 0) {
         http_response_code(400);
         echo 'Invalid country selected';
         return;
     }
-    
+
     // Default weight tiers to add
     $default_tiers = [
         ['name' => 'Up to 0.5kg', 'weight' => 0.5, 'price' => 4.99],
@@ -900,23 +919,23 @@ post('/admin/shipping/weight-tiers/bulk-add/{country_id}', function ($country_id
         ['name' => 'Up to 2kg', 'weight' => 2.0, 'price' => 12.99],
         ['name' => 'Up to 5kg', 'weight' => 5.0, 'price' => 18.99],
     ];
-    
+
     $added_count = 0;
     foreach ($default_tiers as $index => $tier) {
         if (add_shipping_weight_tier($country_id, $tier['name'], $tier['weight'], $tier['price'], $index + 1)) {
             $added_count++;
         }
     }
-    
+
     if ($added_count > 0) {
         // Get the country and its new tiers
         $db = db();
         $stmt = $db->prepare("SELECT * FROM shipping_countries WHERE id = :id");
         $stmt->execute([':id' => $country_id]);
         $country = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+
         $stmt = $db->prepare("
-            SELECT swt.*, sc.country_name, sc.country_code 
+            SELECT swt.*, sc.country_name, sc.country_code
             FROM shipping_weight_tiers swt
             JOIN shipping_countries sc ON swt.country_id = sc.id
             WHERE swt.country_id = :country_id
@@ -924,7 +943,7 @@ post('/admin/shipping/weight-tiers/bulk-add/{country_id}', function ($country_id
         ");
         $stmt->execute([':country_id' => $country_id]);
         $tiers = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+
         // Return the tier list
         echo '<div class="weight-tiers">';
         foreach ($tiers as $tier) {
@@ -934,5 +953,98 @@ post('/admin/shipping/weight-tiers/bulk-add/{country_id}', function ($country_id
     } else {
         http_response_code(400);
         echo 'Failed to add default weight tiers';
+    }
+}, [$getAdminAuth]);
+
+// Shipping Countries Management
+get('/admin/shipping/countries', function () {
+    $countries = get_all_shipping_countries();
+    view('admin/shipping/countries', ['countries' => $countries], 'admin');
+}, [$getAdminAuth]);
+
+post('/admin/shipping/countries/add', function () {
+    $country_code = trim(strtoupper($_POST['country_code'] ?? ''));
+    $country_name = trim($_POST['country_name'] ?? '');
+    $estimated_days_min = (int) ($_POST['estimated_days_min'] ?? 7);
+    $estimated_days_max = (int) ($_POST['estimated_days_max'] ?? 14);
+
+    $errors = [];
+
+    if (strlen($country_code) !== 2) {
+        $errors[] = 'Country code must be exactly 2 characters (ISO 3166-1 alpha-2)';
+    }
+
+    if ($country_name === '') {
+        $errors[] = 'Country name is required';
+    }
+
+    if ($estimated_days_min < 1 || $estimated_days_max < 1 || $estimated_days_min > $estimated_days_max) {
+        $errors[] = 'Invalid delivery time estimates';
+    }
+
+    if ($errors) {
+        http_response_code(422);
+        echo '❌ ' . implode(', ', $errors);
+        return;
+    }
+
+    if (add_shipping_country($country_code, $country_name, $estimated_days_min, $estimated_days_max)) {
+        $countries = get_all_shipping_countries();
+        partial('admin/shipping/countries/partials/countries_table', ['countries' => $countries]);
+    } else {
+        http_response_code(400);
+        echo '❌ Failed to add country. Country code may already exist.';
+    }
+}, [$getAdminAuth]);
+
+post('/admin/shipping/countries/update/{id}', function ($data) {
+    $country_id = (int) $data['id'];
+    $country_name = trim($_POST['country_name'] ?? '');
+    $estimated_days_min = (int) ($_POST['estimated_days_min'] ?? 7);
+    $estimated_days_max = (int) ($_POST['estimated_days_max'] ?? 14);
+    $is_enabled = isset($_POST['is_enabled']) && $_POST['is_enabled'] !== 'false';
+
+    if ($country_id <= 0) {
+        http_response_code(400);
+        echo '❌ Invalid country ID';
+        return;
+    }
+
+    if (update_shipping_country($country_id, $country_name, $estimated_days_min, $estimated_days_max, $is_enabled)) {
+        $countries = get_all_shipping_countries();
+        partial('admin/shipping/countries/partials/countries_table', ['countries' => $countries]);
+    } else {
+        http_response_code(400);
+        echo '❌ Failed to update country';
+    }
+}, [$getAdminAuth]);
+
+post('/admin/shipping/countries/delete/{id}', function ($data) {
+    $country_id = (int) $data['id'];
+
+    if ($country_id <= 0) {
+        http_response_code(400);
+        echo '❌ Invalid country ID';
+        return;
+    }
+
+    // Check if country has any orders
+    $db = db();
+    $stmt = $db->prepare("SELECT COUNT(*) as order_count FROM orders WHERE shipping_country = (SELECT country_code FROM shipping_countries WHERE id = :id)");
+    $stmt->execute([':id' => $country_id]);
+    $order_count = $stmt->fetch(PDO::FETCH_ASSOC)['order_count'];
+
+    if ($order_count > 0) {
+        http_response_code(403);
+        echo "❌ Cannot delete country: it has {$order_count} existing orders";
+        return;
+    }
+
+    if (delete_shipping_country($country_id)) {
+        $countries = get_all_shipping_countries();
+        partial('admin/shipping/countries/partials/countries_table', ['countries' => $countries]);
+    } else {
+        http_response_code(400);
+        echo '❌ Failed to delete country';
     }
 }, [$getAdminAuth]);

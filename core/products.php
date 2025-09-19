@@ -1,9 +1,9 @@
 <?php
 
-function insert_product($edition_id, $name, $description, $price, $quantity, $is_foil) {
+function insert_product($edition_id, $name, $description, $price, $quantity, $is_foil, $is_used) {
     $stmt = db()->prepare("
-        INSERT INTO products (edition_id, name, description, price, quantity, is_foil)
-        VALUES (:edition_id, :name, :description, :price, :quantity, :is_foil)
+        INSERT INTO products (edition_id, name, description, price, quantity, is_foil, is_used)
+        VALUES (:edition_id, :name, :description, :price, :quantity, :is_foil, :is_used)
     ");
     $stmt->execute([
         ':edition_id'  => $edition_id ?: null,
@@ -11,14 +11,15 @@ function insert_product($edition_id, $name, $description, $price, $quantity, $is
         ':description' => $description,
         ':price'       => $price,
         ':quantity'    => $quantity,
-        ':is_foil'     => $is_foil
+        ':is_foil'     => $is_foil,
+        ':is_used'     => $is_used
     ]);
 }
 
-function update_product($id, $name, $description, $price, $quantity, $is_foil) {
+function update_product($id, $name, $description, $price, $quantity, $is_foil, $is_used) {
     $stmt = db()->prepare("
         UPDATE products
-        SET name = :name, description = :description, price = :price, quantity = :quantity, is_foil = :is_foil
+        SET name = :name, description = :description, price = :price, quantity = :quantity, is_foil = :is_foil, updated_at = :updated_at
         WHERE id = :id
     ");
     $stmt->execute([
@@ -27,7 +28,8 @@ function update_product($id, $name, $description, $price, $quantity, $is_foil) {
         ':description' => $description,
         ':price'       => $price,
         ':quantity'    => $quantity,
-        ':is_foil'     => $is_foil
+        ':is_foil'     => $is_foil,
+        ':updated_at'  => date('Y-m-d H:i:s')
     ]);
 }
 

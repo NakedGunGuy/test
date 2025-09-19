@@ -68,6 +68,13 @@
                 <span class="form-label" style="margin-bottom: 0;">Foil Version</span>
             </label>
         </div>
+
+        <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="is_used" name="is_used" />
+                <span class="form-label" style="margin-bottom: 0;">Used</span>
+            </label>
+        </div>
     </form>
 </div>
 
@@ -75,7 +82,9 @@
     <button type="submit" form="product_form" class="btn blue">
         Create Product
     </button>
-    <button type="button" onclick="closeDialog()" class="btn black">
-        Cancel
-    </button>
+    <form method="dialog">
+        <button type="submit" class="btn black">
+            Cancel
+        </button>
+    </form>
 </div>

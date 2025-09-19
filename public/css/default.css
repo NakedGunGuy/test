@@ -1845,6 +1845,116 @@ select.form-input-small {
     }
 }
 
+/* Data Table Styles */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: transparent;
+}
+
+.data-table thead th {
+    background: linear-gradient(145deg, rgba(0, 174, 239, 0.15) 0%, rgba(0, 174, 239, 0.08) 100%);
+    color: #FFFFFF;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    border-bottom: 1px solid rgba(0, 174, 239, 0.2);
+    border-right: 1px solid rgba(0, 174, 239, 0.1);
+}
+
+.data-table thead th:first-child {
+    border-top-left-radius: 12px;
+    border-left: 1px solid rgba(0, 174, 239, 0.2);
+}
+
+.data-table thead th:last-child {
+    border-top-right-radius: 12px;
+    border-right: 1px solid rgba(0, 174, 239, 0.2);
+}
+
+.data-table tbody td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 174, 239, 0.1);
+    border-right: 1px solid rgba(0, 174, 239, 0.05);
+    background: linear-gradient(145deg, rgba(0, 0, 0, 0.4) 0%, rgba(26, 26, 26, 0.4) 100%);
+    color: #FFFFFF;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.data-table tbody td:first-child {
+    border-left: 1px solid rgba(0, 174, 239, 0.1);
+}
+
+.data-table tbody td:last-child {
+    border-right: 1px solid rgba(0, 174, 239, 0.1);
+}
+
+.data-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 12px;
+}
+
+.data-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 12px;
+}
+
+.data-table tbody tr:hover td {
+    background: linear-gradient(145deg, rgba(0, 174, 239, 0.08) 0%, rgba(0, 174, 239, 0.04) 100%);
+}
+
+.data-table .actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.data-table .actions .btn-small {
+    white-space: nowrap;
+}
+
+.data-table .no-data {
+    text-align: center;
+    color: #C0C0D1;
+    font-style: italic;
+    padding: 2rem;
+}
+
+/* Gray button style for disabled states */
+.btn-small.gray {
+    background: linear-gradient(145deg, #2f3542 0%, #40394a 100%);
+    color: #C0C0D1;
+    border: 1px solid rgba(192, 192, 209, 0.2);
+}
+
+.btn-small.gray:hover:not(.disabled) {
+    background: linear-gradient(135deg, #40394a 0%, #57606f 100%);
+    color: #FFFFFF;
+    transform: translateY(-1px);
+}
+
+.btn-small.gray.disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-small.gray.disabled:hover {
+    transform: none;
+}
+
+.btn-small.green {
+    background: linear-gradient(135deg, #2ed573 0%, #1e90ff 100%);
+    color: white;
+}
+
+.btn-small.green:hover {
+    background: linear-gradient(135deg, #1e90ff 0%, #2ed573 100%);
+    transform: translateY(-1px);
+}
+
 /* Checkout Styles */
 .checkout-container {
     display: grid;

@@ -226,3 +226,32 @@ function delete_shipping_weight_tier($id) {
     $stmt = $db->prepare("DELETE FROM shipping_weight_tiers WHERE id = :id");
     return $stmt->execute([':id' => $id]);
 }
+
+/**
+ * Add new shipping country
+ */
+function add_shipping_country($country_code, $country_name, $estimated_days_min = 7, $estimated_days_max = 14) {
+    $db = db();
+    $stmt = $db->prepare("
+        INSERT INTO shipping_countries (country_code, country_name, estimated_days_min, estimated_days_max)
+        VALUES (:country_code, :country_name, :estimated_days_min, :estimated_days_max)
+    ");
+
+    return $stmt->execute([
+        ':country_code' => strtoupper($country_code),
+        ':country_name' => $country_name,
+        ':estimated_days_min' => $estimated_days_min,
+        ':estimated_days_max' => $estimated_days_max
+    ]);
+}
+
+/**
+ * Delete shipping country and all associated weight tiers
+ */
+function delete_shipping_country($id) {
+    $db = db();
+
+    // First delete all weight tiers for this country (foreign key will cascade)
+    $stmt = $db->prepare("DELETE FROM shipping_countries WHERE id = :id");
+    return $stmt->execute([':id' => $id]);
+}

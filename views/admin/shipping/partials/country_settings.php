@@ -11,12 +11,12 @@
             <label class="form-label">Max Delivery Days</label>
             <input type="number" name="estimated_days_max" class="form-input" min="1" value="<?= $country['estimated_days_max'] ?>" required>
         </div>
-        <div class="form-group">
+        <div class="form-group" style="padding-bottom: 0.75rem;">
             <label class="checkbox-wrapper">
                 <input type="checkbox" name="is_enabled" value="1" <?= $country['is_enabled'] ? 'checked' : '' ?>>
-                <span class="form-label">Enabled for shipping</span>
+                <span class="form-label" style="margin: 0;">Enabled for shipping</span>
             </label>
         </div>
-        <button type="submit" class="btn-small blue">Update</button>
+        <button type="submit" class="btn-small blue form-group">Update</button>
     </div>
 </form>
