@@ -4,13 +4,13 @@ Settings - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 
 <!-- Page Header -->
 <div class="section" style="margin-bottom: 2rem;">
-    <a href="/admin" class="btn text back">← Back to Dashboard</a>
+    <a href="<?= url('admin') ?>" class="btn text back">← Back to Dashboard</a>
     <h1 class="section-title" style="margin-top: 0;">Store Settings</h1>
     <p style="color: #C0C0D1;">Configure store settings and preferences</p>
 </div>
 
 <!-- Settings Form -->
-<form id="settings-form" method="POST" action="/admin/settings">
+<form id="settings-form" method="POST" action="<?= url('admin/settings') ?>">
     <!-- Store Information -->
     <div class="section">
         <h2 class="section-subtitle">Store Information</h2>
@@ -113,7 +113,7 @@ Settings - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                 <div class="title">Clear Cache</div>
                 <div class="desc">Clear system cache and temporary files</div>
             </div>
-            <form method="POST" action="/admin/settings/clear-cache" style="display: inline;">
+            <form method="POST" action="<?= url('admin/settings/clear-cache') ?>" style="display: inline;">
                 <button type="submit" class="btn blue" style="min-width: auto; padding: 8px 12px;">Clear</button>
             </form>
         </div>
@@ -124,7 +124,7 @@ Settings - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                 <div class="title">Backup Database</div>
                 <div class="desc">Create a backup of the database</div>
             </div>
-            <form method="POST" action="/admin/settings/backup-database" style="display: inline;">
+            <form method="POST" action="<?= url('admin/settings/backup-database') ?>" style="display: inline;">
                 <button type="submit" class="btn blue" style="min-width: auto; padding: 8px 12px;">Backup</button>
             </form>
         </div>
@@ -135,7 +135,7 @@ Settings - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                 <div class="title">Import Cards</div>
                 <div class="desc">Update card database from external API</div>
             </div>
-            <form method="POST" action="/admin/settings/import-cards" style="display: inline;">
+            <form method="POST" action="<?= url('admin/settings/import-cards') ?>" style="display: inline;">
                 <button type="submit" class="btn blue" style="min-width: auto; padding: 8px 12px;">Import</button>
             </form>
         </div>

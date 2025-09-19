@@ -72,7 +72,7 @@ Admin Dashboard - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 <div class="section">
     <h2 class="section-subtitle">Quick Actions</h2>
     <div class="grid actions" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
-        <a href="/admin/products" class="card action">
+        <a href="<?= url('admin/products') ?>" class="card action">
             <span class="icon">📦</span>
             <div class="content">
                 <div class="title">Manage Products</div>
@@ -81,7 +81,7 @@ Admin Dashboard - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             <span class="arrow">→</span>
         </a>
         
-        <a href="/admin/orders" class="card action">
+        <a href="<?= url('admin/orders') ?>" class="card action">
             <span class="icon">📋</span>
             <div class="content">
                 <div class="title">View Orders</div>
@@ -90,7 +90,7 @@ Admin Dashboard - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             <span class="arrow">→</span>
         </a>
         
-        <a href="/admin/analytics" class="card action">
+        <a href="<?= url('admin/analytics') ?>" class="card action">
             <span class="icon">📊</span>
             <div class="content">
                 <div class="title">Analytics</div>
@@ -99,7 +99,7 @@ Admin Dashboard - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             <span class="arrow">→</span>
         </a>
         
-        <a href="/admin/settings" class="card action">
+        <a href="<?= url('admin/settings') ?>" class="card action">
             <span class="icon">⚙️</span>
             <div class="content">
                 <div class="title">Store Settings</div>

@@ -5,7 +5,7 @@ Account Settings - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 <div class="container wide">
     <!-- Back Navigation -->
     <div class="section" style="margin-bottom: 2rem;">
-        <a href="/profile" class="btn text back">← Back to Profile</a>
+        <a href="<?= url('profile') ?>" class="btn text back">← Back to Profile</a>
         <h1 class="product-title">Account Settings</h1>
         <p class="user-email">Manage your account information and security</p>
     </div>
@@ -33,7 +33,7 @@ Account Settings - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         <div class="settings-section">
             <h3 class="section-subtitle">Account Actions</h3>
             <div class="footer-actions">
-                <a href="/logout" class="btn red">Sign Out</a>
+                <a href="<?= url('logout') ?>" class="btn red">Sign Out</a>
             </div>
         </div>
         

@@ -8,7 +8,7 @@ Order History - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         <div>
             <!-- Back Navigation -->
             <div class="section">
-                <a href="/profile" class="btn text back">← Back to Profile</a>
+                <a href="<?= url('profile') ?>" class="btn text back">← Back to Profile</a>
                 <h1 class="product-title">Order History</h1>
                 <p class="user-email">Track your purchases and order status</p>
             </div>

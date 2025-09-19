@@ -69,8 +69,8 @@
                     <span class="summary-value">$<?= number_format($cart_total, 2) ?></span>
                 </div>
                 <div class="cart-actions">
-                    <a href="/products" class="btn black">Continue Shopping</a>
-                    <a href="/checkout" class="btn blue">Proceed to Checkout</a>
+                    <a href="<?= url('products') ?>" class="btn black">Continue Shopping</a>
+                    <a href="<?= url('checkout') ?>" class="btn blue">Proceed to Checkout</a>
                 </div>
             </div>
         </div>

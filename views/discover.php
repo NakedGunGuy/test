@@ -18,7 +18,7 @@
                 id="search-input"
                 class="form-input"
                 name="name"
-                hx-get="/products/search"
+                hx-get="<?= url('products/search') ?>"
                 hx-trigger="keyup changed delay:300ms"
                 hx-target="#product-results"
                 hx-swap="innerHTML"
@@ -102,7 +102,7 @@
                     <div class="list-item-content">
                         <div class="list-item-image">
                             <img
-                                hx-get="/cards/image/<?= $product['edition_slug'] ?>"
+                                hx-get="<?= url('cards/image/' . $product['edition_slug']) ?>"
                                 hx-target="#dialog"
                                 hx-trigger="click"
                                 height="60" width="60"
@@ -113,7 +113,7 @@
                         </div>
                         <div class="list-item-main">
                             <h3 class="list-item-title">
-                                <a href="/product/<?= $product['id'] ?>"><?= htmlspecialchars($product['name']) ?></a>
+                                <a href="<?= url('product/' . $product['id']) ?>"><?= htmlspecialchars($product['name']) ?></a>
                             </h3>
                             <p class="list-item-details"><?= htmlspecialchars($product['set_name']) ?> • €<?= number_format($product['price'], 2) ?></p>
                             <div class="list-item-meta">
@@ -156,7 +156,7 @@
                 <div class="product-card">
                     <div class="product-card-image">
                         <img
-                            hx-get="/cards/image/<?= $product['edition_slug'] ?>"
+                            hx-get="<?= url('cards/image/' . $product['edition_slug']) ?>"
                             hx-target="#dialog"
                             hx-trigger="click"
                             src="<?= $dataUri ?>"
@@ -167,7 +167,7 @@
 
                     <div class="product-card-header">
                         <h3 class="product-card-title">
-                            <a href="/product/<?= $product['id'] ?>"><?= htmlspecialchars($product['name']) ?></a>
+                            <a href="<?= url('product/' . $product['id']) ?>"><?= htmlspecialchars($product['name']) ?></a>
                         </h3>
                         <div class="product-card-subtitle"><?= htmlspecialchars($product['set_name']) ?></div>
                     </div>
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             // Save preference to session
-            fetch('/set-view-preference', {
+            fetch('<?= url('set-view-preference') ?>', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',

@@ -4,7 +4,7 @@ Analytics - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 
 <!-- Page Header -->
 <div class="section" style="margin-bottom: 2rem;">
-    <a href="/admin" class="btn text back">← Back to Dashboard</a>
+    <a href="<?= url('admin') ?>" class="btn text back">← Back to Dashboard</a>
     <h1 class="section-title" style="margin-top: 0;">Store Analytics</h1>
     <p style="color: #C0C0D1;">View sales reports and store metrics</p>
 </div>

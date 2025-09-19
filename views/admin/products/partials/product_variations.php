@@ -21,7 +21,7 @@
 <div class="form-actions">
     <button
             class="btn blue"
-            hx-get="/admin/products/edition/<?= htmlspecialchars($edition_id) ?>/new"
+            hx-get="<?= url('admin/products/edition/' . htmlspecialchars($edition_id) . '/new') ?>"
             hx-target="#dialog"
             hx-swap="innerHTML"
     >Create New</button>

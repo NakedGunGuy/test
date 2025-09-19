@@ -115,7 +115,7 @@
         <?php foreach ($card_variants as $variant): ?>
             <div class="variant-card">
                 <h3 class="variant-title">
-                    <a href="/product/<?= $variant['id'] ?>">
+                    <a href="<?= url('product/' . $variant['id']) ?>">
                         <?= htmlspecialchars($variant['set_name']) ?> #<?= htmlspecialchars($variant['edition_number']) ?>
                     </a>
                 </h3>
@@ -125,7 +125,7 @@
                     <div class="variant-meta-item"><?= t('products.price') ?>: <span class="variant-price">$<?= number_format($variant['price'], 2) ?></span></div>
                     <div class="variant-meta-item"><?= t('products.stock') ?>: <?= $variant['quantity'] > 0 ? t('product.available', ['count' => $variant['quantity']]) : t('products.out_of_stock') ?></div>
                 </div>
-                <a href="/product/<?= $variant['id'] ?>" class="btn blue btn-small">
+                <a href="<?= url('product/' . $variant['id']) ?>" class="btn blue btn-small">
                     <?= t('product.view_details') ?>
                 </a>
             </div>

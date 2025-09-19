@@ -102,7 +102,7 @@ get('/checkout', function () {
     $cart_items = get_cart_items($cart_id);
 
     if (empty($cart_items)) {
-        header('Location: /cart');
+        header('Location: ' . url('cart'));
         exit;
     }
 
@@ -154,7 +154,7 @@ post('/checkout', function () {
     // Validate required shipping fields
     foreach ($shipping_address as $field => $value) {
         if (empty($value)) {
-            header('Location: /cart?error=' . urlencode('Please fill in all shipping fields including country.'));
+            header('Location: ' . url('cart?error=' . urlencode('Please fill in all shipping fields including country.')));
             exit;
         }
     }
@@ -164,7 +164,7 @@ post('/checkout', function () {
     $shipping = calculate_shipping_cost($weight_grams, $country_code);
     
     if (!$shipping) {
-        header('Location: /cart?error=' . urlencode('Shipping not available to selected country.'));
+        header('Location: ' . url('cart?error=' . urlencode('Shipping not available to selected country.')));
         exit;
     }
 
@@ -182,7 +182,7 @@ post('/checkout', function () {
 
     // Check Stripe minimum amount with shipping (50 euro cents)
     if (!empty($_ENV['STRIPE_SECRET_KEY']) && $total_with_shipping < 0.50) {
-        header('Location: /cart?error=' . urlencode('Order total with shipping must be at least €0.50 to process payment.'));
+        header('Location: ' . url('cart?error=' . urlencode('Order total with shipping must be at least €0.50 to process payment.')));
         exit;
     }
 
@@ -206,14 +206,14 @@ post('/checkout', function () {
         $stmt = $pdo->prepare("DELETE FROM cart_items WHERE cart_id = :cid");
         $stmt->execute([':cid' => $cart_id]);
         
-        header('Location: /checkout/success?order_id=' . $order_id . '&token=' . $token);
+        header('Location: ' . url('checkout/success?order_id=' . $order_id . '&token=' . $token));
         exit;
     }
     
     // Debug: Check if APP_URL is set
     if (empty($_ENV['APP_URL'])) {
         update_order_status($order_id, 'cancelled');
-        header('Location: /checkout/cancel?order_id=' . $order_id . '&error=' . urlencode('APP_URL not configured'));
+        header('Location: ' . url('checkout/cancel?order_id=' . $order_id . '&error=' . urlencode('APP_URL not configured')));
         exit;
     }
 
@@ -263,7 +263,7 @@ post('/checkout', function () {
     } catch (\Stripe\Exception\ApiErrorException $e) {
         // Handle Stripe errors
         update_order_status($order_id, 'cancelled');
-        header('Location: /checkout/cancel?order_id=' . $order_id . '&token=' . $token . '&error=' . urlencode($e->getMessage()));
+        header('Location: ' . url('checkout/cancel?order_id=' . $order_id . '&token=' . $token . '&error=' . urlencode($e->getMessage())));
         exit;
     }
 }, [$getUserAuth]);
@@ -275,14 +275,14 @@ get('/checkout/success', function () {
     $pdo = db();
 
     if ($order_id <= 0) {
-        header('Location: /cart');
+        header('Location: ' . url('cart'));
         exit;
     }
 
     // Verify the security token
     if (!verify_order_token($order_id, $token)) {
         // Invalid token - possible manipulation attempt
-        header('Location: /cart');
+        header('Location: ' . url('cart'));
         exit;
     }
 
@@ -293,20 +293,20 @@ get('/checkout/success', function () {
 
     if (!$order) {
         // Order doesn't exist
-        header('Location: /cart');
+        header('Location: ' . url('cart'));
         exit;
     }
 
     if ($order['user_id'] != $user['id']) {
         // User doesn't own this order
-        header('Location: /cart');
+        header('Location: ' . url('cart'));
         exit;
     }
 
     // Additional security: Check if this order was created in this session
     if (!isset($_SESSION['checkout_orders'][$order_id])) {
         // Order was not created in this session - possible manipulation
-        header('Location: /cart');
+        header('Location: ' . url('cart'));
         exit;
     }
 

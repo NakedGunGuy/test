@@ -49,7 +49,7 @@ Payment Successful - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         
         <div class="maintenance-actions">
             <button onclick="window.close()" class="btn blue">Close Window</button>
-            <a href="/admin" class="btn black">Admin Access</a>
+            <a href="<?= url('admin') ?>" class="btn black">Admin Access</a>
         </div>
         
         <div class="maintenance-footer">

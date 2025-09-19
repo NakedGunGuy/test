@@ -47,7 +47,7 @@
                     
                     <button 
                         class="btn-text"
-                        hx-get="/profile/order/<?= $order['id'] ?>"
+                        hx-get="<?= url('profile/order/' . $order['id']) ?>"
                         hx-target="#order-details-content"
                         onclick="document.getElementById('order-details-modal').classList.remove('hidden')"
                     >

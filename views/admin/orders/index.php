@@ -4,7 +4,7 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 
 <!-- Page Header -->
 <div class="section" style="margin-bottom: 2rem;">
-    <a href="/admin" class="btn text back">← Back to Dashboard</a>
+    <a href="<?= url('admin') ?>" class="btn text back">← Back to Dashboard</a>
     <h1 class="section-title" style="margin-top: 0;">Orders Management</h1>
     <p style="color: #C0C0D1;">Process and track customer orders</p>
 </div>
@@ -132,7 +132,7 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                         </div>
                         
                         <div class="grid-cell">
-                            <a href="/admin/orders/<?= $order['id'] ?>" class="btn blue btn-small">View Details</a>
+                            <a href="<?= url('admin/orders/' . $order['id']) ?>" class="btn blue btn-small">View Details</a>
                         </div>
                     </div>
                 <?php endforeach; ?>

@@ -1,7 +1,7 @@
 <?php foreach ($editions as $edition): ?>
     <div
         class="search-result-item"
-        hx-get="/admin/products/edition/<?= htmlspecialchars($edition['id']) ?>"
+        hx-get="<?= url('admin/products/edition/' . htmlspecialchars($edition['id'])) ?>"
         hx-target="#dialog"
         hx-swap="innerHTML"
         style="padding: 12px; cursor: pointer; border-bottom: 1px solid rgba(0, 174, 239, 0.15); transition: all 0.2s ease;"

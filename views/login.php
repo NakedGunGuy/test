@@ -63,7 +63,7 @@
             
             <div class="auth-footer">
                 <p class="auth-footer-text">Don't have an account? 
-                    <a href="/register" class="auth-footer-link">Sign up here</a>
+                    <a href="<?= url('register') ?>" class="auth-footer-link">Sign up here</a>
                 </p>
             </div>
         </div>

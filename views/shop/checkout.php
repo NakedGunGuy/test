@@ -114,7 +114,7 @@ Checkout - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             </div>
 
             <div class="checkout-actions">
-                <a href="/cart" class="btn black">← Back to Cart</a>
+                <a href="<?= url('cart') ?>" class="btn black">← Back to Cart</a>
                 <button type="submit" class="btn blue" id="complete-order-btn">Complete Order</button>
             </div>
         </form>

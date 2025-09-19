@@ -7,7 +7,7 @@
         <label class="form-label" for="q">Search Edition</label>
         <input
             name="q"
-            hx-get="/admin/editions/search"
+            hx-get="<?= url('admin/editions/search') ?>"
             hx-trigger="keyup changed delay:200ms"
             hx-target="#edition-results"
             hx-swap="innerHTML"

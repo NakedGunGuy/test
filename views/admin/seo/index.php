@@ -26,7 +26,7 @@
                 <a href="<?= htmlspecialchars($sitemap_url) ?>" target="_blank" class="btn blue">
                     View Sitemap
                 </a>
-                <a href="/admin/seo/sitemap/generate" class="btn black">
+                <a href="<?= url('admin/seo/sitemap/generate') ?>" class="btn black">
                     Download Sitemap
                 </a>
             </div>

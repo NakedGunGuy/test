@@ -54,7 +54,7 @@ Profile - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             <h2 class="section-title">Quick Actions</h2>
             
             <div class="grid actions" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
-                <a href="/profile/settings" class="card action">
+                <a href="<?= url('profile/settings') ?>" class="card action">
                     <span class="icon">⚙️</span>
                     <div class="content">
                         <div class="title"><?= t('profile.account_settings') ?></div>
@@ -63,7 +63,7 @@ Profile - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                     <span class="arrow">→</span>
                 </a>
                 
-                <a href="/profile/orders" class="card action">
+                <a href="<?= url('profile/orders') ?>" class="card action">
                     <span class="icon">📦</span>
                     <div class="content">
                         <div class="title"><?= t('profile.order_history') ?></div>
@@ -72,7 +72,7 @@ Profile - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                     <span class="arrow">→</span>
                 </a>
                 
-                <a href="/discover" class="card action">
+                <a href="<?= url('discover') ?>" class="card action">
                     <span class="icon">🛒</span>
                     <div class="content">
                         <div class="title">Continue Shopping</div>
@@ -81,7 +81,7 @@ Profile - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                     <span class="arrow">→</span>
                 </a>
                 
-                <a href="/cart" class="card action">
+                <a href="<?= url('cart') ?>" class="card action">
                     <span class="icon">🛍️</span>
                     <div class="content">
                         <div class="title"><?= t('button.view_cart') ?></div>
@@ -92,7 +92,7 @@ Profile - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             </div>
 
             <div class="footer-actions">
-                <a href="/logout" class="btn text">Sign Out</a>
+                <a href="<?= url('logout') ?>" class="btn text">Sign Out</a>
             </div>
         </div>
     </div>

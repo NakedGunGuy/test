@@ -54,7 +54,7 @@
             </form>
             
             <div class="auth-footer admin-auth-footer">
-                <a href="/" class="return-link">← Return to main site</a>
+                <a href="<?= url('') ?>" class="return-link">← Return to main site</a>
             </div>
         </div>
     </div>

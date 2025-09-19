@@ -33,7 +33,7 @@ Store Under Maintenance - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         </div>
         
         <div class="maintenance-actions">
-            <a href="/admin" class="btn blue">Admin Access</a>
+            <a href="<?= url('admin') ?>" class="btn blue">Admin Access</a>
             <button onclick="location.reload()" class="btn black">Check Again</button>
         </div>
         

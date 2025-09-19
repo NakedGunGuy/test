@@ -33,11 +33,11 @@ post('/admin/login', function () {
     $password = $_POST['password'] ?? '';
 
     if (authenticate_admin($username, $password)) {
-        header("Location: /admin");
+        header("Location: " . url('admin'));
         exit;
     } else {
         session_flash('error', 'Invalid credentials.');
-        header("Location: /admin/login");
+        header("Location: " . url('admin/login'));
         exit;
     }
 });
@@ -576,25 +576,25 @@ post('/admin/settings', function () {
     
     if (!in_array($store_status, $valid_store_statuses)) {
         session_flash('error', 'Invalid store status');
-        header('Location: /admin/settings');
+        header('Location: ' . url('admin/settings'));
         exit;
     }
     
     if (!in_array($default_order_status, $valid_order_statuses)) {
         session_flash('error', 'Invalid default order status');
-        header('Location: /admin/settings');
+        header('Location: ' . url('admin/settings'));
         exit;
     }
     
     if (!is_numeric($low_stock_threshold) || $low_stock_threshold < 0) {
         session_flash('error', 'Low stock threshold must be a positive number');
-        header('Location: /admin/settings');
+        header('Location: ' . url('admin/settings'));
         exit;
     }
     
     if ($notification_email && !filter_var($notification_email, FILTER_VALIDATE_EMAIL)) {
         session_flash('error', 'Invalid email address');
-        header('Location: /admin/settings');
+        header('Location: ' . url('admin/settings'));
         exit;
     }
     
@@ -606,7 +606,7 @@ post('/admin/settings', function () {
     set_setting('email_notifications', $email_notifications);
     
     session_flash('success', 'Settings saved successfully');
-    header('Location: /admin/settings');
+    header('Location: ' . url('admin/settings'));
     exit;
 }, [$getAdminAuth]);
 
@@ -625,7 +625,7 @@ post('/admin/settings/clear-cache', function () {
         session_flash('error', 'Failed to clear cache');
     }
     
-    header('Location: /admin/settings');
+    header('Location: ' . url('admin/settings'));
     exit;
 }, [$getAdminAuth]);
 
@@ -649,7 +649,7 @@ post('/admin/settings/backup-database', function () {
         session_flash('error', 'Error creating backup: ' . $e->getMessage());
     }
     
-    header('Location: /admin/settings');
+    header('Location: ' . url('admin/settings'));
     exit;
 }, [$getAdminAuth]);
 
@@ -682,7 +682,7 @@ post('/admin/settings/import-cards', function () {
         session_flash('error', 'Error importing cards: ' . $e->getMessage());
     }
     
-    header('Location: /admin/settings');
+    header('Location: ' . url('admin/settings'));
     exit;
 }, [$getAdminAuth]);
 
@@ -721,7 +721,7 @@ post('/admin/cache-images/refresh', function () {
         session_flash('error', 'Error caching images: ' . $e->getMessage());
     }
     
-    header('Location: /admin/cache-images');
+    header('Location: ' . url('admin/cache-images'));
     exit;
 }, [$getAdminAuth]);
 
@@ -735,7 +735,7 @@ post('/admin/cache-images/clear-old', function () {
         session_flash('error', 'Error clearing old images: ' . $e->getMessage());
     }
     
-    header('Location: /admin/cache-images');
+    header('Location: ' . url('admin/cache-images'));
     exit;
 }, [$getAdminAuth]);
 
@@ -747,7 +747,7 @@ post('/admin/cache-images/clear-all', function () {
         session_flash('error', 'Error clearing cache: ' . $e->getMessage());
     }
     
-    header('Location: /admin/cache-images');
+    header('Location: ' . url('admin/cache-images'));
     exit;
 }, [$getAdminAuth]);
 

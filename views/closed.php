@@ -38,7 +38,7 @@ Store Temporarily Closed - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         </div>
         
         <div class="closed-actions">
-            <a href="/admin" class="btn blue">Admin Access</a>
+            <a href="<?= url('admin') ?>" class="btn blue">Admin Access</a>
             <button onclick="location.reload()" class="btn black">Check Status</button>
         </div>
         

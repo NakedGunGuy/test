@@ -15,7 +15,7 @@ foreach ($weight_tiers as $tier) {
         <span class="section-header-icon">🚚</span>
         Shipping Settings
         <div class="section-header-actions">
-            <a href="/admin/shipping/countries" class="btn blue">
+            <a href="<?= url('admin/shipping/countries') ?>" class="btn blue">
                 🌍 Manage Countries
             </a>
         </div>

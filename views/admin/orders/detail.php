@@ -4,7 +4,7 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 
 <!-- Page Header -->
 <div class="section" style="margin-bottom: 2rem;">
-    <a href="/admin/orders" class="btn text back">← Back to Orders</a>
+    <a href="<?= url('admin/orders') ?>" class="btn text back">← Back to Orders</a>
     <h1 class="section-title" style="margin-top: 0;">Order #<?= $order['id'] ?></h1>
     <p style="color: #C0C0D1;">Order placed on <?= date('M j, Y g:i A', strtotime($order['created_at'])) ?></p>
 </div>

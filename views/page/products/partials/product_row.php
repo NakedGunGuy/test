@@ -9,7 +9,7 @@ $dataUri = 'data:image/svg+xml;base64,' . base64_encode($svg);
 <div id="product-<?= $product['id'] ?>" class="grid-row" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;" hx-swap-oob="true">
     <div class="grid-cell" style="border-color: rgba(0, 174, 239, 0.15);">
         <img 
-            hx-get="/cards/image/<?= $product['edition_slug'] ?>"
+            hx-get="<?= url('cards/image/' . $product['edition_slug']) ?>"
             hx-target="#dialog"
             hx-trigger="click"
             height="40" width="40" 
@@ -18,7 +18,7 @@ $dataUri = 'data:image/svg+xml;base64,' . base64_encode($svg);
             data-src="<?= card_image($product['edition_slug']) ?>" 
         />
         <span>
-            <a href="/product/<?= $product['id'] ?>">
+            <a href="<?= url('product/' . $product['id']) ?>">
                 <?= htmlspecialchars($product['name']); ?>
             </a>
         </span>

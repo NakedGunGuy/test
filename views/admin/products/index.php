@@ -5,7 +5,7 @@ Products - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 
 <!-- Page Header -->
 <div class="section" style="margin-bottom: 2rem;">
-    <a href="/admin" class="btn text back">← Back to Dashboard</a>
+    <a href="<?= url('admin') ?>" class="btn text back">← Back to Dashboard</a>
     <h1 class="section-title" style="margin-top: 0;">Products Management</h1>
     <p style="color: #C0C0D1;">Manage your store inventory and product listings</p>
 </div>
@@ -15,7 +15,7 @@ Products - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
             <h2 class="section-subtitle" style="margin-bottom: 0;">Product Inventory</h2>
             <button 
-                hx-get="/admin/products/add"
+                hx-get="<?= url('admin/products/add') ?>"
                 hx-target="#dialog"
                 hx-trigger="click"
                 class="btn blue"
@@ -31,7 +31,7 @@ Products - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                     <label class="form-label">Search Products</label>
                     <input
                         name="name"
-                        hx-get="/admin/products/search"
+                        hx-get="<?= url('admin/products/search') ?>"
                         hx-trigger="keyup changed delay:200ms"
                         hx-target="#product-results"
                         hx-swap="innerHTML"
