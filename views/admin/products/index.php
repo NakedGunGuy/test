@@ -14,14 +14,19 @@ Products - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 <div class="section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
             <h2 class="section-subtitle" style="margin-bottom: 0;">Product Inventory</h2>
-            <button 
-                hx-get="<?= url('admin/products/add') ?>"
-                hx-target="#dialog"
-                hx-trigger="click"
-                class="btn blue"
-            >
-                + Add Product
-            </button>
+            <div style="display: flex; gap: 12px;">
+                <a href="<?= url('admin/products/bulk') ?>" class="btn">
+                    📦 Bulk Add
+                </a>
+                <button
+                    hx-get="<?= url('admin/products/add') ?>"
+                    hx-target="#dialog"
+                    hx-trigger="click"
+                    class="btn blue"
+                >
+                    + Add Product
+                </button>
+            </div>
         </div>
 
         <!-- Search and Filters -->

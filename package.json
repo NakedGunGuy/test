@@ -1,0 +1,27 @@
+{
+  "name": "cardpoint",
+  "version": "1.0.0",
+  "description": ".\\tailwindcss.exe -i public/css/style.css -o public/css/output.css --watch",
+  "main": "test_bulk_products.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NakedGunGuy/test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/NakedGunGuy/test/issues"
+  },
+  "homepage": "https://github.com/NakedGunGuy/test#readme",
+  "dependencies": {
+    "playwright": "^1.55.1"
+  }
+}

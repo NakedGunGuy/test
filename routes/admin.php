@@ -101,6 +101,181 @@ get('/admin/editions/search', function () {
     partial('admin/products/partials/edition_search_results', ['editions' => $editions]);
 }, [$getAdminAuth]);
 
+get('/admin/products/bulk', function () {
+    // Get all sets for the filter
+    $stmt = db()->prepare("SELECT * FROM sets ORDER BY name ASC");
+    $stmt->execute();
+    $sets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Get all unique rarity values to populate the dropdown
+    $stmt = db()->prepare("SELECT DISTINCT rarity FROM editions WHERE rarity IS NOT NULL AND rarity != '' ORDER BY rarity ASC");
+    $stmt->execute();
+    $rarities = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    view('admin/products/bulk', ['sets' => $sets, 'rarities' => $rarities], 'admin');
+}, [$getAdminAuth]);
+
+get('/admin/products/bulk/editions', function () {
+    $set_id = $_GET['set_id'] ?? null;
+    $rarity = $_GET['rarity'] ?? null;
+    $sort = $_GET['sort'] ?? 'collector_number';
+
+    if (!$set_id) {
+        echo '<p class="text-red-500">Please select a set first.</p>';
+        return;
+    }
+
+    // Build query based on filters
+    $query = "
+        SELECT e.*, c.name as card_name, s.name as set_name,
+               COUNT(p.id) as existing_products
+        FROM editions e
+        JOIN cards c ON e.card_id = c.id
+        JOIN sets s ON e.set_id = s.id
+        LEFT JOIN products p ON e.id = p.edition_id
+        WHERE e.set_id = :set_id
+    ";
+
+    $params = [':set_id' => $set_id];
+
+    if ($rarity) {
+        $query .= " AND e.rarity = :rarity";
+        $params[':rarity'] = $rarity;
+    }
+
+    $query .= " GROUP BY e.id";
+
+    // Add sorting
+    switch ($sort) {
+        case 'name':
+            $query .= " ORDER BY c.name ASC";
+            break;
+        case 'rarity':
+            $query .= " ORDER BY e.rarity ASC, e.collector_number ASC";
+            break;
+        default:
+            $query .= " ORDER BY CAST(e.collector_number AS INTEGER) ASC";
+            break;
+    }
+
+    $stmt = db()->prepare($query);
+    $stmt->execute($params);
+    $editions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    partial('admin/products/partials/bulk_editions_grid', ['editions' => $editions]);
+}, [$getAdminAuth]);
+
+post('/admin/products/bulk/create', function () {
+    // Disable compression for this endpoint to prevent HTMX decoding issues
+    if (ob_get_level()) {
+        ob_end_clean();
+    }
+
+    $products = $_POST['products'] ?? [];
+
+    if (empty($products)) {
+        http_response_code(422);
+        echo '❌ No products to create';
+        return;
+    }
+
+    $created_count = 0;
+    $skipped_count = 0;
+    $errors = [];
+
+    foreach ($products as $edition_index => $variants) {
+        // Each edition can have multiple product variants
+        foreach ($variants as $variant_index => $product_data) {
+            $edition_id = $product_data['edition_id'] ?? null;
+            $name = trim($product_data['name'] ?? '');
+            $description = trim($product_data['description'] ?? '');
+            $price = $product_data['price'] ?? null;
+            $quantity = $product_data['quantity'] ?? null;
+            $is_foil = isset($product_data['is_foil']) ? 1 : 0;
+            $is_used = isset($product_data['is_used']) ? 1 : 0;
+
+            // Skip empty rows
+            if (!$edition_id || !$name || $price === '' || $quantity === '' || $price === null || $quantity === null) {
+                $skipped_count++;
+                continue;
+            }
+
+            // Convert to numbers
+            $price = floatval($price);
+            $quantity = intval($quantity);
+
+            // Validate each product
+            if ($price < 0) {
+                $errors[] = "Edition " . ($edition_index + 1) . ", Variant " . ($variant_index + 1) . ": Price must be positive";
+                continue;
+            }
+
+            if ($quantity < 0) {
+                $errors[] = "Edition " . ($edition_index + 1) . ", Variant " . ($variant_index + 1) . ": Quantity must be positive";
+                continue;
+            }
+
+            try {
+                insert_product($edition_id, $name, $description, $price, $quantity, $is_foil, $is_used);
+                $created_count++;
+            } catch (Exception $e) {
+                $errors[] = "Edition " . ($edition_index + 1) . ", Variant " . ($variant_index + 1) . ": " . $e->getMessage();
+            }
+        }
+    }
+
+    // Get the set_id from the first product to reload the grid
+    $set_id = null;
+    foreach ($products as $edition_index => $variants) {
+        foreach ($variants as $variant_index => $product_data) {
+            if (isset($product_data['edition_id'])) {
+                $stmt = db()->prepare("SELECT set_id FROM editions WHERE id = :id");
+                $stmt->execute([':id' => $product_data['edition_id']]);
+                $set_id = $stmt->fetchColumn();
+                break 2;
+            }
+        }
+    }
+
+    // Prepare success message
+    if ($errors) {
+        $message = '⚠️ Created ' . $created_count . ' products, skipped ' . $skipped_count . ' empty rows. Errors: ' . implode(', ', $errors);
+    } else {
+        $message = '✅ Successfully created ' . $created_count . ' products';
+        if ($skipped_count > 0) {
+            $message .= ', skipped ' . $skipped_count . ' empty rows';
+        }
+    }
+
+    // Return fresh grid with success message
+    if ($set_id) {
+        // Get fresh editions data
+        $query = "
+            SELECT e.*, c.name as card_name, s.name as set_name,
+                   COUNT(p.id) as existing_products
+            FROM editions e
+            JOIN cards c ON e.card_id = c.id
+            JOIN sets s ON e.set_id = s.id
+            LEFT JOIN products p ON e.id = p.edition_id
+            WHERE e.set_id = :set_id
+            GROUP BY e.id
+            ORDER BY CAST(e.collector_number AS INTEGER) ASC
+        ";
+
+        $stmt = db()->prepare($query);
+        $stmt->execute([':set_id' => $set_id]);
+        $editions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Show success message and fresh grid
+        echo '<div class="bulk-result" style="margin-bottom: 24px; padding: 16px; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px; color: #22c55e;">';
+        echo $message;
+        echo '</div>';
+
+        partial('admin/products/partials/bulk_editions_grid', ['editions' => $editions]);
+    } else {
+        echo $message;
+    }
+}, [$getAdminAuth]);
 
 get('/admin/products/add', function () {
     $edition_id = $_GET['edition_id'] ?? null;

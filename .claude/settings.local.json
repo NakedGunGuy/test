@@ -14,7 +14,10 @@
       "mcp__playwright__browser_wait_for",
       "mcp__playwright__browser_network_requests",
       "mcp__playwright__browser_snapshot",
-      "mcp__playwright__browser_resize"
+      "mcp__playwright__browser_resize",
+      "Bash(node:*)",
+      "Bash(npx playwright codegen:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []
