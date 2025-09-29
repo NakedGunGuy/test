@@ -15,7 +15,6 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         <div class="status-info">
             <div class="status-icon">
                 <?php if ($order['status'] === 'pending'): ?>📋
-                <?php elseif ($order['status'] === 'processing'): ?>⚙️
                 <?php elseif ($order['status'] === 'shipped'): ?>🚚
                 <?php elseif ($order['status'] === 'delivered'): ?>✅
                 <?php elseif ($order['status'] === 'cancelled'): ?>❌
@@ -24,8 +23,7 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             <div>
                 <div class="status-title">Status: <?= ucfirst($order['status']) ?></div>
                 <div class="status-desc">
-                    <?php if ($order['status'] === 'pending'): ?>Order received and awaiting processing
-                    <?php elseif ($order['status'] === 'processing'): ?>Order is being prepared for shipment
+                    <?php if ($order['status'] === 'pending'): ?>Order received and awaiting shipment
                     <?php elseif ($order['status'] === 'shipped'): ?>Order has been shipped
                     <?php elseif ($order['status'] === 'delivered'): ?>Order has been delivered
                     <?php elseif ($order['status'] === 'cancelled'): ?>Order has been cancelled
@@ -40,15 +38,16 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                   data-toast="Order status updated!">
                 <select name="status" class="form-input" style="padding: 8px 12px;" onchange="toggleTrackingField(this)">
                     <option value="pending" <?= $order['status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
-                    <option value="processing" <?= $order['status'] === 'processing' ? 'selected' : '' ?>>Processing</option>
                     <option value="shipped" <?= $order['status'] === 'shipped' ? 'selected' : '' ?>>Shipped</option>
+                    <option value="delivered" <?= $order['status'] === 'delivered' ? 'selected' : '' ?>>Delivered</option>
                     <option value="cancelled" <?= $order['status'] === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
                 </select>
-                <input type="text" 
-                       name="tracking_number" 
-                       id="tracking_field" 
-                       placeholder="Tracking number (optional)" 
-                       class="form-input" 
+                <input type="text"
+                       name="tracking_number"
+                       id="tracking_field"
+                       placeholder="Tracking number (optional)"
+                       value="<?= htmlspecialchars($order['tracking_number'] ?? '') ?>"
+                       class="form-input"
                        style="padding: 8px 12px; display: <?= $order['status'] === 'shipped' ? 'block' : 'none' ?>;">
                 <button type="submit" class="btn btn-small blue">Update</button>
             </form>
@@ -86,6 +85,12 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                 <span class="info-label">Order Total:</span>
                 <span class="info-value total">€<?= number_format($order['total_amount'], 2) ?></span>
             </div>
+            <?php if ($order['tracking_number']): ?>
+            <div class="info-row">
+                <span class="info-label">Tracking Number:</span>
+                <span class="info-value" style="font-family: monospace; background: rgba(0, 174, 239, 0.1); padding: 4px 8px; border-radius: 4px;"><?= htmlspecialchars($order['tracking_number']) ?></span>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -238,12 +243,6 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
     background: rgba(255, 193, 7, 0.1);
     border-color: #FFC107;
     color: #FFC107;
-}
-
-.order-status-banner.status-processing {
-    background: rgba(23, 162, 184, 0.1);
-    border-color: #17A2B8;
-    color: #17A2B8;
 }
 
 .order-status-banner.status-shipped {

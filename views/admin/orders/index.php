@@ -7,9 +7,12 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
     <a href="<?= url('admin') ?>" class="btn text back">← Back to Dashboard</a>
     <h1 class="section-title" style="margin-top: 0;">Orders Management</h1>
     <p style="color: #C0C0D1;">Process and track customer orders</p>
-    <div style="margin-top: 1rem;">
+    <div style="margin-top: 1rem; display: flex; gap: 1rem;">
         <a href="<?= url('admin/orders/preparation') ?>" class="btn blue">
-            📦 Order Preparation View
+            📦 Order Preparation
+        </a>
+        <a href="<?= url('admin/orders/shipping') ?>" class="btn black">
+            🚚 Order Shipping
         </a>
     </div>
 </div>
@@ -30,13 +33,6 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             <div class="info">
                 <div class="number"><?= $stats['pending_count'] ?? 0 ?></div>
                 <div class="label">Pending</div>
-            </div>
-        </div>
-        <div class="card stat">
-            <div class="icon">⚙️</div>
-            <div class="info">
-                <div class="number"><?= $stats['processing_count'] ?? 0 ?></div>
-                <div class="label">Processing</div>
             </div>
         </div>
         <div class="card stat">
@@ -128,7 +124,6 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                                   data-toast="Order status updated!">
                                 <select name="status" class="form-input" style="width: auto; padding: 4px 8px; font-size: 12px;">
                                     <option value="pending" <?= $order['status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
-                                    <option value="processing" <?= $order['status'] === 'processing' ? 'selected' : '' ?>>Processing</option>
                                     <option value="shipped" <?= $order['status'] === 'shipped' ? 'selected' : '' ?>>Shipped</option>
                                     <option value="delivered" <?= $order['status'] === 'delivered' ? 'selected' : '' ?>>Delivered</option>
                                     <option value="cancelled" <?= $order['status'] === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>

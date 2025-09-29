@@ -28,6 +28,8 @@
                 <span class="nav-icon">📋</span><?= t('admin.orders') ?></a></li>
             <li><a href="<?= url('admin/orders/preparation') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/orders/preparation') ? 'active' : '' ?>">
                 <span class="nav-icon">📦</span>Order Preparation</a></li>
+            <li><a href="<?= url('admin/orders/shipping') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/orders/shipping') ? 'active' : '' ?>">
+                <span class="nav-icon">🚚</span>Order Shipping</a></li>
             <li><a href="<?= url('admin/analytics') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/analytics') ? 'active' : '' ?>">
                 <span class="nav-icon">📈</span><?= t('admin.analytics') ?></a></li>
             <li><a href="<?= url('admin/cache-images') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/cache-images') ? 'active' : '' ?>">
@@ -110,6 +112,10 @@
         <a href="<?= url('admin/orders/preparation') ?>" class="mobile-nav-item <?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/orders/preparation') ? 'active' : '' ?>">
             <span class="mobile-nav-icon">📦</span>
             <span class="mobile-nav-text">Preparation</span>
+        </a>
+        <a href="<?= url('admin/orders/shipping') ?>" class="mobile-nav-item <?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/orders/shipping') ? 'active' : '' ?>">
+            <span class="mobile-nav-icon">🚚</span>
+            <span class="mobile-nav-text">Shipping</span>
         </a>
         <a href="<?= url('admin/analytics') ?>" class="mobile-nav-item <?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/analytics') ? 'active' : '' ?>">
             <span class="mobile-nav-icon">📈</span>

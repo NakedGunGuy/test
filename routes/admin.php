@@ -562,14 +562,13 @@ get('/admin/orders', function () {
     
     // Get order statistics
     $stats_stmt = db()->prepare("
-        SELECT 
+        SELECT
             COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_count,
-            COUNT(CASE WHEN status = 'processing' THEN 1 END) as processing_count,
             COUNT(CASE WHEN status = 'shipped' THEN 1 END) as shipped_count,
             COUNT(CASE WHEN status = 'delivered' THEN 1 END) as delivered_count,
             COUNT(*) as total_orders,
             ROUND(SUM(total_amount), 2) as total_revenue
-        FROM orders 
+        FROM orders
         WHERE created_at >= date('now', '-30 days')
     ");
     $stats_stmt->execute();
@@ -584,7 +583,7 @@ post('/admin/orders/{id}/status', function ($data) {
     $status = $_POST['status'] ?? '';
     $tracking_number = $_POST['tracking_number'] ?? '';
     
-    $valid_statuses = ['pending', 'processing', 'shipped', 'cancelled'];
+    $valid_statuses = ['pending', 'shipped', 'delivered', 'cancelled'];
     if (!in_array($status, $valid_statuses)) {
         http_response_code(400);
         echo '❌ Invalid status';
@@ -612,7 +611,7 @@ post('/admin/orders/{id}/status', function ($data) {
 
 // Order Preparation - Grouped view for fulfillment (MUST be before {id} route)
 get('/admin/orders/preparation', function () {
-    // Get all unprepared orders (pending and processing status)
+    // Get all unprepared orders (pending status only) with preparation status
     $stmt = db()->prepare("
         SELECT
             oi.product_id,
@@ -628,6 +627,8 @@ get('/admin/orders/preparation', function () {
             s.prefix as set_prefix,
             GROUP_CONCAT(DISTINCT o.id) as order_ids,
             SUM(oi.quantity) as total_quantity,
+            SUM(oi.prepared_quantity) as total_prepared,
+            SUM(oi.quantity - oi.prepared_quantity) as total_remaining,
             COUNT(DISTINCT o.id) as order_count
         FROM order_items oi
         JOIN orders o ON oi.order_id = o.id
@@ -635,7 +636,8 @@ get('/admin/orders/preparation', function () {
         LEFT JOIN editions e ON p.edition_id = e.id
         LEFT JOIN cards c ON e.card_id = c.id
         LEFT JOIN sets s ON e.set_id = s.id
-        WHERE o.status IN ('pending', 'processing')
+        WHERE o.status = 'pending'
+        AND oi.quantity > oi.prepared_quantity
         GROUP BY oi.product_id
         ORDER BY s.name ASC, e.collector_number ASC, c.name ASC
     ");
@@ -652,15 +654,18 @@ get('/admin/orders/preparation', function () {
         $grouped_items[$set_name][] = $item;
     }
 
-    // Get summary statistics
+    // Get summary statistics including preparation progress
     $stats_stmt = db()->prepare("
         SELECT
             COUNT(DISTINCT o.id) as unprepared_orders,
-            SUM(oi.quantity) as total_items_to_prepare,
-            COUNT(DISTINCT oi.product_id) as unique_products
+            SUM(oi.quantity) as total_items_needed,
+            SUM(oi.prepared_quantity) as total_items_prepared,
+            SUM(oi.quantity - oi.prepared_quantity) as total_items_remaining,
+            COUNT(DISTINCT oi.product_id) as unique_products,
+            COUNT(DISTINCT CASE WHEN oi.quantity > oi.prepared_quantity THEN oi.product_id END) as products_needing_prep
         FROM order_items oi
         JOIN orders o ON oi.order_id = o.id
-        WHERE o.status IN ('pending', 'processing')
+        WHERE o.status = 'pending'
     ");
     $stats_stmt->execute();
     $stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
@@ -669,6 +674,194 @@ get('/admin/orders/preparation', function () {
         'grouped_items' => $grouped_items,
         'stats' => $stats
     ], 'admin');
+}, [$getAdminAuth]);
+
+// Mark product as prepared
+post('/admin/orders/preparation/mark', function () {
+    $product_id = $_POST['product_id'] ?? null;
+    $quantity_prepared = (int)($_POST['quantity_prepared'] ?? 0);
+
+    if (!$product_id || $quantity_prepared <= 0) {
+        http_response_code(400);
+        echo '❌ Invalid product ID or quantity';
+        return;
+    }
+
+    // Get all unprepared order items for this product
+    $stmt = db()->prepare("
+        SELECT oi.id, oi.order_id, oi.quantity, oi.prepared_quantity,
+               (oi.quantity - oi.prepared_quantity) as remaining
+        FROM order_items oi
+        JOIN orders o ON oi.order_id = o.id
+        WHERE oi.product_id = :product_id
+        AND o.status = 'pending'
+        AND oi.quantity > oi.prepared_quantity
+        ORDER BY o.created_at ASC
+    ");
+    $stmt->execute([':product_id' => $product_id]);
+    $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $remaining_to_prepare = $quantity_prepared;
+    $updated_items = [];
+
+    // Distribute prepared quantity across order items (FIFO)
+    foreach ($order_items as $item) {
+        if ($remaining_to_prepare <= 0) break;
+
+        $can_prepare = min($item['remaining'], $remaining_to_prepare);
+        $new_prepared_qty = $item['prepared_quantity'] + $can_prepare;
+
+        $update_stmt = db()->prepare("
+            UPDATE order_items
+            SET prepared_quantity = :prepared_qty
+            WHERE id = :item_id
+        ");
+        $update_stmt->execute([
+            ':prepared_qty' => $new_prepared_qty,
+            ':item_id' => $item['id']
+        ]);
+
+        $updated_items[] = "Order #{$item['order_id']}: +{$can_prepare}";
+        $remaining_to_prepare -= $can_prepare;
+    }
+
+    // Send custom toast message with details
+    if ($remaining_to_prepare > 0) {
+        $actually_prepared = $quantity_prepared - $remaining_to_prepare;
+        header("X-Toast-Message: WARNING: Marked {$actually_prepared} items as prepared. {$remaining_to_prepare} excess quantity ignored.");
+    } else {
+        $orders_text = count($updated_items) === 1 ? "1 order" : count($updated_items) . " orders";
+        header("X-Toast-Message: SUCCESS: Marked {$quantity_prepared} items as prepared across {$orders_text}");
+    }
+
+    // Return updated preparation content
+    // Re-run the same query as the preparation view
+    $stmt = db()->prepare("
+        SELECT
+            oi.product_id,
+            oi.quantity,
+            oi.price,
+            p.name as product_name,
+            p.edition_id,
+            e.slug as edition_slug,
+            e.collector_number,
+            e.rarity,
+            c.name as card_name,
+            s.name as set_name,
+            s.prefix as set_prefix,
+            GROUP_CONCAT(DISTINCT o.id) as order_ids,
+            SUM(oi.quantity) as total_quantity,
+            SUM(oi.prepared_quantity) as total_prepared,
+            SUM(oi.quantity - oi.prepared_quantity) as total_remaining,
+            COUNT(DISTINCT o.id) as order_count
+        FROM order_items oi
+        JOIN orders o ON oi.order_id = o.id
+        JOIN products p ON oi.product_id = p.id
+        LEFT JOIN editions e ON p.edition_id = e.id
+        LEFT JOIN cards c ON e.card_id = c.id
+        LEFT JOIN sets s ON e.set_id = s.id
+        WHERE o.status = 'pending'
+        AND oi.quantity > oi.prepared_quantity
+        GROUP BY oi.product_id
+        ORDER BY s.name ASC, e.collector_number ASC, c.name ASC
+    ");
+    $stmt->execute();
+    $preparation_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Group items by set
+    $grouped_items = [];
+    foreach ($preparation_items as $item) {
+        $set_name = $item['set_name'] ?: 'Custom Products';
+        if (!isset($grouped_items[$set_name])) {
+            $grouped_items[$set_name] = [];
+        }
+        $grouped_items[$set_name][] = $item;
+    }
+
+    // Get updated statistics
+    $stats_stmt = db()->prepare("
+        SELECT
+            COUNT(DISTINCT o.id) as unprepared_orders,
+            SUM(oi.quantity) as total_items_needed,
+            SUM(oi.prepared_quantity) as total_items_prepared,
+            SUM(oi.quantity - oi.prepared_quantity) as total_items_remaining,
+            COUNT(DISTINCT oi.product_id) as unique_products,
+            COUNT(DISTINCT CASE WHEN oi.quantity > oi.prepared_quantity THEN oi.product_id END) as products_needing_prep
+        FROM order_items oi
+        JOIN orders o ON oi.order_id = o.id
+        WHERE o.status = 'pending'
+    ");
+    $stats_stmt->execute();
+    $stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Return the preparation content partial
+    partial('admin/orders/partials/preparation_content', [
+        'grouped_items' => $grouped_items,
+        'stats' => $stats
+    ]);
+}, [$getAdminAuth]);
+
+// Order Shipping - Sort prepared items by individual orders
+get('/admin/orders/shipping', function () {
+    // Get pending orders that have prepared items ready for shipping
+    $stmt = db()->prepare("
+        SELECT DISTINCT
+            o.id as order_id,
+            o.status,
+            o.total_amount,
+            o.created_at,
+            u.username,
+            u.email,
+            COUNT(oi.id) as total_item_types,
+            SUM(oi.quantity) as total_quantity,
+            SUM(oi.prepared_quantity) as prepared_quantity,
+            SUM(CASE WHEN oi.quantity = oi.prepared_quantity THEN 1 ELSE 0 END) as fully_prepared_item_types
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        JOIN order_items oi ON o.id = oi.order_id
+        WHERE o.status = 'pending'
+        AND oi.prepared_quantity > 0
+        GROUP BY o.id
+        ORDER BY
+            CASE WHEN SUM(oi.quantity) = SUM(oi.prepared_quantity) THEN 0 ELSE 1 END,
+            o.created_at ASC
+    ");
+    $stmt->execute();
+    $orders_with_prepared_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    view('admin/orders/shipping', [
+        'orders' => $orders_with_prepared_items
+    ], 'admin');
+}, [$getAdminAuth]);
+
+// Get detailed prepared items for a specific order (for shipping view)
+get('/admin/orders/{id}/prepared-items', function ($data) {
+    $order_id = $data['id'];
+
+    $stmt = db()->prepare("
+        SELECT
+            oi.*,
+            p.name as product_name,
+            c.name as card_name,
+            s.name as set_name,
+            e.collector_number,
+            e.rarity
+        FROM order_items oi
+        JOIN products p ON oi.product_id = p.id
+        LEFT JOIN editions e ON p.edition_id = e.id
+        LEFT JOIN cards c ON e.card_id = c.id
+        LEFT JOIN sets s ON e.set_id = s.id
+        WHERE oi.order_id = :order_id
+        AND oi.prepared_quantity > 0
+        ORDER BY s.name ASC, e.collector_number ASC
+    ");
+    $stmt->execute([':order_id' => $order_id]);
+    $prepared_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    partial('admin/orders/partials/prepared_items_list', [
+        'order_id' => $order_id,
+        'items' => $prepared_items
+    ]);
 }, [$getAdminAuth]);
 
 // View order details

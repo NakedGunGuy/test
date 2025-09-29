@@ -201,16 +201,21 @@ function create_order_with_shipping(int $user_id, array $cart_items, array $ship
 
 function update_order_status(int $order_id, string $status, string $tracking_number = ''): void {
     $pdo = db();
-    
+
     // Get current status before updating
     $stmt = $pdo->prepare("SELECT status FROM orders WHERE id = :id");
     $stmt->execute([':id' => $order_id]);
     $old_status = $stmt->fetchColumn();
-    
-    // Update the order status
-    $stmt = $pdo->prepare("UPDATE orders SET status = :status WHERE id = :id");
-    $stmt->execute([':status' => $status, ':id' => $order_id]);
-    
+
+    // Update the order status and tracking number if provided
+    if ($tracking_number) {
+        $stmt = $pdo->prepare("UPDATE orders SET status = :status, tracking_number = :tracking_number WHERE id = :id");
+        $stmt->execute([':status' => $status, ':tracking_number' => $tracking_number, ':id' => $order_id]);
+    } else {
+        $stmt = $pdo->prepare("UPDATE orders SET status = :status WHERE id = :id");
+        $stmt->execute([':status' => $status, ':id' => $order_id]);
+    }
+
     // Send shipping email if status changed to 'shipped'
     if ($old_status !== 'shipped' && $status === 'shipped') {
         send_order_shipped_email($order_id, $tracking_number);

@@ -37,11 +37,20 @@ function setupDialogClose(dlg) {
 
 document.body.addEventListener("htmx:afterRequest", function(event) {
     const elt = event.detail.elt;
-    if (elt.matches("[data-toast], [data-close-modal]")) {
+
+    // Always check for custom toast message from server header first
+    if (event.detail.xhr.status >= 200 && event.detail.xhr.status < 300) {
+        const customMessage = event.detail.xhr.getResponseHeader('X-Toast-Message');
+        if (customMessage) {
+            showToast(customMessage);
+        } else if (elt.matches("[data-toast]") && elt.dataset.toast) {
+            showToast(elt.dataset.toast);
+        }
+    }
+
+    // Handle modal closing
+    if (elt.matches("[data-close-modal]")) {
         if (event.detail.xhr.status >= 200 && event.detail.xhr.status < 300) {
-            if (elt.dataset.toast) {
-                showToast(elt.dataset.toast);
-            }
             if (elt.dataset.closeModal === "true") {
                 const dlg = document.getElementById('dialog');
                 if (dlg.open) {

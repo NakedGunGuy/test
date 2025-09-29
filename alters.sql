@@ -149,8 +149,9 @@ CREATE TABLE IF NOT EXISTS cart_items (
 CREATE TABLE IF NOT EXISTS orders (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
-    status TEXT NOT NULL DEFAULT 'pending', -- pending, processing, shipped, delivered, cancelled
+    status TEXT NOT NULL DEFAULT 'pending', -- pending, shipped, delivered, cancelled
     total_amount DECIMAL(10,2) NOT NULL,
+    tracking_number TEXT,
     shipping_address TEXT,
     notes TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
