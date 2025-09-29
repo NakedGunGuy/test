@@ -610,13 +610,74 @@ post('/admin/orders/{id}/status', function ($data) {
     }
 }, [$getAdminAuth]);
 
+// Order Preparation - Grouped view for fulfillment (MUST be before {id} route)
+get('/admin/orders/preparation', function () {
+    // Get all unprepared orders (pending and processing status)
+    $stmt = db()->prepare("
+        SELECT
+            oi.product_id,
+            oi.quantity,
+            oi.price,
+            p.name as product_name,
+            p.edition_id,
+            e.slug as edition_slug,
+            e.collector_number,
+            e.rarity,
+            c.name as card_name,
+            s.name as set_name,
+            s.prefix as set_prefix,
+            GROUP_CONCAT(DISTINCT o.id) as order_ids,
+            SUM(oi.quantity) as total_quantity,
+            COUNT(DISTINCT o.id) as order_count
+        FROM order_items oi
+        JOIN orders o ON oi.order_id = o.id
+        JOIN products p ON oi.product_id = p.id
+        LEFT JOIN editions e ON p.edition_id = e.id
+        LEFT JOIN cards c ON e.card_id = c.id
+        LEFT JOIN sets s ON e.set_id = s.id
+        WHERE o.status IN ('pending', 'processing')
+        GROUP BY oi.product_id
+        ORDER BY s.name ASC, e.collector_number ASC, c.name ASC
+    ");
+    $stmt->execute();
+    $preparation_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Group items by set for better organization
+    $grouped_items = [];
+    foreach ($preparation_items as $item) {
+        $set_name = $item['set_name'] ?: 'Custom Products';
+        if (!isset($grouped_items[$set_name])) {
+            $grouped_items[$set_name] = [];
+        }
+        $grouped_items[$set_name][] = $item;
+    }
+
+    // Get summary statistics
+    $stats_stmt = db()->prepare("
+        SELECT
+            COUNT(DISTINCT o.id) as unprepared_orders,
+            SUM(oi.quantity) as total_items_to_prepare,
+            COUNT(DISTINCT oi.product_id) as unique_products
+        FROM order_items oi
+        JOIN orders o ON oi.order_id = o.id
+        WHERE o.status IN ('pending', 'processing')
+    ");
+    $stats_stmt->execute();
+    $stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
+
+    view('admin/orders/preparation', [
+        'grouped_items' => $grouped_items,
+        'stats' => $stats
+    ], 'admin');
+}, [$getAdminAuth]);
+
 // View order details
 get('/admin/orders/{id}', function ($data) {
     $order_id = $data['id'];
-    
+
     // Get order with user information
     $order_stmt = db()->prepare("
-        SELECT 
+        SELECT
             o.*,
             u.username,
             u.email
@@ -626,16 +687,16 @@ get('/admin/orders/{id}', function ($data) {
     ");
     $order_stmt->execute([':id' => $order_id]);
     $order = $order_stmt->fetch(PDO::FETCH_ASSOC);
-    
+
     if (!$order) {
         http_response_code(404);
         echo 'Order not found';
         return;
     }
-    
+
     // Get order items with product details
     $items_stmt = db()->prepare("
-        SELECT 
+        SELECT
             oi.*,
             p.name as current_product_name,
             p.quantity as current_stock,
@@ -653,13 +714,13 @@ get('/admin/orders/{id}', function ($data) {
     ");
     $items_stmt->execute([':order_id' => $order_id]);
     $items = $items_stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
     // Parse shipping address if it exists
     $shipping_address = null;
     if ($order['shipping_address']) {
         $shipping_address = json_decode($order['shipping_address'], true);
     }
-    
+
     view('admin/orders/detail', [
         'order' => $order,
         'items' => $items,

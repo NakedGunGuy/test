@@ -3771,3 +3771,103 @@ select.form-input-small {
     }
 }
 
+/* Badge Styles */
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(0, 174, 239, 0.1);
+    color: #00AEEF;
+    border: 1px solid rgba(0, 174, 239, 0.3);
+}
+
+/* Status Badge Styles */
+.badge.status {
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: normal;
+}
+
+.badge.status.status-pending {
+    background: rgba(255, 193, 7, 0.1);
+    color: #FFC107;
+    border-color: rgba(255, 193, 7, 0.3);
+}
+
+.badge.status.status-processing {
+    background: rgba(0, 174, 239, 0.1);
+    color: #00AEEF;
+    border-color: rgba(0, 174, 239, 0.3);
+}
+
+.badge.status.status-shipped {
+    background: rgba(108, 117, 125, 0.1);
+    color: #6C757D;
+    border-color: rgba(108, 117, 125, 0.3);
+}
+
+.badge.status.status-delivered {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28A745;
+    border-color: rgba(40, 167, 69, 0.3);
+}
+
+.badge.status.status-cancelled {
+    background: rgba(220, 53, 69, 0.1);
+    color: #DC3545;
+    border-color: rgba(220, 53, 69, 0.3);
+}
+
+/* Rarity Badge Styles */
+.badge.rarity {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge.rarity.rarity-common {
+    background: rgba(108, 117, 125, 0.1);
+    color: #6C757D;
+    border-color: rgba(108, 117, 125, 0.3);
+}
+
+.badge.rarity.rarity-uncommon {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28A745;
+    border-color: rgba(40, 167, 69, 0.3);
+}
+
+.badge.rarity.rarity-rare {
+    background: rgba(0, 174, 239, 0.1);
+    color: #00AEEF;
+    border-color: rgba(0, 174, 239, 0.3);
+}
+
+.badge.rarity.rarity-epic {
+    background: rgba(102, 16, 242, 0.1);
+    color: #6610F2;
+    border-color: rgba(102, 16, 242, 0.3);
+}
+
+.badge.rarity.rarity-legendary {
+    background: rgba(255, 193, 7, 0.1);
+    color: #FFC107;
+    border-color: rgba(255, 193, 7, 0.3);
+}
+
+.badge.rarity.rarity-mythic {
+    background: linear-gradient(45deg, rgba(255, 193, 7, 0.1), rgba(220, 53, 69, 0.1));
+    color: #FF6B35;
+    border: 1px solid rgba(255, 107, 53, 0.3);
+}
+
+.badge.rarity.rarity-secret {
+    background: linear-gradient(45deg, rgba(102, 16, 242, 0.1), rgba(220, 53, 69, 0.1));
+    color: #E91E63;
+    border: 1px solid rgba(233, 30, 99, 0.3);
+}
+

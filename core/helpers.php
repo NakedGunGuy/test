@@ -67,11 +67,18 @@ function parse_yaml_file($path)
 
 /**
  * Get cached card image URL
- * 
+ *
  * @param string $edition_slug The edition slug for the card
  * @return string The local URL path to the cached image
  */
-function card_image($edition_slug) 
+function card_image($edition_slug)
 {
     return get_cached_card_image($edition_slug);
+}
+
+// Polyfill for str_starts_with() for PHP < 8.0
+if (!function_exists('str_starts_with')) {
+    function str_starts_with($haystack, $needle) {
+        return $needle !== '' && strncmp($haystack, $needle, strlen($needle)) === 0;
+    }
 }

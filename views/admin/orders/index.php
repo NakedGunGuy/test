@@ -7,6 +7,11 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
     <a href="<?= url('admin') ?>" class="btn text back">← Back to Dashboard</a>
     <h1 class="section-title" style="margin-top: 0;">Orders Management</h1>
     <p style="color: #C0C0D1;">Process and track customer orders</p>
+    <div style="margin-top: 1rem;">
+        <a href="<?= url('admin/orders/preparation') ?>" class="btn blue">
+            📦 Order Preparation View
+        </a>
+    </div>
 </div>
 
 <!-- Order Statistics -->
