@@ -2,7 +2,7 @@
 
 <div id="product-purchase-<?= $product['id'] ?>" class="purchase-card" hx-swap-oob="true">
     <div class="price">
-        $<?= number_format($product['price'], 2) ?>
+        €<?= number_format($product['price'], 2) ?>
     </div>
     
     <div class="stock-info">

@@ -31,7 +31,7 @@
                     <p class="quantity">Quantity: <?= $item['quantity'] ?></p>
                 </div>
                 <div class="item-price">
-                    $<?= number_format($item['price'] * $item['quantity'], 2) ?>
+                    €<?= number_format($item['price'] * $item['quantity'], 2) ?>
                 </div>
             </div>
         <?php endforeach; ?>
@@ -41,7 +41,7 @@
 <!-- Order Total -->
 <div class="order-total-section">
     <span>Total</span>
-    <span>$<?= number_format($order['total_amount'], 2) ?></span>
+    <span>€<?= number_format($order['total_amount'], 2) ?></span>
 </div>
 
 <!-- Shipping Address -->

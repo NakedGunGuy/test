@@ -34,7 +34,7 @@ Profile - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                     <div class="card stat">
                         <div class="icon">💳</div>
                         <div class="info">
-                            <div class="number">$<?= number_format($stats['total_spent'] ?? 0, 2) ?></div>
+                            <div class="number">€<?= number_format($stats['total_spent'] ?? 0, 2) ?></div>
                             <div class="label"><?= t('profile.total_spent') ?></div>
                         </div>
                     </div>

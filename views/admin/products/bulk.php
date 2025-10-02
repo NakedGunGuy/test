@@ -1,9 +1,3 @@
-
-<div class="header">
-    <h1>Bulk Add Products</h1>
-    <p>Add multiple products to a set at once</p>
-</div>
-
 <div class="filters">
     <div class="filter-form">
         <div class="filters-row">

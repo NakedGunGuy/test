@@ -14,7 +14,7 @@
     
     <div class="grid-cell">
         <span style="font-weight: 600; color: #01AFFC;">
-            $<?= number_format($product['price'], 2) ?>
+            €<?= number_format($product['price'], 2) ?>
         </span>
     </div>
     

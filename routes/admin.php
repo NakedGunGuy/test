@@ -1320,7 +1320,7 @@ post('/admin/shipping/calculate', function () {
         $shipping = calculate_shipping_cost($weight_grams, $country_code);
         
         if ($shipping) {
-            echo "💰 <strong>$" . number_format($shipping['cost'], 2) . "</strong> ";
+            echo "💰 <strong>€" . number_format($shipping['cost'], 2) . "</strong> ";
             echo "({$shipping['tier']['tier_name']}) ";
             echo "📅 {$shipping['country']['estimated_days_min']}-{$shipping['country']['estimated_days_max']} days";
         } else {

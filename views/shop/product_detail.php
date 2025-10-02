@@ -96,7 +96,7 @@
                     <td><?= date('M j, Y', strtotime($order['created_at'])) ?></td>
                     <td><?= htmlspecialchars($order['username']) ?></td>
                     <td><?= $order['quantity'] ?></td>
-                    <td>$<?= number_format($order['price'], 2) ?></td>
+                    <td>€<?= number_format($order['price'], 2) ?></td>
                     <td>
                         <span style="color: <?= $order['status'] === 'paid' ? '#01AFFC' : '#FFB800' ?>">
                             <?= ucfirst($order['status']) ?>
@@ -122,7 +122,7 @@
                 <div class="variant-meta">
                     <div class="variant-meta-item"><?= t('product.rarity') ?>: <?= htmlspecialchars($variant['rarity'] ?? t('common.na')) ?></div>
                     <div class="variant-meta-item"><?= t('product.foil') ?>: <?= $variant['is_foil'] ? t('common.yes') : t('common.no') ?></div>
-                    <div class="variant-meta-item"><?= t('products.price') ?>: <span class="variant-price">$<?= number_format($variant['price'], 2) ?></span></div>
+                    <div class="variant-meta-item"><?= t('products.price') ?>: <span class="variant-price">€<?= number_format($variant['price'], 2) ?></span></div>
                     <div class="variant-meta-item"><?= t('products.stock') ?>: <?= $variant['quantity'] > 0 ? t('product.available', ['count' => $variant['quantity']]) : t('products.out_of_stock') ?></div>
                 </div>
                 <a href="<?= url('product/' . $variant['id']) ?>" class="btn blue btn-small">

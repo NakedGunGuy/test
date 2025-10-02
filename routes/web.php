@@ -17,6 +17,7 @@ get('/discover', function () {
         'name' => $_GET['name'] ?? null,
         'min_price' => $_GET['min_price'] ?? null,
         'max_price' => $_GET['max_price'] ?? null,
+        'in_stock_only' => true, // Only show products that are in stock
     ];
     $filters = array_filter($filters);
 

@@ -75,14 +75,14 @@ Analytics - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         <div class="card stat">
             <div class="icon">💰</div>
             <div class="info">
-                <div class="number">$<?= number_format($overview['total_revenue'] ?? 0, 2) ?></div>
+                <div class="number">€<?= number_format($overview['total_revenue'] ?? 0, 2) ?></div>
                 <div class="label">Total Revenue</div>
             </div>
         </div>
         <div class="card stat">
             <div class="icon">💳</div>
             <div class="info">
-                <div class="number">$<?= number_format($overview['avg_order_value'] ?? 0, 2) ?></div>
+                <div class="number">€<?= number_format($overview['avg_order_value'] ?? 0, 2) ?></div>
                 <div class="label">Avg Order Value</div>
             </div>
         </div>
@@ -122,11 +122,11 @@ Analytics - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                         </div>
                         <div class="grid-cell">
                             <span style="font-weight: 600; color: #01AFFC;">
-                                $<?= number_format($day['daily_revenue'], 2) ?>
+                                €<?= number_format($day['daily_revenue'], 2) ?>
                             </span>
                         </div>
                         <div class="grid-cell">
-                            $<?= number_format($day['daily_revenue'] / $day['orders_count'], 2) ?>
+                            €<?= number_format($day['daily_revenue'] / $day['orders_count'], 2) ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -167,10 +167,10 @@ Analytics - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                             <span style="font-weight: 600; color: #01AFFC;"><?= number_format($product['total_sold']) ?></span>
                         </div>
                         <div class="grid-cell">
-                            $<?= number_format($product['revenue'], 2) ?>
+                            €<?= number_format($product['revenue'], 2) ?>
                         </div>
                         <div class="grid-cell">
-                            $<?= number_format($product['revenue'] / $product['total_sold'], 2) ?>
+                            €<?= number_format($product['revenue'] / $product['total_sold'], 2) ?>
                         </div>
                     </div>
                 <?php endforeach; ?>

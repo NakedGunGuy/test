@@ -52,7 +52,7 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         <div class="card stat">
             <div class="icon">💰</div>
             <div class="info">
-                <div class="number">$<?= number_format($stats['total_revenue'] ?? 0, 2) ?></div>
+                <div class="number">€<?= number_format($stats['total_revenue'] ?? 0, 2) ?></div>
                 <div class="label">Revenue</div>
             </div>
         </div>
@@ -107,7 +107,7 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                         
                         <div class="grid-cell">
                             <span style="font-weight: 600; color: #01AFFC;">
-                                $<?= number_format($order['total_amount'], 2) ?>
+                                €<?= number_format($order['total_amount'], 2) ?>
                             </span>
                         </div>
                         

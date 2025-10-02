@@ -29,9 +29,13 @@
                 <?php foreach ($cart as $item): ?>
                     <div class="cart-row" id="cart-item-<?= $item['product_id'] ?>" style="grid-template-columns: 2fr 1fr 1fr 1fr auto;">
                         <div class="cart-cell" data-label="Product">
-                            <div class="product-name"><?= htmlspecialchars($item['name']) ?></div>
+                            <div class="product-name">
+                                <a href="<?= url('product/' . $item['product_id']) ?>" class="product-link">
+                                    <?= htmlspecialchars($item['name']) ?>
+                                </a>
+                            </div>
                         </div>
-                        <div class="cart-cell" data-label="Price">$<?= number_format($item['price'], 2) ?></div>
+                        <div class="cart-cell" data-label="Price">€<?= number_format($item['price'], 2) ?></div>
                         <div class="cart-cell" data-label="Qty">
                             <div class="quantity-controls">
                                 <form hx-post="<?= url('cart/update-quantity') ?>" hx-swap="outerHTML" class="quantity-form">
@@ -43,7 +47,7 @@
                             </div>
                         </div>
                         <div class="cart-cell" data-label="Total">
-                            <span class="item-total">$<?= number_format($item['price'] * $item['quantity'], 2) ?></span>
+                            <span class="item-total">€<?= number_format($item['price'] * $item['quantity'], 2) ?></span>
                         </div>
                         <div class="cart-cell" data-label="Action">
                             <form hx-post="<?= url('cart/remove') ?>" hx-swap="outerHTML" class="remove-form">
@@ -62,11 +66,11 @@
             <div class="cart-summary">
                 <div class="summary-row">
                     <span class="summary-label">Subtotal:</span>
-                    <span class="summary-value">$<?= number_format($cart_total, 2) ?></span>
+                    <span class="summary-value">€<?= number_format($cart_total, 2) ?></span>
                 </div>
                 <div class="summary-row total">
                     <span class="summary-label">Total:</span>
-                    <span class="summary-value">$<?= number_format($cart_total, 2) ?></span>
+                    <span class="summary-value">€<?= number_format($cart_total, 2) ?></span>
                 </div>
                 <div class="cart-actions">
                     <a href="<?= url('products') ?>" class="btn black">Continue Shopping</a>

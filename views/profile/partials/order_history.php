@@ -28,7 +28,7 @@
                         <?= $order['item_count'] ?? 0 ?> item<?= ($order['item_count'] ?? 0) !== 1 ? 's' : '' ?>
                     </div>
                     <div class="order-total">
-                        $<?= number_format($order['total_amount'] ?? 0, 2) ?>
+                        €<?= number_format($order['total_amount'] ?? 0, 2) ?>
                     </div>
                 </div>
                 

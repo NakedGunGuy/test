@@ -56,7 +56,7 @@
                             </div>
 
                             <div class="field-group">
-                                <label>Price ($)</label>
+                                <label>Price (€)</label>
                                 <input type="number"
                                        name="products[<?= $index ?>][0][price]"
                                        step="0.01"
@@ -98,7 +98,7 @@
                             </div>
 
                             <div class="row-actions">
-                                <button type="button" onclick="duplicateRow(<?= $index ?>)" class="btn small">
+                                <button type="button" onclick="duplicateRow(<?= $index ?>)" class="btn small blue">
                                     Duplicate
                                 </button>
                             </div>
@@ -151,7 +151,7 @@ function duplicateRow(editionIndex) {
     // Add remove button
     const actions = newRow.querySelector('.row-actions');
     actions.innerHTML = `
-        <button type="button" onclick="duplicateRow(${editionIndex})" class="btn small">
+        <button type="button" onclick="duplicateRow(${editionIndex})" class="btn small blue">
             Duplicate
         </button>
         <button type="button" onclick="removeRow(this)" class="btn small red">

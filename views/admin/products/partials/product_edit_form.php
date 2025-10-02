@@ -34,7 +34,7 @@
         
         <div class="grid form" style="grid-template-columns: 1fr 1fr;">
             <div class="form-group">
-                <label class="form-label">Price ($)</label>
+                <label class="form-label">Price (€)</label>
                 <input 
                     type="number" 
                     name="price" 

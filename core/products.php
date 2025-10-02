@@ -101,6 +101,10 @@ function getProducts($filters = [], $sort = 'p.id DESC', $limit = null, $offset 
         $params[':max_price'] = $filters['max_price'];
     }
 
+    if (isset($filters['in_stock_only']) && $filters['in_stock_only']) {
+        $sql .= " AND p.quantity > 0";
+    }
+
     // sorting
     if ($sort) {
         $sql .= " ORDER BY $sort";
@@ -156,6 +160,10 @@ function getProductsCount($filters = []) {
     if (isset($filters['max_price'])) {
         $sql .= " AND p.price <= :max_price";
         $params[':max_price'] = $filters['max_price'];
+    }
+
+    if (isset($filters['in_stock_only']) && $filters['in_stock_only']) {
+        $sql .= " AND p.quantity > 0";
     }
 
     $stmt = db()->prepare($sql);

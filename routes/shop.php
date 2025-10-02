@@ -382,7 +382,7 @@ post('/checkout/calculate-shipping', function () {
         // Store in session for order processing
         $_SESSION['shipping_estimate'] = $shipping;
         
-        echo '$' . number_format($shipping['cost'], 2) . ' - Delivery: ' . 
+        echo '€' . number_format($shipping['cost'], 2) . ' - Delivery: ' .
              $shipping['country']['estimated_days_min'] . '-' . 
              $shipping['country']['estimated_days_max'] . ' days';
     } else {

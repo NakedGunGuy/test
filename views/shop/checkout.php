@@ -18,17 +18,21 @@ Checkout - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                 <?php foreach ($cart as $item): ?>
                     <div class="order-item">
                         <div class="item-info">
-                            <div class="item-name"><?= htmlspecialchars($item['name']) ?></div>
+                            <div class="item-name">
+                                <a href="<?= url('product/' . $item['product_id']) ?>" class="product-link">
+                                    <?= htmlspecialchars($item['name']) ?>
+                                </a>
+                            </div>
                             <div class="item-quantity">Qty: <?= $item['quantity'] ?></div>
                         </div>
-                        <div class="item-total">$<?= number_format($item['price'] * $item['quantity'], 2) ?></div>
+                        <div class="item-total">€<?= number_format($item['price'] * $item['quantity'], 2) ?></div>
                     </div>
                 <?php endforeach; ?>
                 
                 <div class="order-total" id="order-total">
                     <div class="total-row">
                         <span>Subtotal:</span>
-                        <span>$<?= number_format($total, 2) ?></span>
+                        <span>€<?= number_format($total, 2) ?></span>
                     </div>
                     <div class="total-row">
                         <span>Weight:</span>
@@ -40,7 +44,7 @@ Checkout - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                     </div>
                     <div class="total-row final">
                         <span>Total:</span>
-                        <span id="final-total">$<?= number_format($total, 2) ?></span>
+                        <span id="final-total">€<?= number_format($total, 2) ?></span>
                     </div>
                 </div>
             </div>
@@ -129,13 +133,13 @@ document.body.addEventListener('htmx:afterRequest', function(evt) {
     if (evt.detail.elt.id === 'country-select') {
         const response = evt.detail.xhr.responseText.trim();
         
-        if (response.includes('$')) {
+        if (response.includes('€')) {
             // Extract shipping cost from response
-            const match = response.match(/\$(\d+\.?\d*)/);
+            const match = response.match(/€(\d+\.?\d*)/);
             if (match) {
                 const shippingCost = parseFloat(match[1]);
                 const finalTotal = subtotal + shippingCost;
-                document.getElementById('final-total').textContent = '$' + finalTotal.toFixed(2);
+                document.getElementById('final-total').textContent = '€' + finalTotal.toFixed(2);
                 
                 // Update shipping estimate
                 document.getElementById('shipping-estimate').innerHTML = '✅ ' + response;

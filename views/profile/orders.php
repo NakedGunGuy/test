@@ -23,7 +23,7 @@ Order History - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                     </div>
                     <?php if (!empty($orders)): ?>
                     <div class="stat order">
-                        <span class="number">$<?= number_format(array_sum(array_column($orders, 'total_amount')), 2) ?></span>
+                        <span class="number">€<?= number_format(array_sum(array_column($orders, 'total_amount')), 2) ?></span>
                         <span class="label">Total Spent</span>
                     </div>
                     <div class="stat order">
@@ -73,7 +73,7 @@ Order History - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                                 <?= $order['item_count'] ?? 0 ?> item<?= ($order['item_count'] ?? 0) !== 1 ? 's' : '' ?>
                             </div>
                             <div class="total">
-                                $<?= number_format($order['total_amount'] ?? 0, 2) ?>
+                                €<?= number_format($order['total_amount'] ?? 0, 2) ?>
                             </div>
                         </div>
                         

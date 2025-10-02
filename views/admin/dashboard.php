@@ -61,7 +61,7 @@ Admin Dashboard - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         <div class="card stat">
             <div class="icon">💰</div>
             <div class="info">
-                <div class="number">$<?= number_format($revenue ?? 0, 2) ?></div>
+                <div class="number">€<?= number_format($revenue ?? 0, 2) ?></div>
                 <div class="label">Monthly Revenue</div>
             </div>
         </div>

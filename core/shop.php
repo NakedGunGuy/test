@@ -265,10 +265,11 @@ function get_card_variants(string $card_name, ?int $exclude_product_id = null): 
         JOIN cards c ON e.card_id = c.id
         JOIN sets s ON e.set_id = s.id
         WHERE c.name = :card_name
+          AND p.quantity > 0
     ";
-    
+
     $params = [':card_name' => $card_name];
-    
+
     if ($exclude_product_id) {
         $sql .= " AND p.id != :exclude_id";
         $params[':exclude_id'] = $exclude_product_id;
