@@ -51,8 +51,60 @@
                 <li>
                     <a href="<?= url('discover') ?>" class="<?= str_starts_with($currentUrl, '/discover') ? 'active' : '' ?>">
                         <span class="nav-icon">🔍</span><?= t('nav.discover') ?>
-                    </a>    
+                    </a>
                 </li>
+                <?php
+                // Get CMS pages for navigation
+                try {
+                    $cms_pages = build_page_tree();
+                    $lang = get_current_language();
+
+                    // Build hierarchical structure
+                    $top_level_pages = [];
+                    $children = [];
+
+                    foreach ($cms_pages as $slug => $page) {
+                        if (empty($page['parent'])) {
+                            $top_level_pages[$slug] = $page;
+                        } else {
+                            if (!isset($children[$page['parent']])) {
+                                $children[$page['parent']] = [];
+                            }
+                            $children[$page['parent']][$slug] = $page;
+                        }
+                    }
+
+                    // Display top-level pages with their children
+                    foreach ($top_level_pages as $slug => $page):
+                        $title = $page['translations'][$lang]['title'] ?? $page['translations']['en']['title'] ?? $slug;
+                        $has_children = isset($children[$slug]);
+                        $is_active = str_starts_with($currentUrl, $page['full_path']);
+                ?>
+                <li class="nav-item <?= $has_children ? 'has-submenu' : '' ?>">
+                    <a href="<?= url($page['full_path']) ?>" class="<?= $is_active ? 'active' : '' ?>">
+                        <span class="nav-icon">📄</span><?= htmlspecialchars($title) ?>
+                    </a>
+                    <?php if ($has_children): ?>
+                        <ul class="submenu">
+                            <?php foreach ($children[$slug] as $child_slug => $child_page):
+                                $child_title = $child_page['translations'][$lang]['title'] ?? $child_page['translations']['en']['title'] ?? $child_slug;
+                                $child_active = str_starts_with($currentUrl, $child_page['full_path']);
+                            ?>
+                                <li>
+                                    <a href="<?= url($child_page['full_path']) ?>" class="<?= $child_active ? 'active' : '' ?>">
+                                        <?= htmlspecialchars($child_title) ?>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </li>
+                <?php
+                    endforeach;
+                } catch (Exception $e) {
+                    // If YAML pages fail to load, skip silently
+                }
+                ?>
             </ul>
         </section>
         <section>

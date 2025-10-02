@@ -108,6 +108,57 @@ body > nav section:first-of-type > ul li a:hover {
     color: #00AEEF;
 }
 
+/* Submenu styles */
+body > nav section:first-of-type > ul li.nav-item {
+    position: relative;
+}
+
+body > nav section:first-of-type > ul li .submenu {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    padding-left: 30px;
+    padding-top: 8px;
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body > nav section:first-of-type > ul li.has-submenu:hover .submenu,
+body > nav section:first-of-type > ul li.has-submenu .submenu:has(.active) {
+    display: flex;
+}
+
+body > nav section:first-of-type > ul li .submenu li a {
+    padding: 6px 15px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    border-left: 2px solid rgba(0, 174, 239, 0.2);
+}
+
+body > nav section:first-of-type > ul li .submenu li a:hover {
+    background-color: rgba(0, 174, 239, 0.08);
+    color: #00AEEF;
+    border-left-color: #00AEEF;
+}
+
+body > nav section:first-of-type > ul li .submenu li a.active {
+    background: rgba(0, 174, 239, 0.15);
+    color: #00AEEF;
+    border-left-color: #00AEEF;
+    box-shadow: none;
+}
+
 body > nav section:last-of-type > ul {
     display: flex;
     flex-direction: column;
