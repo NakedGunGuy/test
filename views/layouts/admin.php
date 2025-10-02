@@ -38,6 +38,8 @@
                 <span class="nav-icon">🚚</span><?= t('admin.shipping') ?></a></li>
             <li><a href="<?= url('admin/seo') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/seo') ? 'active' : '' ?>">
                 <span class="nav-icon">🔍</span><?= t('admin.seo') ?></a></li>
+            <li><a href="<?= url('admin/pages') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/pages') ? 'active' : '' ?>">
+                <span class="nav-icon">📄</span>Pages</a></li>
             <li><a href="<?= url('admin/settings') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/settings') ? 'active' : '' ?>">
                 <span class="nav-icon">⚙️</span><?= t('admin.settings') ?></a></li>
         </ul>

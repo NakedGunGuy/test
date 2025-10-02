@@ -1,11 +1,43 @@
+---
 slug: about
-title: About Us
-parent: null       # no parent (top-level page)
-
-content:
-  hero:
-    heading: "Welcome to Our Shop"
-    subheading: "Find the best cards here!"
-  text:
-    - "We started this project to make trading easier."
-    - "All products are verified and shipped fast."
+parent: ""
+layout: default
+translations:
+  en:
+    title: About Us
+    blocks:
+    - type: hero
+      heading: Welcome to Our Shop
+      subheading: Find the best cards here!
+      image: /uploads/pages/page_68de32db7bc5f_1759392475.jpg
+    - type: heading
+      level: 2
+      content: ""
+    - type: text
+      content: We started this project to make trading easier. All products are verified
+        and shipped fast.
+    - type: image
+      url: ""
+      alt: About us
+      caption: ""
+    - type: columns
+      count: "3"
+      content:
+      - test text
+      - tesssstt dsads asdasd a
+      - asdaoksdoaks
+  si:
+    title: O nas
+    blocks:
+    - type: hero
+      heading: Dobrodošli v naši trgovini
+      subheading: Najdite najboljše karte tukaj!
+      image: ""
+    - type: text
+      content: Ta projekt smo začeli, da bi olajšali trgovanje. Vsi izdelki so preverjeni
+        in hitro dostavljeni.
+    - type: image
+      url: ""
+      alt: O nas
+      caption: ""
+...

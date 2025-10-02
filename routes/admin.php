@@ -76,6 +76,104 @@ get('/admin/seo/sitemap/generate', function () {
     exit;
 }, [$getAdminAuth]);
 
+// CMS Pages Management
+get('/admin/pages', function () {
+    $pages = build_page_tree();
+    view('admin/pages/index', ['pages' => $pages], 'admin');
+}, [$getAdminAuth]);
+
+get('/admin/pages/edit/{slug}', function ($data) {
+    $slug = $data['slug'];
+    $pages = build_page_tree();
+
+    if (!isset($pages[$slug])) {
+        http_response_code(404);
+        echo "Page not found";
+        return;
+    }
+
+    view('admin/pages/edit', ['page' => $pages[$slug], 'slug' => $slug], 'admin');
+}, [$getAdminAuth]);
+
+post('/admin/pages/update/{slug}', function ($data) {
+    $slug = $data['slug'];
+    $file_path = CONTENT_PATH . '/pages/' . $slug . '.yaml';
+
+    if (!file_exists($file_path)) {
+        http_response_code(404);
+        echo "Page not found";
+        return;
+    }
+
+    // Build YAML structure
+    $yaml_data = [
+        'slug' => $slug,
+        'parent' => $_POST['parent'] ?? null,
+        'layout' => $_POST['layout'] ?? 'default',
+        'translations' => []
+    ];
+
+    // Process each language
+    foreach (AVAILABLE_LANGUAGES as $lang) {
+        // Get blocks data
+        $blocks = [];
+        if (isset($_POST["blocks_$lang"]) && is_string($_POST["blocks_$lang"])) {
+            $decoded = json_decode($_POST["blocks_$lang"], true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $blocks = $decoded;
+            }
+        }
+
+        $yaml_data['translations'][$lang] = [
+            'title' => $_POST["title_$lang"] ?? '',
+            'blocks' => $blocks
+        ];
+    }
+
+    // Write YAML file
+    $yaml_content = yaml_emit($yaml_data, YAML_UTF8_ENCODING);
+    file_put_contents($file_path, $yaml_content);
+
+    header('HX-Redirect: ' . url('admin/pages'));
+    http_response_code(200);
+    exit;
+}, [$getAdminAuth]);
+
+// Image upload for pages
+post('/admin/pages/upload-image', function () {
+    if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+        http_response_code(400);
+        echo json_encode(['error' => 'No file uploaded or upload error']);
+        exit;
+    }
+
+    $file = $_FILES['image'];
+    $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+    if (!in_array($file['type'], $allowed_types)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid file type. Only JPG, PNG, GIF, and WebP allowed']);
+        exit;
+    }
+
+    // Generate unique filename
+    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $filename = uniqid('page_') . '_' . time() . '.' . $extension;
+    $upload_path = PUBLIC_PATH . '/uploads/pages/' . $filename;
+
+    if (move_uploaded_file($file['tmp_name'], $upload_path)) {
+        echo json_encode([
+            'success' => true,
+            'url' => '/uploads/pages/' . $filename,
+            'filename' => $filename
+        ]);
+    } else {
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to save file']);
+    }
+    exit;
+}, [$getAdminAuth]);
+
 get('/admin/products', function () {
     $filters = [
         'name' => $_GET['name'] ?? null,

@@ -2,7 +2,10 @@
 
 try {
     route_page_tree(build_page_tree());
-} catch (Exception $e) {}
+} catch (Exception $e) {
+    // YAML pages disabled - requires ext-yaml PHP extension
+    error_log('YAML pages error: ' . $e->getMessage());
+}
 
 route('/', function () {
     $seo_data = get_seo_meta('home');

@@ -1,4 +1,21 @@
-title: Our Team
 slug: team
 parent: about
-view: login
+layout: default
+
+translations:
+  en:
+    title: "Our Team"
+    blocks:
+      - type: heading
+        level: 1
+        content: "Meet Our Team"
+      - type: text
+        content: "We are a passionate team dedicated to bringing you the best trading card experience."
+  si:
+    title: "Naša ekipa"
+    blocks:
+      - type: heading
+        level: 1
+        content: "Spoznajte našo ekipo"
+      - type: text
+        content: "Smo strastna ekipa, ki se posveča temu, da vam zagotovimo najboljšo izkušnjo s trgovanjem kart."

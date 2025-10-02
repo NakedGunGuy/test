@@ -126,9 +126,22 @@ function route_page_tree($pages): void
 {
     foreach ($pages as $page) {
         route($page['full_path'], function () use ($page) {
+            // Get current language
+            $lang = get_current_language();
+
+            // Get translation for current language
+            $translation = $page['translations'][$lang] ?? $page['translations']['en'] ?? [];
+
+            // Merge page data with translation
+            $pageData = array_merge($page, [
+                'title' => $translation['title'] ?? $page['slug'],
+                'blocks' => $translation['blocks'] ?? [],
+                'content' => $translation['content'] ?? [] // Backward compatibility
+            ]);
+
             view(
                 (!empty($page['view']) ? $page['view'] : 'page'),
-                ['page' => $page],
+                ['page' => $pageData],
                 (!empty($page['layout']) ? $page['layout'] : 'default')
             );
         });

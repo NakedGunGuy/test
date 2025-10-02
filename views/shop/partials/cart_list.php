@@ -73,8 +73,8 @@
                     <span class="summary-value">€<?= number_format($cart_total, 2) ?></span>
                 </div>
                 <div class="cart-actions">
-                    <a href="<?= url('products') ?>" class="btn black">Continue Shopping</a>
-                    <a href="<?= url('checkout') ?>" class="btn blue">Proceed to Checkout</a>
+                    <a href="<?= url('discover') ?>" class="btn black"><?= t('button.continue_shopping') ?></a>
+                    <a href="<?= url('checkout') ?>" class="btn blue"><?= t('button.proceed_to_checkout') ?></a>
                 </div>
             </div>
         </div>

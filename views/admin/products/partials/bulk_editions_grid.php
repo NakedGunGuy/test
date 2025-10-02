@@ -1,18 +1,18 @@
 <?php if (empty($editions)): ?>
-    <p class="muted">No cards found for the selected filters.</p>
+    <p class="muted"><?= t('admin.no_cards_found') ?></p>
 <?php else: ?>
     <form id="bulk-products-form"
-          hx-post="/en/admin/products/bulk/create"
+          hx-post="<?= url('admin/products/bulk/create') ?>"
           hx-target="#editions-container"
           hx-on::before-request="optimizeFormData(event)">
 
         <div class="bulk-header">
-            <h3>Add Products for <?= htmlspecialchars($editions[0]['set_name']) ?></h3>
-            <p class="muted"><?= count($editions) ?> cards found</p>
+            <h3><?= t('admin.add_products_for', ['set' => htmlspecialchars($editions[0]['set_name'])]) ?></h3>
+            <p class="muted"><?= t('admin.cards_found', ['count' => count($editions)]) ?></p>
         </div>
 
         <div class="bulk-controls">
-            <button type="submit" class="btn blue">Create All Products</button>
+            <button type="submit" class="btn blue"><?= t('admin.create_all_products') ?></button>
         </div>
 
         <div id="bulk-result" class="bulk-result"></div>
@@ -27,7 +27,7 @@
                                      alt="<?= htmlspecialchars($edition['card_name']) ?>"
                                      loading="lazy" height="100" />
                             <?php else: ?>
-                                <div class="no-image">No Image</div>
+                                <div class="no-image"><?= t('admin.no_image') ?></div>
                             <?php endif; ?>
                         </div>
 
@@ -37,7 +37,7 @@
                             <p class="rarity"><?= htmlspecialchars($edition['rarity']) ?></p>
                             <?php if ($edition['existing_products'] > 0): ?>
                                 <p class="existing-products">
-                                    <?= $edition['existing_products'] ?> existing product(s)
+                                    <?= t('admin.existing_products', ['count' => $edition['existing_products']]) ?>
                                 </p>
                             <?php endif; ?>
                         </div>
@@ -48,15 +48,15 @@
                             <input type="hidden" name="products[<?= $index ?>][0][edition_id]" value="<?= $edition['id'] ?>">
 
                             <div class="field-group">
-                                <label>Product Name</label>
+                                <label><?= t('admin.product_name') ?></label>
                                 <input type="text"
                                        name="products[<?= $index ?>][0][name]"
                                        value="<?= htmlspecialchars($edition['card_name']) ?>"
-                                       placeholder="Product name">
+                                       placeholder="<?= t('admin.product_name') ?>">
                             </div>
 
                             <div class="field-group">
-                                <label>Price (€)</label>
+                                <label><?= t('admin.price') ?></label>
                                 <input type="number"
                                        name="products[<?= $index ?>][0][price]"
                                        step="0.01"
@@ -65,7 +65,7 @@
                             </div>
 
                             <div class="field-group">
-                                <label>Quantity</label>
+                                <label><?= t('admin.quantity') ?></label>
                                 <input type="number"
                                        name="products[<?= $index ?>][0][quantity]"
                                        min="0"
@@ -77,7 +77,7 @@
                                     <input type="checkbox"
                                            name="products[<?= $index ?>][0][is_foil]"
                                            value="1">
-                                    Foil
+                                    <?= t('admin.foil') ?>
                                 </label>
                             </div>
 
@@ -86,20 +86,20 @@
                                     <input type="checkbox"
                                            name="products[<?= $index ?>][0][is_used]"
                                            value="1">
-                                    Used
+                                    <?= t('admin.used') ?>
                                 </label>
                             </div>
 
                             <div class="field-group">
-                                <label>Description</label>
+                                <label><?= t('admin.description') ?></label>
                                 <input type="text"
                                        name="products[<?= $index ?>][0][description]"
-                                       placeholder="Optional description">
+                                       placeholder="<?= t('admin.description') ?>">
                             </div>
 
                             <div class="row-actions">
                                 <button type="button" onclick="duplicateRow(<?= $index ?>)" class="btn small blue">
-                                    Duplicate
+                                    <?= t('admin.duplicate') ?>
                                 </button>
                             </div>
                         </div>
@@ -109,7 +109,7 @@
         </div>
 
         <div class="bulk-submit">
-            <button type="submit" class="btn blue large">Create All Products</button>
+            <button type="submit" class="btn blue large"><?= t('admin.create_all_products') ?></button>
         </div>
     </form>
 <?php endif; ?>
@@ -152,10 +152,10 @@ function duplicateRow(editionIndex) {
     const actions = newRow.querySelector('.row-actions');
     actions.innerHTML = `
         <button type="button" onclick="duplicateRow(${editionIndex})" class="btn small blue">
-            Duplicate
+            <?= t('admin.duplicate') ?>
         </button>
         <button type="button" onclick="removeRow(this)" class="btn small red">
-            Remove
+            <?= t('admin.remove') ?>
         </button>
     `;
 
@@ -203,7 +203,7 @@ function optimizeFormData(event) {
     });
 
     // Continue with the HTMX request using the optimized data
-    htmx.ajax('POST', '/en/admin/products/bulk/create', {
+    htmx.ajax('POST', '<?= url('admin/products/bulk/create') ?>', {
         values: Object.fromEntries(formData),
         target: '#editions-container',
         swap: 'innerHTML'

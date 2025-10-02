@@ -280,6 +280,10 @@ function t(string $key, array $replacements = []): string {
                 'button.change_password' => 'Change Password',
                 'button.save_settings' => 'Save Settings',
                 'button.reset_defaults' => 'Reset to Defaults',
+                'button.continue_shopping' => 'Continue Shopping',
+                'button.proceed_to_checkout' => 'Proceed to Checkout',
+                'button.view_orders' => 'View Orders',
+                'button.return_to_cart' => 'Return to Cart',
 
                 // Status and Messages
                 'status.out_of_stock' => 'Out of Stock',
@@ -329,6 +333,20 @@ function t(string $key, array $replacements = []): string {
                 'admin.clear_old_images' => 'Clear Old Images',
                 'admin.admin_user' => 'Admin User',
                 'admin.administrator' => 'Administrator',
+                'admin.no_cards_found' => 'No cards found for the selected filters.',
+                'admin.add_products_for' => 'Add Products for {set}',
+                'admin.cards_found' => '{count} cards found',
+                'admin.no_image' => 'No Image',
+                'admin.existing_products' => '{count} existing product(s)',
+                'admin.product_name' => 'Product Name',
+                'admin.price' => 'Price (€)',
+                'admin.quantity' => 'Quantity',
+                'admin.foil' => 'Foil',
+                'admin.used' => 'Used',
+                'admin.description' => 'Description',
+                'admin.duplicate' => 'Duplicate',
+                'admin.remove' => 'Remove',
+                'admin.create_all_products' => 'Create All Products',
 
                 // Success/Error messages
                 'toast.login_successful' => 'Login successful!',
@@ -472,6 +490,10 @@ function t(string $key, array $replacements = []): string {
                 'button.change_password' => 'Spremeni geslo',
                 'button.save_settings' => 'Shrani nastavitve',
                 'button.reset_defaults' => 'Ponastavi na privzeto',
+                'button.continue_shopping' => 'Nadaljuj z nakupovanjem',
+                'button.proceed_to_checkout' => 'Nadaljuj na blagajno',
+                'button.view_orders' => 'Poglej naročila',
+                'button.return_to_cart' => 'Nazaj na košarico',
 
                 // Status and Messages
                 'status.out_of_stock' => 'Ni na zalogi',
@@ -521,6 +543,20 @@ function t(string $key, array $replacements = []): string {
                 'admin.clear_old_images' => 'Počisti stare slike',
                 'admin.admin_user' => 'Skrbniški uporabnik',
                 'admin.administrator' => 'Skrbnik',
+                'admin.no_cards_found' => 'Nobene karte niso bile najdene za izbrane filtre.',
+                'admin.add_products_for' => 'Dodaj izdelke za {set}',
+                'admin.cards_found' => '{count} kart najdenih',
+                'admin.no_image' => 'Ni slike',
+                'admin.existing_products' => '{count} obstoječih izdelkov',
+                'admin.product_name' => 'Ime izdelka',
+                'admin.price' => 'Cena (€)',
+                'admin.quantity' => 'Količina',
+                'admin.foil' => 'Foil',
+                'admin.used' => 'Rabljeno',
+                'admin.description' => 'Opis',
+                'admin.duplicate' => 'Podvoji',
+                'admin.remove' => 'Odstrani',
+                'admin.create_all_products' => 'Ustvari vse izdelke',
 
                 // Success/Error messages
                 'toast.login_successful' => 'Prijava uspešna!',
