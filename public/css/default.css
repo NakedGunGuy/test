@@ -407,13 +407,14 @@ input:focus {
     display: grid;
     gap: 0;
     min-width: 600px;
+    background: linear-gradient(145deg, rgba(0, 174, 239, 0.08) 0%, rgba(0, 174, 239, 0.04) 100%);
 }
 
 .grid-header .header-cell {
     color: white;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border-block: 1px solid rgba(0, 174, 239, 0.15);
+    border-block: 1px solid rgba(0, 174, 239, 0.3);
     font-size: 14px;
     font-weight: 600;
     height: 50px;
@@ -426,17 +427,15 @@ input:focus {
 }
 
 .grid-header .header-cell:first-child {
-    border-left: 1px solid rgba(0, 174, 239, 0.2);
+    border-left: 1px solid rgba(0, 174, 239, 0.3);
     border-start-start-radius: 12px;
-    border-end-start-radius: 12px;
     text-align: start;
     justify-content: flex-start;
 }
 
 .grid-header .header-cell:last-child {
-    border-right: 1px solid rgba(0, 174, 239, 0.2);
+    border-right: 1px solid rgba(0, 174, 239, 0.3);
     border-start-end-radius: 12px;
-    border-end-end-radius: 12px;
 }
 
 .grid-header .header-cell .sort {
@@ -453,23 +452,51 @@ input:focus {
     vertical-align: middle;
 }
 
+.grid-body {
+    background: linear-gradient(145deg, rgba(10, 10, 10, 0.6) 0%, rgba(0, 0, 0, 0.8) 100%);
+    border: 1px solid rgba(0, 174, 239, 0.3);
+    border-top: none;
+    border-end-start-radius: 12px;
+    border-end-end-radius: 12px;
+}
+
 .grid-body .grid-row {
     display: grid;
     gap: 0;
     min-width: 600px;
     background: transparent;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .grid-body .grid-row:hover {
-    background: rgba(0, 174, 239, 0.05);
+    background: rgba(0, 174, 239, 0.08);
+}
+
+.grid-body .grid-row:nth-child(even) {
+    background: rgba(0, 174, 239, 0.02);
+}
+
+.grid-body .grid-row:nth-child(even):hover {
+    background: rgba(0, 174, 239, 0.08);
+}
+
+.grid-body .grid-row:last-child .grid-cell {
+    border-bottom: none;
+}
+
+.grid-body .grid-row:last-child .grid-cell:first-child {
+    border-end-start-radius: 12px;
+}
+
+.grid-body .grid-row:last-child .grid-cell:last-child {
+    border-end-end-radius: 12px;
 }
 
 .grid-body .grid-row .grid-cell {
-    border-bottom: 1px solid rgba(0, 174, 239, 0.2);
+    border-bottom: 1px solid rgba(0, 174, 239, 0.15);
     font-size: 14px;
     font-weight: 600;
-    height: 80px;
+    min-height: 80px;
     text-align: center;
     padding: 15px;
     display: flex;
@@ -480,6 +507,22 @@ input:focus {
 .grid-body .grid-row .grid-cell:first-child {
     text-align: start;
     justify-content: flex-start;
+    padding-left: 20px;
+}
+
+.grid-body .grid-row .grid-cell.actions-cell {
+    display: flex;
+    gap: 8px;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.grid-body .grid-row .grid-cell.actions-cell .btn {
+    min-width: 80px;
+    padding: 8px 12px;
+    font-size: 13px;
+    flex-shrink: 0;
 }
 
 .grid-body .grid-row .grid-cell:first-child a {
