@@ -184,6 +184,105 @@
             <span class="mobile-nav-icon">👤</span>
             <span class="mobile-nav-text"><?= t('nav.account') ?></span>
         </a>
+        <button class="hamburger-menu-btn" id="hamburger-menu-btn" aria-label="Menu">
+            <div class="hamburger-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <span class="mobile-nav-text">MENU</span>
+        </button>
+    </div>
+</div>
+
+<!-- Mobile Menu Overlay and Panel -->
+<div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+<div class="mobile-menu-panel" id="mobile-menu-panel">
+    <div class="mobile-menu-header">
+        <a href="<?= url('') ?>" class="mobile-menu-brand">
+            <img src="/assets/logo.png" alt="Cardpoint">
+            <span>CARDPOINT</span>
+        </a>
+        <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">&times;</button>
+    </div>
+
+    <ul class="mobile-menu-nav">
+        <li>
+            <a href="<?= url('discover') ?>" class="<?= str_starts_with($currentUrl, '/discover') ? 'active' : '' ?>">
+                <span class="nav-icon">🔍</span><?= t('nav.discover') ?>
+            </a>
+        </li>
+        <?php
+        // Get CMS pages for mobile menu
+        try {
+            $cms_pages = build_page_tree();
+            $lang = get_current_language();
+
+            // Build hierarchical structure
+            $top_level_pages = [];
+            $children = [];
+
+            foreach ($cms_pages as $slug => $page) {
+                if (empty($page['parent'])) {
+                    $top_level_pages[$slug] = $page;
+                } else {
+                    if (!isset($children[$page['parent']])) {
+                        $children[$page['parent']] = [];
+                    }
+                    $children[$page['parent']][$slug] = $page;
+                }
+            }
+
+            // Display top-level pages with their children
+            foreach ($top_level_pages as $slug => $page):
+                $title = $page['translations'][$lang]['title'] ?? $page['translations']['en']['title'] ?? $slug;
+                $has_children = isset($children[$slug]);
+                $is_active = str_starts_with($currentUrl, $page['full_path']);
+        ?>
+        <li>
+            <a href="<?= url($page['full_path']) ?>" class="<?= $is_active ? 'active' : '' ?>">
+                <span class="nav-icon">📄</span><?= htmlspecialchars($title) ?>
+            </a>
+            <?php if ($has_children): ?>
+                <ul class="mobile-menu-submenu">
+                    <?php foreach ($children[$slug] as $child_slug => $child_page):
+                        $child_title = $child_page['translations'][$lang]['title'] ?? $child_page['translations']['en']['title'] ?? $child_slug;
+                        $child_active = str_starts_with($currentUrl, $child_page['full_path']);
+                    ?>
+                        <li>
+                            <a href="<?= url($child_page['full_path']) ?>" class="<?= $child_active ? 'active' : '' ?>">
+                                <?= htmlspecialchars($child_title) ?>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </li>
+        <?php
+            endforeach;
+        } catch (Exception $e) {
+            // If YAML pages fail to load, skip silently
+        }
+        ?>
+        <?php if (get_logged_in_user()): ?>
+        <li>
+            <a href="<?= url('cart') ?>" class="<?= str_starts_with($currentUrl, '/cart') ? 'active' : '' ?>">
+                <span class="nav-icon">🛒</span><?= t('nav.cart') ?>
+            </a>
+        </li>
+        <?php endif; ?>
+        <li>
+            <a href="<?= url('profile') ?>" class="<?= str_starts_with($currentUrl, '/profile') ? 'active' : '' ?>">
+                <span class="nav-icon">👤</span><?= t('nav.account') ?>
+            </a>
+        </li>
+    </ul>
+
+    <div class="mobile-menu-search">
+        <div class="mobile-menu-search-box" onclick="alert('Search feature coming soon!')">
+            <span class="mobile-menu-search-icon">🔍</span>
+            <span class="mobile-menu-search-placeholder"><?= t('common.search_cards') ?></span>
+        </div>
     </div>
 </div>
 
@@ -194,6 +293,7 @@
 <script src="/js/dialog.js"></script>
 <script src="/js/quantity.js"></script>
 <script src="/js/general.js"></script>
+<script src="/js/hamburger.js"></script>
 
 <?= section('js') ?>
 </body>

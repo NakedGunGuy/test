@@ -17,7 +17,9 @@
       "mcp__playwright__browser_resize",
       "Bash(node:*)",
       "Bash(npx playwright codegen:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "mcp__playwright__browser_install",
+      "Read(//tmp/**)"
     ],
     "deny": [],
     "ask": []

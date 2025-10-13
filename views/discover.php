@@ -11,7 +11,17 @@
     <h3 class="section-header">
         <span class="section-header-icon">🔍</span><?= t('products.search_filter') ?>
     </h3>
-    <form method="get" class="search-form" style="grid-template-columns: 2fr 1fr 1fr auto auto;">
+
+    <!-- Mobile/Tablet Filter Toggle Button -->
+    <button type="button" class="filter-toggle-btn" id="filter-toggle-btn">
+        <span>
+            <span class="filter-icon">🔍</span>
+            <span><?= t('products.search_filter') ?></span>
+        </span>
+        <span class="filter-arrow">▼</span>
+    </button>
+
+    <form method="get" class="search-form" id="search-form" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto auto;">
         <div class="form-group" style="position: relative; margin-bottom: 0;">
             <label class="form-label"><?= t('products.search_cards') ?></label>
             <input
@@ -28,17 +38,38 @@
             >
             <div id="product-results" class="search-results" style="display: none;"></div>
         </div>
-        
+
+        <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label"><?= t('products.set') ?></label>
+            <select class="form-input" name="set_id">
+                <option value=""><?= t('common.all') ?></option>
+                <?php foreach ($sets as $set): ?>
+                    <option value="<?= $set['id'] ?>" <?= (isset($_GET['set_id']) && $_GET['set_id'] == $set['id']) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($set['name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label"><?= t('products.foil') ?></label>
+            <select class="form-input" name="is_foil">
+                <option value=""><?= t('common.all') ?></option>
+                <option value="yes" <?= (isset($_GET['is_foil']) && $_GET['is_foil'] === 'yes') ? 'selected' : '' ?>><?= t('common.yes') ?></option>
+                <option value="no" <?= (isset($_GET['is_foil']) && $_GET['is_foil'] === 'no') ? 'selected' : '' ?>><?= t('common.no') ?></option>
+            </select>
+        </div>
+
         <div class="form-group" style="margin-bottom: 0;">
             <label class="form-label"><?= t('products.min_price') ?></label>
             <input class="form-input" type="number" name="min_price" placeholder="€0" value="<?= htmlspecialchars($_GET['min_price'] ?? '') ?>"/>
         </div>
-        
+
         <div class="form-group" style="margin-bottom: 0;">
             <label class="form-label"><?= t('products.max_price') ?></label>
             <input class="form-input" type="number" name="max_price" placeholder="€1000" value="<?= htmlspecialchars($_GET['max_price'] ?? '') ?>"/>
         </div>
-        
+
         <button type="submit" class="btn blue filter-button" style="box-sizing: border-box; height: auto; line-height: normal;"><?= t('common.filter') ?></button>
 
         <a href="<?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?>" class="btn black reset-button" style="box-sizing: border-box; height: auto; line-height: normal; display: inline-flex; align-items: center;"><?= t('common.reset') ?></a>
@@ -214,6 +245,17 @@
 <?php start_section('js'); ?>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Handle filter toggle on mobile/tablet
+    const filterToggleBtn = document.getElementById('filter-toggle-btn');
+    const searchForm = document.getElementById('search-form');
+
+    if (filterToggleBtn && searchForm) {
+        filterToggleBtn.addEventListener('click', function() {
+            this.classList.toggle('active');
+            searchForm.classList.toggle('active');
+        });
+    }
+
     // Handle view toggle buttons
     const viewButtons = document.querySelectorAll('.view-toggle-btn');
     const viewContainers = {

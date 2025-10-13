@@ -20,9 +20,14 @@ get('/discover', function () {
         'name' => $_GET['name'] ?? null,
         'min_price' => $_GET['min_price'] ?? null,
         'max_price' => $_GET['max_price'] ?? null,
+        'set_id' => $_GET['set_id'] ?? null,
+        'is_foil' => $_GET['is_foil'] ?? null,
         'in_stock_only' => true, // Only show products that are in stock
     ];
     $filters = array_filter($filters);
+
+    // Get all sets for the filter dropdown
+    $sets = db()->query("SELECT id, name FROM sets ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 
     // Handle per_page setting from session
     if (isset($_GET['per_page']) && in_array((int)$_GET['per_page'], [10, 25, 50, 100])) {
@@ -53,6 +58,7 @@ get('/discover', function () {
 
     view('discover', [
         'products' => $products,
+        'sets' => $sets,
         'pagination' => [
             'current_page' => $page,
             'per_page' => $per_page,

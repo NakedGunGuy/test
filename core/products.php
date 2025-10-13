@@ -105,6 +105,19 @@ function getProducts($filters = [], $sort = 'p.id DESC', $limit = null, $offset 
         $sql .= " AND p.quantity > 0";
     }
 
+    if (isset($filters['set_id']) && $filters['set_id']) {
+        $sql .= " AND e.set_id = :set_id";
+        $params[':set_id'] = $filters['set_id'];
+    }
+
+    if (isset($filters['is_foil'])) {
+        if ($filters['is_foil'] === 'yes' || $filters['is_foil'] === '1') {
+            $sql .= " AND p.is_foil = 1";
+        } elseif ($filters['is_foil'] === 'no' || $filters['is_foil'] === '0') {
+            $sql .= " AND p.is_foil = 0";
+        }
+    }
+
     // sorting
     if ($sort) {
         $sql .= " ORDER BY $sort";
@@ -164,6 +177,19 @@ function getProductsCount($filters = []) {
 
     if (isset($filters['in_stock_only']) && $filters['in_stock_only']) {
         $sql .= " AND p.quantity > 0";
+    }
+
+    if (isset($filters['set_id']) && $filters['set_id']) {
+        $sql .= " AND e.set_id = :set_id";
+        $params[':set_id'] = $filters['set_id'];
+    }
+
+    if (isset($filters['is_foil'])) {
+        if ($filters['is_foil'] === 'yes' || $filters['is_foil'] === '1') {
+            $sql .= " AND p.is_foil = 1";
+        } elseif ($filters['is_foil'] === 'no' || $filters['is_foil'] === '0') {
+            $sql .= " AND p.is_foil = 0";
+        }
     }
 
     $stmt = db()->prepare($sql);

@@ -203,6 +203,7 @@ function t(string $key, array $replacements = []): string {
                 'common.add' => 'Add',
                 'common.loading' => 'Loading...',
                 'common.search_cards' => 'Search cards...',
+                'common.all' => 'All',
 
                 // Product listing
                 'products.search_filter' => 'Search & Filter',
@@ -221,6 +222,7 @@ function t(string $key, array $replacements = []): string {
                 'products.price' => 'Price',
                 'products.stock' => 'Stock',
                 'products.foil' => 'Foil',
+                'products.set' => 'Set',
                 'products.actions' => 'Actions',
                 'products.in_stock' => '{count} in stock',
                 'products.out_of_stock' => 'Out of stock',
@@ -413,6 +415,7 @@ function t(string $key, array $replacements = []): string {
                 'common.add' => 'Dodaj',
                 'common.loading' => 'Nalaganje...',
                 'common.search_cards' => 'Iščite karte...',
+                'common.all' => 'Vse',
 
                 // Product listing
                 'products.search_filter' => 'Iskanje in filtriranje',
@@ -431,6 +434,7 @@ function t(string $key, array $replacements = []): string {
                 'products.price' => 'Cena',
                 'products.stock' => 'Zaloga',
                 'products.foil' => 'Foil',
+                'products.set' => 'Set',
                 'products.actions' => 'Dejanja',
                 'products.in_stock' => '{count} na zalogi',
                 'products.out_of_stock' => 'Ni na zalogi',
