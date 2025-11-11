@@ -1,6 +1,6 @@
 name: cardpoint
 type: php
-docroot: public
+docroot: public_html
 php_version: "8.3"
 webserver_type: nginx-fpm
 xdebug_enabled: false

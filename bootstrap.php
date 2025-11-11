@@ -4,7 +4,7 @@ const ROOT_PATH = __DIR__;
 const CONTENT_PATH = ROOT_PATH . '/content';
 const VIEW_PATH = ROOT_PATH . '/views';
 const CORE_PATH = ROOT_PATH . '/core';
-const PUBLIC_PATH = ROOT_PATH . '/public';
+const PUBLIC_PATH = ROOT_PATH . '/public_html';
 const ROUTE_PATH = ROOT_PATH . '/routes';
 const MAIL_PATH = ROOT_PATH . '/mail';
 
