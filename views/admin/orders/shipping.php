@@ -85,7 +85,7 @@ Order Shipping - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                             </div>
                             <?php if ($is_fully_prepared): ?>
                                 <div style="font-size: 11px; color: #28A745; margin-top: 2px;">
-                                    ✅ Ready to ship
+                                    <?= icon('check') ?> Ready to ship
                                 </div>
                             <?php endif; ?>
                         </div>

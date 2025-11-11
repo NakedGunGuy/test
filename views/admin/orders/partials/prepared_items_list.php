@@ -65,7 +65,7 @@
 
         <div style="margin-top: 12px; padding: 8px; background: rgba(40, 167, 69, 0.1); border-radius: 4px; text-align: center;">
             <span style="color: #28A745; font-weight: 600;">
-                ✅ <?= array_sum(array_column($items, 'prepared_quantity')) ?> items ready for this order
+                <?= icon('check') ?> <?= array_sum(array_column($items, 'prepared_quantity')) ?> items ready for this order
             </span>
         </div>
     </div>

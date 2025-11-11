@@ -14,10 +14,10 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
     <div class="order-status-banner status-<?= $order['status'] ?>">
         <div class="status-info">
             <div class="status-icon">
-                <?php if ($order['status'] === 'pending'): ?>📋
-                <?php elseif ($order['status'] === 'shipped'): ?>🚚
-                <?php elseif ($order['status'] === 'delivered'): ?>✅
-                <?php elseif ($order['status'] === 'cancelled'): ?>❌
+                <?php if ($order['status'] === 'pending'): ?><?= icon('clipboard') ?>
+                <?php elseif ($order['status'] === 'shipped'): ?><?= icon('truck') ?>
+                <?php elseif ($order['status'] === 'delivered'): ?><?= icon('check') ?>
+                <?php elseif ($order['status'] === 'cancelled'): ?><?= icon('x') ?>
                 <?php endif; ?>
             </div>
             <div>
@@ -167,12 +167,12 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                 <?php if ($item['current_product_name']): ?>
                     <div class="stock-info">
                         <div class="stock-status <?= $item['current_stock'] > 0 ? 'in-stock' : 'out-of-stock' ?>">
-                            <?= $item['current_stock'] > 0 ? "✅ {$item['current_stock']} in stock" : '❌ Out of stock' ?>
+                            <?= $item['current_stock'] > 0 ? "<?= icon('check') ?> {$item['current_stock']} in stock" : '<?= icon('x') ?> Out of stock' ?>
                         </div>
                     </div>
                 <?php else: ?>
                     <div class="stock-info">
-                        <div class="stock-status deleted">⚠️ Product deleted</div>
+                        <div class="stock-status deleted"><?= icon('alert-triangle') ?> Product deleted</div>
                     </div>
                 <?php endif; ?>
             </div>

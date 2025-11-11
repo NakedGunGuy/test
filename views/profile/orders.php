@@ -8,31 +8,31 @@ Order History - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         <div>
             <!-- Back Navigation -->
             <div class="section">
-                <a href="<?= url('profile') ?>" class="btn text back">← Back to Profile</a>
-                <h1 class="product-title">Order History</h1>
-                <p class="user-email">Track your purchases and order status</p>
+                <a href="<?= url('profile') ?>" class="btn text back"><?= t('profile.back_to_profile') ?></a>
+                <h1 class="product-title"><?= t('profile.order_history') ?></h1>
+                <p class="user-email"><?= t('profile.track_purchases') ?></p>
             </div>
 
             <!-- Order Filters/Stats -->
             <div class="section">
-                <h3 class="section-subtitle">Order Summary</h3>
+                <h3 class="section-subtitle"><?= t('profile.order_summary') ?></h3>
                 <div class="grid orders" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
                     <div class="stat order">
                         <span class="number"><?= count($orders) ?></span>
-                        <span class="label">Total Orders</span>
+                        <span class="label"><?= t('profile.total_orders') ?></span>
                     </div>
                     <?php if (!empty($orders)): ?>
                     <div class="stat order">
                         <span class="number">€<?= number_format(array_sum(array_column($orders, 'total_amount')), 2) ?></span>
-                        <span class="label">Total Spent</span>
+                        <span class="label"><?= t('profile.total_spent') ?></span>
                     </div>
                     <div class="stat order">
-                        <?php 
+                        <?php
                         $recent_order = $orders[0] ?? null;
-                        $status = $recent_order ? ucfirst($recent_order['status']) : 'None';
+                        $status = $recent_order ? t('status.' . $recent_order['status']) : 'None';
                         ?>
                         <span class="number"><?= $status ?></span>
-                        <span class="label">Latest Status</span>
+                        <span class="label"><?= t('profile.latest_status') ?></span>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -41,8 +41,8 @@ Order History - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 
         <!-- Orders List -->
         <div class="section">
-        <h2 class="section-title">Your Orders</h2>
-        
+        <h2 class="section-title"><?= t('profile.your_orders') ?></h2>
+
         <?php if (empty($orders)): ?>
             <div class="empty">
                 <div class="icon">
@@ -64,33 +64,38 @@ Order History - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                                 <p><?= date('F j, Y g:i A', strtotime($order['created_at'])) ?></p>
                             </div>
                             <span class="badge status status-<?= $order['status'] ?>">
-                                <?= ucfirst($order['status']) ?>
+                                <?= t('status.' . $order['status']) ?>
                             </span>
                         </div>
-                        
+
                         <div class="details">
                             <div class="summary">
-                                <?= $order['item_count'] ?? 0 ?> item<?= ($order['item_count'] ?? 0) !== 1 ? 's' : '' ?>
+                                <?php
+                                $item_count = $order['item_count'] ?? 0;
+                                $item_text = pluralize(
+                                    $item_count,
+                                    t('profile.item'),           // 1 artikel / item
+                                    t('profile.item_dual'),      // 2 artikla
+                                    get_current_language() === 'si'
+                                        ? (($item_count % 100 == 3 || $item_count % 100 == 4)
+                                            ? t('profile.item_plural_few')   // 3, 4 artikli
+                                            : t('profile.item_plural_many')) // 5+ artiklov
+                                        : t('profile.item') . 's'            // items (English)
+                                );
+                                ?>
+                                <?= $item_count ?> <?= $item_text ?>
                             </div>
                             <div class="total">
                                 €<?= number_format($order['total_amount'] ?? 0, 2) ?>
                             </div>
                         </div>
-                        
+
                         <div class="footer">
                             <div class="status-<?= $order['status'] ?>">
-                                <?php if ($order['status'] === 'delivered'): ?>
-                                    <span class="status-text">✓ Delivered</span>
-                                <?php elseif ($order['status'] === 'shipped'): ?>
-                                    <span class="status-text">📦 Shipped</span>
-                                <?php elseif ($order['status'] === 'processing'): ?>
-                                    <span class="status-text">⏳ Processing</span>
-                                <?php else: ?>
-                                    <span class="status-text">📋 Pending</span>
-                                <?php endif; ?>
+                                <span class="status-text"><?= t('status.' . $order['status'] . '_icon') ?></span>
                             </div>
-                            
-                            <span class="status-text">Order #<?= $order['id'] ?></span>
+
+                            <span class="status-text"><?= t('profile.order_id', ['id' => $order['id']]) ?></span>
                         </div>
                     </div>
                 <?php endforeach; ?>

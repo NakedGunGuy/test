@@ -19,7 +19,10 @@
       "Bash(npx playwright codegen:*)",
       "Bash(cat:*)",
       "mcp__playwright__browser_install",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(mkdir -p /home/perko/dev/projects/cardpoint/public/icons)",
+      "Bash(npx playwright screenshot --wait-for-timeout 2000 --full-page https://cardpoint.ddev.site/admin /tmp/cardpoint_admin_icons.png)",
+      "Bash(npx playwright screenshot --wait-for-timeout 2000 https://cardpoint.ddev.site/discover /tmp/cardpoint_discover.png)"
     ],
     "deny": [],
     "ask": []

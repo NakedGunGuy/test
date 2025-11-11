@@ -16,7 +16,7 @@ Products - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             <h2 class="section-subtitle" style="margin-bottom: 0;">Product Inventory</h2>
             <div style="display: flex; gap: 12px;">
                 <a href="<?= url('admin/products/bulk') ?>" class="btn">
-                    📦 Bulk Add
+                    <?= icon('package') ?> Bulk Add
                 </a>
                 <button
                     hx-get="<?= url('admin/products/add') ?>"

@@ -37,11 +37,11 @@
                         <?php if ($order['status'] === 'delivered'): ?>
                             <span class="order-status-text">✓ Delivered</span>
                         <?php elseif ($order['status'] === 'shipped'): ?>
-                            <span class="order-status-text">📦 Shipped</span>
+                            <span class="order-status-text"><?= icon('package') ?> Shipped</span>
                         <?php elseif ($order['status'] === 'processing'): ?>
                             <span class="order-status-text">⏳ Processing</span>
                         <?php else: ?>
-                            <span class="order-status-text">📋 Pending</span>
+                            <span class="order-status-text"><?= icon('clipboard') ?> Pending</span>
                         <?php endif; ?>
                     </div>
                     

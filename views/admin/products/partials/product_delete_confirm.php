@@ -5,7 +5,7 @@
 <div class="dialog-content">
     <div class="message-container" style="text-align: center; padding: 2rem 1rem;">
         <div class="message-icon error" style="margin: 0 auto 1rem;">
-            ⚠️
+            <?= icon('alert-triangle') ?>
         </div>
         <h3 style="color: #FF6B6B; margin-bottom: 0.5rem;">Delete Product</h3>
         <p style="color: #C0C0D1;">Are you sure you want to delete this product? This action cannot be undone.</p>

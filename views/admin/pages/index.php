@@ -22,7 +22,7 @@
 
     <?php if (empty($pages)): ?>
         <div class="empty-state">
-            <div class="empty-icon">📄</div>
+            <div class="empty-icon"><?= icon('file') ?></div>
             <h3>No pages found</h3>
             <p>Create YAML files in <code>content/pages/</code> to get started</p>
         </div>
@@ -32,7 +32,7 @@
             <?php foreach ($pages as $slug => $page): ?>
                 <div class="page-card">
                     <div class="page-card-header">
-                        <div class="page-icon">📄</div>
+                        <div class="page-icon"><?= icon('file') ?></div>
                         <div class="page-slug">
                             <code><?= htmlspecialchars($slug) ?></code>
                         </div>

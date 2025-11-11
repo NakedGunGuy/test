@@ -80,7 +80,7 @@ Settings - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
     <h2 class="section-subtitle">System Information</h2>
     <div class="grid stats" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
         <div class="card stat">
-            <div class="icon">🗄️</div>
+            <?= icon('database') ?>
             <div class="info">
                 <div class="number">SQLite</div>
                 <div class="label">Database</div>
@@ -108,7 +108,7 @@ Settings - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
     <h2 class="section-subtitle">Maintenance</h2>
     <div class="grid actions" style="max-width: 500px; grid-template-columns: 1fr;">
         <div class="card action">
-            <span class="icon">🗑️</span>
+            <?= icon('trash') ?>
             <div class="content">
                 <div class="title">Clear Cache</div>
                 <div class="desc">Clear system cache and temporary files</div>

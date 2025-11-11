@@ -6,7 +6,7 @@ end_section('title');
 
 <div class="container">
     <div class="section-header">
-        <span class="section-header-icon">🌍</span>
+        <span class="section-header-icon"><?= icon('globe') ?></span>
         Shipping Countries Management
     </div>
 
@@ -70,7 +70,7 @@ end_section('title');
 
     <!-- Info Section -->
     <div class="section">
-        <h4>📋 Country Management Notes</h4>
+        <h4><?= icon('clipboard') ?> Country Management Notes</h4>
         <ul style="margin: 1rem 0;">
             <li><strong>Country Code:</strong> Must be a valid ISO 3166-1 alpha-2 code (2 letters)</li>
             <li><strong>Delivery Estimates:</strong> Used for customer shipping estimates</li>

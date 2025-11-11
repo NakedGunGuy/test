@@ -118,6 +118,75 @@ get('/logout', function () {
     exit;
 });
 
+get('/forgot-password', function () {
+    view('forgot_password');
+});
+
+post('/forgot-password', function () {
+    $email = trim($_POST['email'] ?? '');
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        http_response_code(422);
+        exit('Please enter a valid email address.');
+    }
+
+    $token = create_password_reset_token($email);
+
+    if ($token) {
+        // In production, you would send an email here
+        // For now, we'll display the reset link
+        $reset_link = url('reset-password') . '?token=' . $token;
+
+        // Store message in session for display
+        session_flash('success', 'Password reset link: ' . $reset_link);
+
+        http_response_code(200);
+        exit('A password reset link has been generated. Check the page for the link.');
+    } else {
+        // Don't reveal if email exists or not for security
+        http_response_code(200);
+        exit('If an account exists with this email, a password reset link will be sent.');
+    }
+});
+
+get('/reset-password', function () {
+    $token = $_GET['token'] ?? '';
+
+    if (!$token || !validate_password_reset_token($token)) {
+        session_flash('error', 'Invalid or expired reset token.');
+        header('Location: ' . url('login'));
+        exit;
+    }
+
+    view('reset_password', ['token' => $token]);
+});
+
+post('/reset-password', function () {
+    $token = $_POST['token'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $confirm_password = $_POST['confirm_password'] ?? '';
+
+    if ($password !== $confirm_password) {
+        http_response_code(422);
+        exit('Passwords do not match.');
+    }
+
+    if (strlen($password) < 6) {
+        http_response_code(422);
+        exit('Password must be at least 6 characters long.');
+    }
+
+    if (reset_password_with_token($token, $password)) {
+        session_flash('success', 'Password reset successful. Please login with your new password.');
+        header('HX-Redirect: ' . url('login'));
+        http_response_code(200);
+        exit;
+    } else {
+        http_response_code(422);
+        exit('Invalid or expired reset token.');
+    }
+});
+
 get('/register', function () {
     view('register');
 });
@@ -252,10 +321,21 @@ post('/set-view-preference', function () {
 });
 
 
+get('/search-dialog', function () {
+    partial('partials/search_dialog');
+});
+
 get('/products/search', function () {
     $name = $_GET['name'] ?? '';
     $products = $name ? getProducts(['name' => $name], null, 10) : [];
-    partial('admin/products/partials/product_search_results', ['products' => $products]);
+
+    // Check if this is a nav search request (has 'nav' param)
+    if (isset($_GET['nav'])) {
+        partial('partials/nav_search_results', ['products' => $products]);
+    } else {
+        // Admin/form search results
+        partial('admin/products/partials/product_search_results', ['products' => $products]);
+    }
 });
 
 get('/store-maintenance', function () {

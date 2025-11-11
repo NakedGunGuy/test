@@ -5,7 +5,7 @@
     <div class="auth-wrapper">
         <!-- Header Section -->
         <div class="auth-header">
-            <div class="auth-icon">🔐</div>
+            <div class="auth-icon"><?= icon('lock') ?></div>
             <h1 class="auth-title"><?= t('auth.welcome_back') ?></h1>
             <p class="auth-description"><?= t('auth.sign_in_description') ?></p>
         </div>
@@ -22,7 +22,7 @@
                 <div class="form-group">
                     <label class="form-label" for="username">
                         <span class="form-label-with-icon">
-                            <span>👤</span><?= t('form.username') ?>
+                            <?= icon('user') ?><?= t('form.username') ?>
                         </span>
                     </label>
                     <input 
@@ -37,7 +37,7 @@
                 <div class="form-group">
                     <label class="form-label" for="password">
                         <span class="form-label-with-icon">
-                            <span>🔑</span><?= t('form.password') ?>
+                            <?= icon('key') ?><?= t('form.password') ?>
                         </span>
                     </label>
                     <input 
@@ -50,14 +50,11 @@
                 </div>
 
                 <div class="remember-forgot-row">
-                    <label class="remember-label">
-                        <input type="checkbox" style="width: 16px; height: 16px;"> Remember me
-                    </label>
-                    <a href="#" class="forgot-link">Forgot password?</a>
+                    <a href="<?= url('forgot-password') ?>" class="forgot-link"><?= t('auth.forgot_password') ?></a>
                 </div>
 
                 <button type="submit" class="btn blue btn-full auth-button">
-                    🚀 Sign In
+                    Sign In
                 </button>
             </form>
             

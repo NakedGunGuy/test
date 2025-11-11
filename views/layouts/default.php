@@ -50,7 +50,7 @@
             <ul>
                 <li>
                     <a href="<?= url('discover') ?>" class="<?= str_starts_with($currentUrl, '/discover') ? 'active' : '' ?>">
-                        <span class="nav-icon">🔍</span><?= t('nav.discover') ?>
+                        <?= icon('search', 'nav-icon') ?><?= t('nav.discover') ?>
                     </a>
                 </li>
                 <?php
@@ -82,7 +82,7 @@
                 ?>
                 <li class="nav-item <?= $has_children ? 'has-submenu' : '' ?>">
                     <a href="<?= url($page['full_path']) ?>" class="<?= $is_active ? 'active' : '' ?>">
-                        <span class="nav-icon">📄</span><?= htmlspecialchars($title) ?>
+                        <?= icon('file', 'nav-icon') ?><?= htmlspecialchars($title) ?>
                     </a>
                     <?php if ($has_children): ?>
                         <ul class="submenu">
@@ -110,8 +110,11 @@
         <section>
             <ul>
                 <li>
-                    <div class="search-box">
-                        <span class="search-icon">🔍</span>
+                    <div class="search-box"
+                         hx-get="<?= url('search-dialog') ?>"
+                         hx-target="#dialog"
+                         hx-swap="innerHTML">
+                        <?= icon('search', 'search-icon') ?>
                         <span class="search-placeholder"><?= t('common.search_cards') ?></span>
                     </div>
                 </li>
@@ -126,7 +129,7 @@
                 </li>
                 <li>
                     <a href="<?= url('profile') ?>" class="<?= str_starts_with($currentUrl, '/profile') ? 'active' : '' ?>">
-                        <span class="nav-icon">👤</span><?= t('nav.account') ?>
+                        <?= icon('user', 'nav-icon') ?><?= t('nav.account') ?>
                     </a>
                 </li>
             </ul>
@@ -171,17 +174,17 @@
             <span class="mobile-nav-icon"><img height="64" src="/assets/logo.png"></span>
         </a>
         <a href="<?= url('discover') ?>" class="mobile-nav-item <?= str_starts_with($currentUrl, '/discover') ? 'active' : '' ?>">
-            <span class="mobile-nav-icon">🔍</span>
+            <?= icon('search', 'mobile-nav-icon') ?>
             <span class="mobile-nav-text"><?= t('nav.discover') ?></span>
         </a>
         <?php if (get_logged_in_user()): ?>
             <a href="<?= url('cart') ?>" class="mobile-nav-item <?= str_starts_with($currentUrl, '/cart') ? 'active' : '' ?>">
-                <span class="mobile-nav-icon">🛒</span>
+                <?= icon('cart', 'mobile-nav-icon') ?>
                 <span class="mobile-nav-text"><?= t('nav.cart') ?></span>
             </a>
         <?php endif; ?>
         <a href="<?= url('profile') ?>" class="mobile-nav-item <?= str_starts_with($currentUrl, '/profile') ? 'active' : '' ?>">
-            <span class="mobile-nav-icon">👤</span>
+            <?= icon('user', 'mobile-nav-icon') ?>
             <span class="mobile-nav-text"><?= t('nav.account') ?></span>
         </a>
         <button class="hamburger-menu-btn" id="hamburger-menu-btn" aria-label="Menu">
@@ -209,7 +212,7 @@
     <ul class="mobile-menu-nav">
         <li>
             <a href="<?= url('discover') ?>" class="<?= str_starts_with($currentUrl, '/discover') ? 'active' : '' ?>">
-                <span class="nav-icon">🔍</span><?= t('nav.discover') ?>
+                <?= icon('search', 'nav-icon') ?><?= t('nav.discover') ?>
             </a>
         </li>
         <?php
@@ -241,7 +244,7 @@
         ?>
         <li>
             <a href="<?= url($page['full_path']) ?>" class="<?= $is_active ? 'active' : '' ?>">
-                <span class="nav-icon">📄</span><?= htmlspecialchars($title) ?>
+                <?= icon('file', 'nav-icon') ?><?= htmlspecialchars($title) ?>
             </a>
             <?php if ($has_children): ?>
                 <ul class="mobile-menu-submenu">
@@ -267,20 +270,20 @@
         <?php if (get_logged_in_user()): ?>
         <li>
             <a href="<?= url('cart') ?>" class="<?= str_starts_with($currentUrl, '/cart') ? 'active' : '' ?>">
-                <span class="nav-icon">🛒</span><?= t('nav.cart') ?>
+                <?= icon('cart', 'nav-icon') ?><?= t('nav.cart') ?>
             </a>
         </li>
         <?php endif; ?>
         <li>
             <a href="<?= url('profile') ?>" class="<?= str_starts_with($currentUrl, '/profile') ? 'active' : '' ?>">
-                <span class="nav-icon">👤</span><?= t('nav.account') ?>
+                <?= icon('user', 'nav-icon') ?><?= t('nav.account') ?>
             </a>
         </li>
     </ul>
 
     <div class="mobile-menu-search">
         <div class="mobile-menu-search-box" onclick="alert('Search feature coming soon!')">
-            <span class="mobile-menu-search-icon">🔍</span>
+            <?= icon('search', 'mobile-menu-search-icon') ?>
             <span class="mobile-menu-search-placeholder"><?= t('common.search_cards') ?></span>
         </div>
     </div>

@@ -5,7 +5,7 @@
     <div class="auth-wrapper">
         <div class="auth-header">
             <div class="auth-icon">
-                👤
+                <?= icon('user') ?>
             </div>
             <h1 class="auth-title"><?= t('auth.create_account') ?></h1>
             <p class="auth-description"><?= t('auth.join_tcg_community') ?></p>

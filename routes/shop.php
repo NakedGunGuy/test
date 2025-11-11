@@ -62,7 +62,7 @@ post('/cart/update-quantity', function () {
         // Check stock availability
         if (!add_to_cart($user['id'], $product_id, 1)) {
             http_response_code(422);
-            exit("❌ Not enough stock.");
+            exit('[✗] Not enough stock.');
         }
     } else {
         // Decrease quantity by 1

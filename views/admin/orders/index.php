@@ -9,10 +9,10 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
     <p style="color: #C0C0D1;">Process and track customer orders</p>
     <div style="margin-top: 1rem; display: flex; gap: 1rem;">
         <a href="<?= url('admin/orders/preparation') ?>" class="btn blue">
-            📦 Order Preparation
+            <?= icon('package') ?> Order Preparation
         </a>
         <a href="<?= url('admin/orders/shipping') ?>" class="btn black">
-            🚚 Order Shipping
+            <?= icon('truck') ?> Order Shipping
         </a>
     </div>
 </div>
@@ -22,7 +22,7 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
     <h2 class="section-subtitle">Order Statistics (Last 30 Days)</h2>
     <div class="grid stats" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
         <div class="card stat">
-            <div class="icon">📋</div>
+            <?= icon('clipboard') ?>
             <div class="info">
                 <div class="number"><?= $stats['total_orders'] ?? 0 ?></div>
                 <div class="label">Total Orders</div>
@@ -36,21 +36,21 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             </div>
         </div>
         <div class="card stat">
-            <div class="icon">🚚</div>
+            <?= icon('truck') ?>
             <div class="info">
                 <div class="number"><?= $stats['shipped_count'] ?? 0 ?></div>
                 <div class="label">Shipped</div>
             </div>
         </div>
         <div class="card stat">
-            <div class="icon">✅</div>
+            <?= icon('check') ?>
             <div class="info">
                 <div class="number"><?= $stats['delivered_count'] ?? 0 ?></div>
                 <div class="label">Delivered</div>
             </div>
         </div>
         <div class="card stat">
-            <div class="icon">💰</div>
+            <?= icon('dollar-sign') ?>
             <div class="info">
                 <div class="number">€<?= number_format($stats['total_revenue'] ?? 0, 2) ?></div>
                 <div class="label">Revenue</div>

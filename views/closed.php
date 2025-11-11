@@ -22,7 +22,7 @@ Store Temporarily Closed - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             </div>
             
             <div class="detail-item">
-                <span class="detail-icon">🛒</span>
+                <span class="detail-icon"><?= icon('cart') ?></span>
                 <span class="detail-text">No new orders are being accepted</span>
             </div>
             

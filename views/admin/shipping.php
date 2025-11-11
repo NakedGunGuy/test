@@ -12,11 +12,11 @@ foreach ($weight_tiers as $tier) {
 
 <div class="container">
     <div class="section-header">
-        <span class="section-header-icon">🚚</span>
+        <span class="section-header-icon"><?= icon('truck') ?></span>
         Shipping Settings
         <div class="section-header-actions">
             <a href="<?= url('admin/shipping/countries') ?>" class="btn blue">
-                🌍 Manage Countries
+                <?= icon('globe') ?> Manage Countries
             </a>
         </div>
     </div>
@@ -46,7 +46,7 @@ foreach ($weight_tiers as $tier) {
                     </div>
                     <div class="country-actions">
                         <button type="button" class="btn-small black" onclick="toggleCountrySettings('<?= $country['id'] ?>')">
-                            ⚙️ Settings
+                            <?= icon('settings') ?> Settings
                         </button>
                     </div>
                 </div>

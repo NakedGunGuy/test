@@ -211,7 +211,7 @@ function createBlockElement(lang, block, index) {
         case 'text':
             content = `
                 <div class="block-header">
-                    <div class="block-type">📄 Text</div>
+                    <div class="block-type"><?= icon('file') ?> Text</div>
                     <div class="block-actions">
                         <button type="button" onclick="moveBlock('${lang}', ${index}, -1)" class="btn-icon">↑</button>
                         <button type="button" onclick="moveBlock('${lang}', ${index}, 1)" class="btn-icon">↓</button>
@@ -228,7 +228,7 @@ function createBlockElement(lang, block, index) {
         case 'image':
             content = `
                 <div class="block-header">
-                    <div class="block-type">🖼️ Image</div>
+                    <div class="block-type"><?= icon('image') ?> Image</div>
                     <div class="block-actions">
                         <button type="button" onclick="moveBlock('${lang}', ${index}, -1)" class="btn-icon">↑</button>
                         <button type="button" onclick="moveBlock('${lang}', ${index}, 1)" class="btn-icon">↓</button>
@@ -253,7 +253,7 @@ function createBlockElement(lang, block, index) {
         case 'columns':
             content = `
                 <div class="block-header">
-                    <div class="block-type">📊 Columns</div>
+                    <div class="block-type"><?= icon('columns') ?> Columns</div>
                     <div class="block-actions">
                         <button type="button" onclick="moveBlock('${lang}', ${index}, -1)" class="btn-icon">↑</button>
                         <button type="button" onclick="moveBlock('${lang}', ${index}, 1)" class="btn-icon">↓</button>

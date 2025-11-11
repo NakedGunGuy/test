@@ -241,6 +241,16 @@ function t(string $key, array $replacements = []): string {
                 'auth.admin_username' => 'Administrator Username',
                 'auth.admin_password' => 'Administrator Password',
                 'auth.access_admin_portal' => '🚀 Access Admin Portal',
+                'auth.forgot_password' => 'Forgot password?',
+                'auth.forgot_password_title' => 'Forgot Password?',
+                'auth.forgot_password_description' => 'Enter your email address and we\'ll send you a link to reset your password.',
+                'auth.send_reset_link' => '🔄 Send Reset Link',
+                'auth.remember_password' => 'Remember your password?',
+                'auth.reset_password_title' => 'Reset Your Password',
+                'auth.reset_password_description' => 'Enter your new password below.',
+                'auth.reset_password_button' => '🚀 Reset Password',
+                'auth.new_password' => 'New Password',
+                'auth.confirm_password' => 'Confirm Password',
 
                 // Forms
                 'form.username' => 'Username',
@@ -298,6 +308,11 @@ function t(string $key, array $replacements = []): string {
                 'status.cancelled' => 'Cancelled',
                 'status.enabled' => 'Enabled',
                 'status.disabled' => 'Disabled',
+                'status.pending_icon' => 'Pending',
+                'status.processing_icon' => 'Processing',
+                'status.shipped_icon' => 'Shipped',
+                'status.delivered_icon' => '✓ Delivered',
+                'status.cancelled_icon' => '✗ Cancelled',
 
                 // Cart and Shopping
                 'cart.quantity' => 'Quantity',
@@ -326,6 +341,25 @@ function t(string $key, array $replacements = []): string {
                 'profile.order_number' => 'Order #{id}',
                 'profile.items' => '{count} item|{count} items',
                 'profile.view_details' => 'View Details →',
+                'profile.member_since' => 'Member since',
+                'profile.account_overview' => 'Account Overview',
+                'profile.status' => 'Status',
+                'profile.status_new' => 'New',
+                'profile.status_member' => 'Member',
+                'profile.status_premium' => 'Premium',
+                'profile.status_vip' => 'VIP',
+                'profile.quick_actions' => 'Quick Actions',
+                'profile.update_info_password' => 'Update your profile information and password',
+                'profile.view_past_orders' => 'View your past orders and track shipments',
+                'profile.continue_shopping' => 'Continue Shopping',
+                'profile.browse_collection' => 'Browse our collection of trading cards',
+                'profile.check_cart_checkout' => 'Check your current cart and checkout',
+                'profile.sign_out' => 'Sign Out',
+                'profile.track_purchases' => 'Track your purchases and order status',
+                'profile.latest_status' => 'Latest Status',
+                'profile.item' => 'item',
+                'profile.items_plural' => 'items',
+                'profile.order_id' => 'Order #{id}',
 
                 // Admin sections
                 'admin.cache_statistics' => 'Cache Statistics',
@@ -453,6 +487,16 @@ function t(string $key, array $replacements = []): string {
                 'auth.admin_username' => 'Skrbniško uporabniško ime',
                 'auth.admin_password' => 'Skrbniško geslo',
                 'auth.access_admin_portal' => '🚀 Dostop do skrbniškega portala',
+                'auth.forgot_password' => 'Ste pozabili geslo?',
+                'auth.forgot_password_title' => 'Ste pozabili geslo?',
+                'auth.forgot_password_description' => 'Vnesite svoj e-poštni naslov in poslali vam bomo povezavo za ponastavitev gesla.',
+                'auth.send_reset_link' => '🔄 Pošlji povezavo za ponastavitev',
+                'auth.remember_password' => 'Se spomnite gesla?',
+                'auth.reset_password_title' => 'Ponastavite geslo',
+                'auth.reset_password_description' => 'Spodaj vnesite novo geslo.',
+                'auth.reset_password_button' => '🚀 Ponastavi geslo',
+                'auth.new_password' => 'Novo geslo',
+                'auth.confirm_password' => 'Potrdite geslo',
 
                 // Forms
                 'form.username' => 'Uporabniško ime',
@@ -510,6 +554,11 @@ function t(string $key, array $replacements = []): string {
                 'status.cancelled' => 'Preklicano',
                 'status.enabled' => 'Omogočeno',
                 'status.disabled' => 'Onemogočeno',
+                'status.pending_icon' => 'Čakajoče',
+                'status.processing_icon' => 'V obdelavi',
+                'status.shipped_icon' => 'Poslano',
+                'status.delivered_icon' => '✓ Dostavljeno',
+                'status.cancelled_icon' => '✗ Preklicano',
 
                 // Cart and Shopping
                 'cart.quantity' => 'Količina',
@@ -538,6 +587,27 @@ function t(string $key, array $replacements = []): string {
                 'profile.order_number' => 'Naročilo #{id}',
                 'profile.items' => '{count} artikel|{count} artikel',
                 'profile.view_details' => 'Poglej podrobnosti →',
+                'profile.member_since' => 'Član od',
+                'profile.account_overview' => 'Pregled računa',
+                'profile.status' => 'Status',
+                'profile.status_new' => 'Nov',
+                'profile.status_member' => 'Član',
+                'profile.status_premium' => 'Premium',
+                'profile.status_vip' => 'VIP',
+                'profile.quick_actions' => 'Hitre akcije',
+                'profile.update_info_password' => 'Posodobite svoje profilne informacije in geslo',
+                'profile.view_past_orders' => 'Oglejte si pretekla naročila in sledite pošiljkam',
+                'profile.continue_shopping' => 'Nadaljuj z nakupovanjem',
+                'profile.browse_collection' => 'Brskajte po naši zbirki menjalnih kart',
+                'profile.check_cart_checkout' => 'Preverite košarico in zaključite nakup',
+                'profile.sign_out' => 'Odjava',
+                'profile.track_purchases' => 'Sledite svojim nakupom in statusu naročila',
+                'profile.latest_status' => 'Zadnji status',
+                'profile.item' => 'artikel',
+                'profile.item_dual' => 'artikla',
+                'profile.item_plural_few' => 'artikli',
+                'profile.item_plural_many' => 'artiklov',
+                'profile.order_id' => 'Naročilo #{id}',
 
                 // Admin sections
                 'admin.cache_statistics' => 'Statistike predpomnilnika',
@@ -624,6 +694,40 @@ function t(string $key, array $replacements = []): string {
  */
 function __(string $key, array $replacements = []): string {
     return t($key, $replacements);
+}
+
+/**
+ * Pluralization function with support for Slovenian dual/plural forms
+ *
+ * @param int $count The count
+ * @param string $singular Singular form (1)
+ * @param string $dual Dual form (2) - used in Slovenian
+ * @param string $plural Plural form (3, 4, 5+)
+ * @param string $language Language code (defaults to current language)
+ * @return string The appropriate form
+ */
+function pluralize(int $count, string $singular, string $dual = null, string $plural = null, string $language = null): string {
+    if ($language === null) {
+        $language = get_current_language();
+    }
+
+    // Slovenian pluralization rules
+    if ($language === 'si') {
+        $mod100 = $count % 100;
+
+        if ($count == 1) {
+            return $singular; // 1 artikel
+        } elseif ($mod100 == 2) {
+            return $dual ?? $plural ?? $singular; // 2 artikla
+        } elseif ($mod100 == 3 || $mod100 == 4) {
+            return $plural ?? $dual ?? $singular; // 3, 4 artikli
+        } else {
+            return $plural ?? $dual ?? $singular; // 5+ artiklov
+        }
+    }
+
+    // English and other languages (simple singular/plural)
+    return $count === 1 ? $singular : ($plural ?? $singular . 's');
 }
 
 /**

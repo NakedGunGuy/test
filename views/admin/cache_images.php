@@ -8,7 +8,7 @@ $stats = get_card_image_cache_stats();
 
 <div class="container">
     <div class="section-header">
-        <span class="section-header-icon">🖼️</span>
+        <span class="section-header-icon"><?= icon('image') ?></span>
         Card Image Cache Management
     </div>
 
@@ -67,7 +67,7 @@ $stats = get_card_image_cache_stats();
                     </select>
                 </div>
                 <button type="submit" class="btn black">
-                    🗑️ Clear Old Images
+                    <?= icon('trash') ?> Clear Old Images
                 </button>
                 <div class="form-help">Remove cached images older than the selected time period</div>
             </form>
@@ -75,7 +75,7 @@ $stats = get_card_image_cache_stats();
             <form hx-post="<?= url('admin/cache-images/clear-all') ?>" hx-swap="outerHTML" hx-target="this" 
                   hx-confirm="Are you sure you want to clear ALL cached images? This cannot be undone.">
                 <button type="submit" class="btn red">
-                    ⚠️ Clear All Cache
+                    <?= icon('alert-triangle') ?> Clear All Cache
                 </button>
                 <div class="form-help">Remove all cached images (requires confirmation)</div>
             </form>

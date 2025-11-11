@@ -14,7 +14,7 @@ Analytics - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
     <h2 class="section-subtitle">Store Overview</h2>
     <div class="grid stats" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
         <div class="card stat">
-            <div class="icon">📋</div>
+            <?= icon('clipboard') ?>
             <div class="info">
                 <div class="number"><?= number_format($overview['total_orders'] ?? 0) ?></div>
                 <div class="label">Total Orders</div>
@@ -28,7 +28,7 @@ Analytics - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             </div>
         </div>
         <div class="card stat">
-            <div class="icon">📦</div>
+            <?= icon('package') ?>
             <div class="info">
                 <div class="number">
                     <?= number_format($overview['products_in_stock'] ?? 0) ?>
@@ -47,7 +47,7 @@ Analytics - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             </div>
         </div>
         <div class="card stat">
-            <div class="icon">📊</div>
+            <?= icon('bar-chart') ?>
             <div class="info">
                 <div class="number">
                     <?= number_format($overview['total_units_available'] ?? 0) ?>
@@ -66,21 +66,21 @@ Analytics - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             </div>
         </div>
         <div class="card stat">
-            <div class="icon">⚠️</div>
+            <?= icon('alert-triangle') ?>
             <div class="info">
                 <div class="number"><?= number_format($overview['low_stock_products'] ?? 0) ?></div>
                 <div class="label">Low Stock Items</div>
             </div>
         </div>
         <div class="card stat">
-            <div class="icon">💰</div>
+            <?= icon('dollar-sign') ?>
             <div class="info">
                 <div class="number">€<?= number_format($overview['total_revenue'] ?? 0, 2) ?></div>
                 <div class="label">Total Revenue</div>
             </div>
         </div>
         <div class="card stat">
-            <div class="icon">💳</div>
+            <?= icon('credit-card') ?>
             <div class="info">
                 <div class="number">€<?= number_format($overview['avg_order_value'] ?? 0, 2) ?></div>
                 <div class="label">Avg Order Value</div>

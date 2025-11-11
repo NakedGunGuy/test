@@ -20,7 +20,7 @@
                 <tr>
                     <td>
                         <div class="product-info">
-                            <div class="product-name">🌍 <?= htmlspecialchars($country['country_name']) ?></div>
+                            <div class="product-name"><?= icon('globe') ?> <?= htmlspecialchars($country['country_name']) ?></div>
                         </div>
                     </td>
                     <td>
@@ -72,7 +72,7 @@
                                     hx-swap="outerHTML"
                                     class="btn-small green"
                                     title="Enable Country">
-                                ✅ Enable
+                                <?= icon('check') ?> Enable
                             </button>
                             <?php endif; ?>
 
@@ -91,11 +91,11 @@
                                     hx-confirm="Are you sure you want to delete <?= htmlspecialchars($country['country_name']) ?>? This will also delete all weight tiers for this country."
                                     class="btn-small red"
                                     title="Delete Country">
-                                🗑️ Delete
+                                <?= icon('trash') ?> Delete
                             </button>
                             <?php else: ?>
                             <span class="btn-small gray disabled" title="Cannot delete - has <?= $order_count ?> existing orders">
-                                🗑️ Delete
+                                <?= icon('trash') ?> Delete
                             </span>
                             <?php endif; ?>
                         </div>

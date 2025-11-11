@@ -5,7 +5,7 @@ Payment Successful - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 <div class="maintenance-success-container">
     <div class="maintenance-success-content">
         <div class="success-icon">
-            ✅
+            <?= icon('check') ?>
         </div>
         
         <h1 class="success-title">Payment Successful!</h1>
@@ -32,7 +32,7 @@ Payment Successful - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         
         <div class="order-details">
             <div class="detail-item">
-                <span class="detail-icon">📦</span>
+                <span class="detail-icon"><?= icon('package') ?></span>
                 <span class="detail-text">Your order is being processed</span>
             </div>
             
@@ -42,7 +42,7 @@ Payment Successful - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             </div>
             
             <div class="detail-item">
-                <span class="detail-icon">🚚</span>
+                <span class="detail-icon"><?= icon('truck') ?></span>
                 <span class="detail-text">Shipping will proceed normally</span>
             </div>
         </div>

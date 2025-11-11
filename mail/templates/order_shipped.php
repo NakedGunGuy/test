@@ -20,7 +20,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>📦 Your Order Has Shipped!</h1>
+        <h1><?= icon('package') ?> Your Order Has Shipped!</h1>
         <p>Your package is on its way</p>
     </div>
     

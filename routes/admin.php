@@ -44,7 +44,7 @@ post('/admin/login', function () {
 
 get('/admin/logout', function () {
     unset($_SESSION['admin']);
-    header("Location: /admin/login");
+    header("Location: " . url('admin/login'));
     exit;
 });
 
@@ -273,7 +273,7 @@ post('/admin/products/bulk/create', function () {
 
     if (empty($products)) {
         http_response_code(422);
-        echo '❌ No products to create';
+        echo '[✗] No products to create';
         return;
     }
 
@@ -337,9 +337,9 @@ post('/admin/products/bulk/create', function () {
 
     // Prepare success message
     if ($errors) {
-        $message = '⚠️ Created ' . $created_count . ' products, skipped ' . $skipped_count . ' empty rows. Errors: ' . implode(', ', $errors);
+        $message = '[!] Created ' . $created_count . ' products, skipped ' . $skipped_count . ' empty rows. Errors: ' . implode(', ', $errors);
     } else {
-        $message = '✅ Successfully created ' . $created_count . ' products';
+        $message = '[✓] Successfully created ' . $created_count . ' products';
         if ($skipped_count > 0) {
             $message .= ', skipped ' . $skipped_count . ' empty rows';
         }
@@ -419,7 +419,7 @@ post('/admin/products/create', function () {
 
     if ($errors) {
         http_response_code(422);
-        echo '❌ ' . implode(', ', $errors);
+        echo '[✗] ' . implode(', ', $errors);
         return;
     }
 
@@ -509,7 +509,7 @@ get('/admin/products/update/{product_id}', function ($data) {
 
     if (!$product_id || !is_numeric($product_id)) {
         http_response_code(400);
-        echo '❌ Invalid product ID';
+        echo '[✗] Invalid product ID';
         return;
     }
 
@@ -520,7 +520,7 @@ get('/admin/products/update/{product_id}', function ($data) {
 
     if (!$product) {
         http_response_code(404);
-        echo '❌ Product not found';
+        echo '[✗] Product not found';
         return;
     }
 
@@ -538,7 +538,7 @@ post('/admin/products/update/{product_id}', function ($data) {
 
     if ($product_id === null || !is_numeric($product_id)) {
         http_response_code(422);
-        echo '❌ Invalid product ID';
+        echo '[✗] Invalid product ID';
         return;
     }
 
@@ -548,7 +548,7 @@ post('/admin/products/update/{product_id}', function ($data) {
 
     if (!$product) {
         http_response_code(404);
-        echo '❌ Product not found';
+        echo '[✗] Product not found';
         return;
     }
 
@@ -573,7 +573,7 @@ post('/admin/products/update/{product_id}', function ($data) {
 
     if ($errors) {
         http_response_code(422);
-        echo '❌ ' . implode(', ', $errors);
+        echo '[✗] ' . implode(', ', $errors);
         return;
     }
 
@@ -607,7 +607,7 @@ post('/admin/products/delete/{product_id}', function ($data) {
 
     if (!$product_id) {
         http_response_code(400);
-        echo '❌ Invalid product ID';
+        echo '[✗] Invalid product ID';
         return;
     }
 
@@ -618,7 +618,7 @@ post('/admin/products/delete/{product_id}', function ($data) {
 
     if ($in_carts > 0) {
         http_response_code(403);
-        echo "❌ Cannot delete product: it exists in {$in_carts} cart(s)";
+        echo "[✗] Cannot delete product: it exists in {$in_carts} cart(s)";
         return;
     }
 
@@ -684,7 +684,7 @@ post('/admin/orders/{id}/status', function ($data) {
     $valid_statuses = ['pending', 'shipped', 'delivered', 'cancelled'];
     if (!in_array($status, $valid_statuses)) {
         http_response_code(400);
-        echo '❌ Invalid status';
+        echo '[✗] Invalid status';
         return;
     }
     
@@ -692,7 +692,7 @@ post('/admin/orders/{id}/status', function ($data) {
     try {
         update_order_status($order_id, $status, $tracking_number);
         
-        $message = "✅ Order status updated to " . ucfirst($status);
+        $message = '[✓] ' . "Order status updated to " . ucfirst($status);
         if ($status === 'shipped' && $tracking_number) {
             $message .= " (Tracking: $tracking_number)";
         }
@@ -703,7 +703,7 @@ post('/admin/orders/{id}/status', function ($data) {
         echo $message;
     } catch (Exception $e) {
         http_response_code(500);
-        echo '❌ Failed to update status: ' . $e->getMessage();
+        echo '[✗] Failed to update status: ' . $e->getMessage();
     }
 }, [$getAdminAuth]);
 
@@ -781,7 +781,7 @@ post('/admin/orders/preparation/mark', function () {
 
     if (!$product_id || $quantity_prepared <= 0) {
         http_response_code(400);
-        echo '❌ Invalid product ID or quantity';
+        echo '[✗] Invalid product ID or quantity';
         return;
     }
 
@@ -1418,14 +1418,14 @@ post('/admin/shipping/calculate', function () {
         $shipping = calculate_shipping_cost($weight_grams, $country_code);
         
         if ($shipping) {
-            echo "💰 <strong>€" . number_format($shipping['cost'], 2) . "</strong> ";
+            echo "<strong>€" . number_format($shipping['cost'], 2) . "</strong> ";
             echo "({$shipping['tier']['tier_name']}) ";
-            echo "📅 {$shipping['country']['estimated_days_min']}-{$shipping['country']['estimated_days_max']} days";
+            echo "{$shipping['country']['estimated_days_min']}-{$shipping['country']['estimated_days_max']} days";
         } else {
-            echo "❌ No shipping available for this weight/country combination";
+            echo '[✗] No shipping available for this weight/country combination';
         }
     } else {
-        echo "⚠️ Please enter valid cards and country";
+        echo '[!] Please enter valid cards and country';
     }
 }, [$getAdminAuth]);
 
@@ -1511,7 +1511,7 @@ post('/admin/shipping/countries/add', function () {
 
     if ($errors) {
         http_response_code(422);
-        echo '❌ ' . implode(', ', $errors);
+        echo '[✗] ' . implode(', ', $errors);
         return;
     }
 
@@ -1520,7 +1520,7 @@ post('/admin/shipping/countries/add', function () {
         partial('admin/shipping/countries/partials/countries_table', ['countries' => $countries]);
     } else {
         http_response_code(400);
-        echo '❌ Failed to add country. Country code may already exist.';
+        echo '[✗] Failed to add country. Country code may already exist.';
     }
 }, [$getAdminAuth]);
 
@@ -1533,7 +1533,7 @@ post('/admin/shipping/countries/update/{id}', function ($data) {
 
     if ($country_id <= 0) {
         http_response_code(400);
-        echo '❌ Invalid country ID';
+        echo '[✗] Invalid country ID';
         return;
     }
 
@@ -1542,7 +1542,7 @@ post('/admin/shipping/countries/update/{id}', function ($data) {
         partial('admin/shipping/countries/partials/countries_table', ['countries' => $countries]);
     } else {
         http_response_code(400);
-        echo '❌ Failed to update country';
+        echo '[✗] Failed to update country';
     }
 }, [$getAdminAuth]);
 
@@ -1551,7 +1551,7 @@ post('/admin/shipping/countries/delete/{id}', function ($data) {
 
     if ($country_id <= 0) {
         http_response_code(400);
-        echo '❌ Invalid country ID';
+        echo '[✗] Invalid country ID';
         return;
     }
 
@@ -1563,7 +1563,7 @@ post('/admin/shipping/countries/delete/{id}', function ($data) {
 
     if ($order_count > 0) {
         http_response_code(403);
-        echo "❌ Cannot delete country: it has {$order_count} existing orders";
+        echo "[✗] Cannot delete country: it has {$order_count} existing orders";
         return;
     }
 
@@ -1572,6 +1572,6 @@ post('/admin/shipping/countries/delete/{id}', function ($data) {
         partial('admin/shipping/countries/partials/countries_table', ['countries' => $countries]);
     } else {
         http_response_code(400);
-        echo '❌ Failed to delete country';
+        echo '[✗] Failed to delete country';
     }
 }, [$getAdminAuth]);

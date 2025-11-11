@@ -36,10 +36,10 @@ function require_admin_auth(): void {
         error_log('User not logged in: ' . print_r($_SESSION, true));
 
         if (isset($_SERVER['HTTP_HX_REQUEST'])) {
-            header("HX-Redirect: /admin/login");
+            header("HX-Redirect: " . url('admin/login'));
             http_response_code(200);
         } else {
-            header("Location: /admin/login");
+            header("Location: " . url('admin/login'));
         }
         exit;
     }
@@ -47,6 +47,6 @@ function require_admin_auth(): void {
 
 function admin_logout(): void {
     unset($_SESSION['admin']);
-    header("Location: /admin/login");
+    header("Location: " . url('admin/login'));
     exit;
 }

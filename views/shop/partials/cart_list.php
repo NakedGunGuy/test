@@ -1,7 +1,7 @@
 <?php if (empty($cart)): ?>
     <div hx-swap-oob="true" id="cart-list">
         <div class="empty">
-            <div class="icon">🛒</div>
+            <?= icon('cart') ?>
             <h3><?= t('cart.empty') ?></h3>
             <p><?= t('cart.add_products') ?></p>
             <a href="<?= url('discover') ?>" class="btn blue"><?= t('button.browse_products') ?></a>

@@ -62,7 +62,7 @@ function process_email_queue($limit = 10) {
             ");
             $status_stmt->execute([':id' => $email['id']]);
             
-            echo "✅ Email sent successfully\n";
+            echo "[✓] Email sent successfully\n";
             $sent_count++;
         } else {
             // Check if max attempts reached
@@ -73,9 +73,9 @@ function process_email_queue($limit = 10) {
                     WHERE id = :id
                 ");
                 $status_stmt->execute([':id' => $email['id']]);
-                echo "❌ Email failed permanently (max attempts reached)\n";
+                echo "[✗] Email failed permanently (max attempts reached)\n";
             } else {
-                echo "⚠️ Email failed, will retry later\n";
+                echo "[!] Email failed, will retry later\n";
             }
             $failed_count++;
         }

@@ -14,7 +14,7 @@
             
             <?php if (session_get('error')): ?>
                 <div class="alert error" style="margin-bottom: 1.5rem;">
-                    ⚠️ <?= htmlspecialchars(session_get('error')) ?>
+                    <?= icon('alert-triangle') ?> <?= htmlspecialchars(session_get('error')) ?>
                 </div>
             <?php endif; ?>
             
@@ -22,7 +22,7 @@
                 <div class="form-group">
                     <label class="form-label" for="username">
                         <span class="form-label-with-icon">
-                            <span>👤</span><?= t('auth.admin_username') ?>
+                            <?= icon('user') ?><?= t('auth.admin_username') ?>
                         </span>
                     </label>
                     <input 

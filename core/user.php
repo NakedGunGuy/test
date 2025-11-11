@@ -38,10 +38,10 @@ function require_user_auth(): void {
         error_log('User not logged in: ' . print_r($_SESSION, true));
 
         if (isset($_SERVER['HTTP_HX_REQUEST'])) {
-            header("HX-Redirect: /login");
+            header("HX-Redirect: " . url('login'));
             http_response_code(200);
         } else {
-            header("Location: /login");
+            header("Location: " . url('login'));
         }
         exit;
     }
@@ -49,7 +49,7 @@ function require_user_auth(): void {
 
 function user_logout(): void {
     unset($_SESSION['user']);
-    header("Location: /login");
+    header("Location: " . url('login'));
     exit;
 }
 
@@ -137,17 +137,17 @@ function get_user_orders(int $user_id): array {
  */
 function get_user_order_details(int $order_id, int $user_id): ?array {
     $pdo = db();
-    
+
     // Get order info
     $stmt = $pdo->prepare("SELECT * FROM orders WHERE id = :id AND user_id = :user_id");
     $stmt->execute([':id' => $order_id, ':user_id' => $user_id]);
     $order = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
     if (!$order) return null;
-    
+
     // Get order items with product details
     $stmt = $pdo->prepare("
-        SELECT oi.*, p.name as product_name, 
+        SELECT oi.*, p.name as product_name,
                e.collector_number, c.name as card_name, s.name as set_name
         FROM order_items oi
         JOIN products p ON oi.product_id = p.id
@@ -158,6 +158,89 @@ function get_user_order_details(int $order_id, int $user_id): ?array {
     ");
     $stmt->execute([':order_id' => $order_id]);
     $order['items'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
     return $order;
+}
+
+/**
+ * Create a password reset token for a user
+ *
+ * @param string $email
+ * @return string|null The reset token or null if user not found
+ */
+function create_password_reset_token(string $email): ?string {
+    $pdo = db();
+
+    // Check if user exists
+    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = :email");
+    $stmt->execute([':email' => $email]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$user) {
+        return null;
+    }
+
+    // Generate a secure token
+    $token = bin2hex(random_bytes(32));
+    $expires_at = date('Y-m-d H:i:s', strtotime('+1 hour'));
+
+    // Store token in session (simple approach without database changes)
+    if (!isset($_SESSION['password_reset_tokens'])) {
+        $_SESSION['password_reset_tokens'] = [];
+    }
+
+    $_SESSION['password_reset_tokens'][$token] = [
+        'user_id' => $user['id'],
+        'email' => $email,
+        'expires_at' => $expires_at
+    ];
+
+    return $token;
+}
+
+/**
+ * Validate a password reset token
+ *
+ * @param string $token
+ * @return array|null User data if valid, null otherwise
+ */
+function validate_password_reset_token(string $token): ?array {
+    if (!isset($_SESSION['password_reset_tokens'][$token])) {
+        return null;
+    }
+
+    $reset_data = $_SESSION['password_reset_tokens'][$token];
+
+    // Check if token has expired
+    if (strtotime($reset_data['expires_at']) < time()) {
+        unset($_SESSION['password_reset_tokens'][$token]);
+        return null;
+    }
+
+    return $reset_data;
+}
+
+/**
+ * Reset user password using a token
+ *
+ * @param string $token
+ * @param string $new_password
+ * @return bool
+ */
+function reset_password_with_token(string $token, string $new_password): bool {
+    $reset_data = validate_password_reset_token($token);
+
+    if (!$reset_data) {
+        return false;
+    }
+
+    // Update password
+    $result = update_user_password($reset_data['user_id'], $new_password);
+
+    if ($result) {
+        // Invalidate the token
+        unset($_SESSION['password_reset_tokens'][$token]);
+    }
+
+    return $result;
 }

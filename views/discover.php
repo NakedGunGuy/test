@@ -9,13 +9,13 @@
 
 <div class="section" style="margin-bottom: 2rem; z-index: 5; position:relative; ">
     <h3 class="section-header">
-        <span class="section-header-icon">🔍</span><?= t('products.search_filter') ?>
+        <span class="section-header-icon"><?= icon('search') ?></span><?= t('products.search_filter') ?>
     </h3>
 
     <!-- Mobile/Tablet Filter Toggle Button -->
     <button type="button" class="filter-toggle-btn" id="filter-toggle-btn">
         <span>
-            <span class="filter-icon">🔍</span>
+            <span class="filter-icon"><?= icon('search') ?></span>
             <span><?= t('products.search_filter') ?></span>
         </span>
         <span class="filter-arrow">▼</span>
@@ -78,7 +78,7 @@
 
 <div class="section">
     <div class="products-stats">
-        <h3 class="products-count">📄 <?= t('products.products_found', ['count' => $pagination['total_products']]) ?><?= $pagination['total_pages'] > 1 ? ', page ' . $pagination['current_page'] . ' of ' . $pagination['total_pages'] : '' ?></h3>
+        <h3 class="products-count"><?= icon('file') ?> <?= t('products.products_found', ['count' => $pagination['total_products']]) ?><?= $pagination['total_pages'] > 1 ? ', page ' . $pagination['current_page'] . ' of ' . $pagination['total_pages'] : '' ?></h3>
         <div class="products-controls">
             <div class="per-page-control">
                 <select aria-label="<?= t('aria.show_products_per_page') ?>" id="per_page_select" onchange="changePerPage(this.value)" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #C0C0D133; background: #1E1E27; color: #fff; font-size: 14px;">

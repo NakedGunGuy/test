@@ -21,27 +21,27 @@
         </a>
         <ul>
             <li><a href="<?= url('admin') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin') && $_SERVER['REQUEST_URI'] === '/admin' ? 'active' : '' ?>">
-                <span class="nav-icon">📊</span><?= t('admin.dashboard') ?></a></li>
+                <?= icon('chart', 'nav-icon') ?><?= t('admin.dashboard') ?></a></li>
             <li><a href="<?= url('admin/products') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/products') ? 'active' : '' ?>">
-                <span class="nav-icon">📦</span><?= t('admin.products') ?></a></li>
+                <?= icon('package', 'nav-icon') ?><?= t('admin.products') ?></a></li>
             <li><a href="<?= url('admin/orders') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/orders') && !str_starts_with($_SERVER['REQUEST_URI'], '/admin/orders/preparation') ? 'active' : '' ?>">
-                <span class="nav-icon">📋</span><?= t('admin.orders') ?></a></li>
+                <?= icon('clipboard', 'nav-icon') ?><?= t('admin.orders') ?></a></li>
             <li><a href="<?= url('admin/orders/preparation') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/orders/preparation') ? 'active' : '' ?>">
-                <span class="nav-icon">📦</span>Order Preparation</a></li>
+                <?= icon('package', 'nav-icon') ?>Order Preparation</a></li>
             <li><a href="<?= url('admin/orders/shipping') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/orders/shipping') ? 'active' : '' ?>">
-                <span class="nav-icon">🚚</span>Order Shipping</a></li>
+                <?= icon('truck', 'nav-icon') ?>Order Shipping</a></li>
             <li><a href="<?= url('admin/analytics') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/analytics') ? 'active' : '' ?>">
-                <span class="nav-icon">📈</span><?= t('admin.analytics') ?></a></li>
+                <?= icon('trending-up', 'nav-icon') ?><?= t('admin.analytics') ?></a></li>
             <li><a href="<?= url('admin/cache-images') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/cache-images') ? 'active' : '' ?>">
-                <span class="nav-icon">🖼️</span><?= t('admin.image_cache') ?></a></li>
+                <?= icon('image', 'nav-icon') ?><?= t('admin.image_cache') ?></a></li>
             <li><a href="<?= url('admin/shipping') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/shipping') ? 'active' : '' ?>">
-                <span class="nav-icon">🚚</span><?= t('admin.shipping') ?></a></li>
+                <?= icon('truck', 'nav-icon') ?><?= t('admin.shipping') ?></a></li>
             <li><a href="<?= url('admin/seo') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/seo') ? 'active' : '' ?>">
-                <span class="nav-icon">🔍</span><?= t('admin.seo') ?></a></li>
+                <?= icon('search', 'nav-icon') ?><?= t('admin.seo') ?></a></li>
             <li><a href="<?= url('admin/pages') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/pages') ? 'active' : '' ?>">
-                <span class="nav-icon">📄</span>Pages</a></li>
+                <?= icon('file', 'nav-icon') ?>Pages</a></li>
             <li><a href="<?= url('admin/settings') ?>" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/settings') ? 'active' : '' ?>">
-                <span class="nav-icon">⚙️</span><?= t('admin.settings') ?></a></li>
+                <?= icon('settings', 'nav-icon') ?><?= t('admin.settings') ?></a></li>
         </ul>
     </section>
     <section>
@@ -53,7 +53,7 @@
                     <div class="admin-role"><?= t('admin.administrator') ?></div>
                 </div>
             </div>
-            <a href="<?= url('admin/logout') ?>" class="logout-link">🚪 <?= t('nav.logout') ?></a>
+            <a href="<?= url('admin/logout') ?>" class="logout-link"><?= icon('door', 'nav-icon') ?><?= t('nav.logout') ?></a>
         </div>
     </section>
 </nav>
@@ -82,13 +82,13 @@
 <main>
     <?php if (session_get('success')): ?>
         <div class="alert success" style="margin-bottom: 2rem;">
-            ✅ <?= htmlspecialchars(session_get('success')) ?>
+            <?= icon('check') ?> <?= htmlspecialchars(session_get('success')) ?>
         </div>
     <?php endif; ?>
-    
+
     <?php if (session_get('error')): ?>
         <div class="alert error" style="margin-bottom: 2rem;">
-            ❌ <?= htmlspecialchars(session_get('error')) ?>
+            <?= icon('alert-circle') ?> <?= htmlspecialchars(session_get('error')) ?>
         </div>
     <?php endif; ?>
     
@@ -100,31 +100,31 @@
 <div class="mobile-bottom-nav">
     <div class="mobile-nav-container">
         <a href="<?= url('admin') ?>" class="mobile-nav-item <?= str_starts_with($_SERVER['REQUEST_URI'], '/admin') && $_SERVER['REQUEST_URI'] === '/admin' ? 'active' : '' ?>">
-            <span class="mobile-nav-icon">📊</span>
+            <?= icon('chart', 'mobile-nav-icon') ?>
             <span class="mobile-nav-text"><?= t('admin.dashboard') ?></span>
         </a>
         <a href="<?= url('admin/products') ?>" class="mobile-nav-item <?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/products') ? 'active' : '' ?>">
-            <span class="mobile-nav-icon">📦</span>
+            <?= icon('package', 'mobile-nav-icon') ?>
             <span class="mobile-nav-text"><?= t('admin.products') ?></span>
         </a>
         <a href="<?= url('admin/orders') ?>" class="mobile-nav-item <?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/orders') && !str_starts_with($_SERVER['REQUEST_URI'], '/admin/orders/preparation') ? 'active' : '' ?>">
-            <span class="mobile-nav-icon">📋</span>
+            <?= icon('clipboard', 'mobile-nav-icon') ?>
             <span class="mobile-nav-text"><?= t('admin.orders') ?></span>
         </a>
         <a href="<?= url('admin/orders/preparation') ?>" class="mobile-nav-item <?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/orders/preparation') ? 'active' : '' ?>">
-            <span class="mobile-nav-icon">📦</span>
+            <?= icon('package', 'mobile-nav-icon') ?>
             <span class="mobile-nav-text">Preparation</span>
         </a>
         <a href="<?= url('admin/orders/shipping') ?>" class="mobile-nav-item <?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/orders/shipping') ? 'active' : '' ?>">
-            <span class="mobile-nav-icon">🚚</span>
+            <?= icon('truck', 'mobile-nav-icon') ?>
             <span class="mobile-nav-text">Shipping</span>
         </a>
         <a href="<?= url('admin/analytics') ?>" class="mobile-nav-item <?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/analytics') ? 'active' : '' ?>">
-            <span class="mobile-nav-icon">📈</span>
+            <?= icon('trending-up', 'mobile-nav-icon') ?>
             <span class="mobile-nav-text"><?= t('admin.analytics') ?></span>
         </a>
         <a href="<?= url('admin/settings') ?>" class="mobile-nav-item <?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/settings') ? 'active' : '' ?>">
-            <span class="mobile-nav-icon">⚙️</span>
+            <?= icon('settings', 'mobile-nav-icon') ?>
             <span class="mobile-nav-text"><?= t('admin.settings') ?></span>
         </a>
     </div>

@@ -4,21 +4,21 @@
     <h2 class="section-subtitle">Preparation Summary</h2>
     <div class="grid stats" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
         <div class="card stat">
-            <div class="icon">📋</div>
+            <?= icon('clipboard') ?>
             <div class="info">
                 <div class="number"><?= $stats['unprepared_orders'] ?? 0 ?></div>
                 <div class="label">Orders to Prepare</div>
             </div>
         </div>
         <div class="card stat">
-            <div class="icon">📦</div>
+            <?= icon('package') ?>
             <div class="info">
                 <div class="number"><?= $stats['total_items_remaining'] ?? 0 ?></div>
                 <div class="label">Items Remaining</div>
             </div>
         </div>
         <div class="card stat">
-            <div class="icon">✅</div>
+            <?= icon('check') ?>
             <div class="info">
                 <div class="number"><?= $stats['total_items_prepared'] ?? 0 ?></div>
                 <div class="label">Items Prepared</div>
@@ -33,7 +33,7 @@
         </div>
         <?php if ($stats['total_items_prepared'] > 0): ?>
         <div class="card stat">
-            <div class="icon">🚚</div>
+            <?= icon('truck') ?>
             <div class="info">
                 <div class="number">
                     <a href="<?= url('admin/orders/shipping') ?>" style="color: #01AFFC; text-decoration: none;">
@@ -86,7 +86,7 @@
                                 </div>
                                 <?php if ($item['edition_slug']): ?>
                                     <div style="font-size: 12px; color: #C0C0D1; margin-top: 2px;">
-                                        📄 <?= htmlspecialchars($item['card_name']) ?>
+                                        <?= icon('file') ?> <?= htmlspecialchars($item['card_name']) ?>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -170,7 +170,7 @@
     <!-- Preparation Instructions -->
     <div class="section">
         <div class="card" style="background: rgba(0, 174, 239, 0.05); border: 1px solid rgba(0, 174, 239, 0.2);">
-            <h3 style="margin-top: 0; color: #01AFFC;">📋 Preparation Instructions</h3>
+            <h3 style="margin-top: 0; color: #01AFFC;"><?= icon('clipboard') ?> Preparation Instructions</h3>
             <ul style="margin: 0; padding-left: 1.5rem;">
                 <li>Items are grouped by set for easier collection</li>
                 <li>Quantity shows total needed across all unprepared orders</li>

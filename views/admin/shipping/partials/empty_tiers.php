@@ -1,5 +1,5 @@
 <div class="empty-state">
-    <div class="empty-icon">📦</div>
+    <div class="empty-icon"><?= icon('package') ?></div>
     <p>No weight tiers configured for <?= htmlspecialchars($country['country_name']) ?></p>
     <button type="button" 
             hx-post="<?= url('admin/shipping/weight-tiers/bulk-add/' . $country['id']) ?>" 

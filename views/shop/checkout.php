@@ -108,7 +108,7 @@ Checkout - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                 <h2 class="section-subtitle">Payment</h2>
                 <div class="payment-info">
                     <div class="payment-note">
-                        <div class="icon">💳</div>
+                        <?= icon('credit-card') ?>
                         <div class="content">
                             <div class="title">Secure Payment</div>
                             <div class="desc">This is a demo store. No actual payment will be processed.</div>
@@ -142,11 +142,11 @@ document.body.addEventListener('htmx:afterRequest', function(evt) {
                 document.getElementById('final-total').textContent = '€' + finalTotal.toFixed(2);
                 
                 // Update shipping estimate
-                document.getElementById('shipping-estimate').innerHTML = '✅ ' + response;
+                document.getElementById('shipping-estimate').innerHTML = '<?= icon('check') ?> ' + response;
             }
         } else {
             // No shipping available or error
-            document.getElementById('shipping-estimate').innerHTML = '❌ ' + response;
+            document.getElementById('shipping-estimate').innerHTML = '<?= icon('x') ?> ' + response;
         }
     }
 });

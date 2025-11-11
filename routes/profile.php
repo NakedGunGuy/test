@@ -6,12 +6,17 @@ $getUserAuth = function() {
 
 // Profile overview page
 get('/profile', function () {
-    $user = get_logged_in_user();
-    
-    // Get user statistics using the same calculation as order details
+    $session_user = get_logged_in_user();
+
+    // Get full user data from database including created_at
     $db = db();
+    $user_stmt = $db->prepare("SELECT id, username, email, created_at FROM users WHERE id = :id");
+    $user_stmt->execute([':id' => $session_user['id']]);
+    $user = $user_stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Get user statistics using the same calculation as order details
     $stmt = $db->prepare("
-        SELECT 
+        SELECT
             COUNT(DISTINCT o.id) as total_orders,
             COALESCE(SUM(oi.price * oi.quantity), 0) as total_spent,
             COUNT(DISTINCT CASE WHEN o.status = 'pending' THEN o.id END) as pending_orders,
@@ -22,7 +27,7 @@ get('/profile', function () {
     ");
     $stmt->execute([':user_id' => $user['id']]);
     $stats = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
     // Determine user status based on order history
     $status = 'New';
     if ($stats['total_orders'] > 0) {
@@ -30,13 +35,13 @@ get('/profile', function () {
             $status = 'VIP';
         } elseif ($stats['delivered_orders'] >= 5) {
             $status = 'Premium';
-        } elseif ($stats['delivered_orders'] >= 1) {
+        } elseif ($stats['total_orders'] >= 1) {
             $status = 'Member';
         }
     }
-    
+
     view('profile/overview', [
-        'user' => $user, 
+        'user' => $user,
         'stats' => $stats,
         'user_status' => $status
     ], 'default');
@@ -75,10 +80,10 @@ post('/profile/update', function () {
         // Update session data
         $_SESSION['user']['username'] = $username;
         $_SESSION['user']['email'] = $email;
-        echo '✅ Profile updated successfully';
+        echo '[✓] Profile updated successfully';
     } else {
         http_response_code(500);
-        echo '❌ Failed to update profile';
+        echo '[✗] Failed to update profile';
     }
 }, [$getUserAuth]);
 
@@ -103,10 +108,10 @@ post('/profile/password', function () {
     }
 
     if (update_user_password($user['id'], $new)) {
-        echo '✅ Password changed successfully';
+        echo '[✓] Password changed successfully';
     } else {
         http_response_code(500);
-        echo '❌ Failed to change password';
+        echo '[✗] Failed to change password';
     }
 }, [$getUserAuth]);
 

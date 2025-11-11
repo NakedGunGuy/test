@@ -76,6 +76,29 @@ function card_image($edition_slug)
     return get_cached_card_image($edition_slug);
 }
 
+/**
+ * Render an SVG icon
+ *
+ * @param string $name Icon name (e.g., 'search', 'cart', 'user')
+ * @param string $class Additional CSS classes
+ * @return string Inline SVG or img tag
+ */
+function icon($name, $class = '')
+{
+    $icon_path = PUBLIC_PATH . "/icons/{$name}.svg";
+
+    if (!file_exists($icon_path)) {
+        $name = 'file'; // fallback
+        $icon_path = PUBLIC_PATH . "/icons/{$name}.svg";
+    }
+
+    $svg_content = file_get_contents($icon_path);
+    $classes = trim("icon icon-{$name} {$class}");
+
+    // Wrap SVG in a span for consistent styling
+    return "<span class=\"{$classes}\">{$svg_content}</span>";
+}
+
 // Polyfill for str_starts_with() for PHP < 8.0
 if (!function_exists('str_starts_with')) {
     function str_starts_with($haystack, $needle) {

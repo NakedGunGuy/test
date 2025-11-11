@@ -5,7 +5,7 @@
 
 <?php if (!empty($error)): ?>
     <div class="error-message" style="background: #fee; border: 1px solid #fcc; color: #c00; padding: 12px; border-radius: 6px; margin-bottom: 20px;">
-        ⚠️ <?= htmlspecialchars($error) ?>
+        <?= icon('alert-triangle') ?> <?= htmlspecialchars($error) ?>
     </div>
 <?php endif; ?>
 

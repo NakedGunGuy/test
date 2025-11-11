@@ -11,7 +11,7 @@
         <!-- Sitemap Management -->
         <div class="product-section">
             <div class="section-header" style="margin-bottom: 1rem;">
-                <span class="section-header-icon">🗺️</span>
+                <span class="section-header-icon"><?= icon('map') ?></span>
                 <h2 class="section-subtitle" style="margin: 0;">XML Sitemap</h2>
             </div>
 
