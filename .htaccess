@@ -1,0 +1,8 @@
+# ================================================
+# ROOT DIRECTORY - DENY ALL ACCESS
+# ================================================
+# This file is in the project root (parent of public_html)
+# It ensures no files outside public_html are web-accessible
+
+Order Deny,Allow
+Deny from all

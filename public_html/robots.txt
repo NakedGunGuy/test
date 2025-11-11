@@ -1,0 +1,28 @@
+# Robots.txt for Cardpoint
+
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://yourdomain.com/sitemap.xml
+
+# Disallow admin areas
+Disallow: /admin
+Disallow: /admin/*
+
+# Disallow user areas
+Disallow: /profile
+Disallow: /profile/*
+Disallow: /cart
+Disallow: /checkout
+
+# Disallow search results with parameters (optional)
+Disallow: /*?*
+
+# Allow discovery and shop pages
+Allow: /discover
+Allow: /shop
+Allow: /product/*
+
+# Crawl delay (optional, adjust if needed)
+# Crawl-delay: 1

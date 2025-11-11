@@ -2,6 +2,16 @@
 
 This guide explains how to set up automated tasks (cronjobs) for Cardpoint on shared hosting environments.
 
+## 🎯 Simple Setup (Recommended)
+
+**NEW:** You only need **ONE cronjob** that runs every minute!
+
+The master cronjob checks the time and runs tasks automatically based on your schedule. Much simpler than managing multiple cronjobs!
+
+Jump to: [Quick Setup](#quick-setup-one-cronjob) | [Advanced Setup](#advanced-setup-multiple-cronjobs)
+
+---
+
 ## Prerequisites
 
 - Access to cPanel or your hosting control panel
@@ -32,14 +42,105 @@ CRON_SECRET_KEY="your-generated-secret-key-here"
 
 **IMPORTANT:** Never share this key or commit it to version control!
 
-## Setting Up Cronjobs in cPanel
+---
+
+## Quick Setup (One Cronjob)
+
+### Recommended for Most Users
+
+This is the **easiest way** to set up cronjobs. You only need to create ONE cronjob in cPanel!
+
+### Step 1: Configure Your Secret Key
+
+Make sure your `.env` file has a `CRON_SECRET_KEY`:
+
+```env
+CRON_SECRET_KEY="your-generated-secret-key-here"
+```
+
+### Step 2: Add Single Cronjob in cPanel
+
+1. Log in to your cPanel
+2. Find and click on "Cron Jobs" (usually under "Advanced" section)
+3. Add **ONE cronjob** with these settings:
+
+**Common Settings:**
+- Minute: `*` (every minute)
+- Hour: `*`
+- Day: `*`
+- Month: `*`
+- Weekday: `*`
+
+**Command:**
+```bash
+php /home/username/cardpoint/cron_master.php YOUR_SECRET_KEY
+```
+
+Replace:
+- `username` with your hosting username
+- `YOUR_SECRET_KEY` with your actual `CRON_SECRET_KEY` from `.env`
+
+**If `/usr/bin/php` doesn't work**, the command might need to be:
+```bash
+/usr/bin/php /home/username/cardpoint/cron_master.php YOUR_SECRET_KEY
+```
+
+Or try:
+```bash
+/usr/local/bin/php /home/username/cardpoint/cron_master.php YOUR_SECRET_KEY
+```
+
+### Step 3: Save and You're Done! ✓
+
+That's it! The master cronjob will automatically run:
+- **Email queue** - Every 5 minutes
+- **Sitemap generation** - Daily at 3:00 AM
+- **Card image caching** - Every Sunday at 4:00 AM
+- **Card data import** - Every Monday at 2:00 AM
+- **Log cleanup** - Monthly on the 1st at 5:00 AM
+
+### Customizing the Schedule
+
+Want to change when tasks run? Edit `cron_master.php` and modify the `$schedule` array:
+
+```php
+$schedule = [
+    'emails' => [
+        'frequency' => 'every_5_minutes',  // Can be: every_5_minutes, every_10_minutes, every_15_minutes, hourly
+        'script' => __DIR__ . '/console/send_emails.php',
+        'description' => 'Process email queue'
+    ],
+    'sitemap' => [
+        'frequency' => 'daily',
+        'time' => '03:00',  // Change this to run at different time
+        'script' => __DIR__ . '/console/generate_sitemap.php',
+        'description' => 'Generate XML sitemap'
+    ],
+    // ... more tasks
+];
+```
+
+**Frequency options:**
+- `every_5_minutes`, `every_10_minutes`, `every_15_minutes` - For frequent tasks
+- `hourly` - Every hour on the hour
+- `daily` - Once per day at specified `time`
+- `weekly` - Once per week on specified `day` and `time`
+- `monthly` - Once per month on specified `day` (1-31) and `time`
+
+---
+
+## Advanced Setup (Multiple Cronjobs)
+
+### For Advanced Users Who Want Fine Control
+
+If you prefer separate cronjobs for each task, you can use the individual `cron.php` script.
 
 ### Step 1: Access Cron Jobs
 
 1. Log in to your cPanel
 2. Find and click on "Cron Jobs" (usually under "Advanced" section)
 
-### Step 2: Configure Cronjobs
+### Step 2: Configure Individual Cronjobs
 
 Add the following cron jobs based on your needs. Replace placeholders with your actual values:
 
@@ -89,6 +190,19 @@ Add the following cron jobs based on your needs. Replace placeholders with your 
 ```bash
 0 2 * * 1 php /home/username/cardpoint/cron.php import-cards YOUR_SECRET_KEY
 ```
+
+#### Log Cleanup (Monthly on 1st at 5:00 AM)
+
+**When to use:** To archive old log files and keep the logs directory clean
+
+**Schedule:** Monthly on the 1st at 5:00 AM
+
+**Command:**
+```bash
+0 5 1 * * php /home/username/cardpoint/cron.php cleanup-logs YOUR_SECRET_KEY
+```
+
+**Note:** Old logs are moved to `logs/archive/` folder, not deleted. You can manually delete archived logs if needed.
 
 ## Cron Schedule Format
 
@@ -181,14 +295,31 @@ Then use the full path in your cron commands:
 */5 * * * * /usr/bin/php /home/username/cardpoint/cron.php emails YOUR_SECRET_KEY
 ```
 
-## Recommended Cronjob Setup
+## Which Setup Should I Use?
 
-For a production e-commerce site, we recommend:
+### ✅ Use Master Cronjob (Recommended) If:
+- You want the simplest setup
+- You have limited cronjob slots in cPanel
+- You want to easily change schedules later
+- You're new to cronjobs
+
+### ⚙️ Use Individual Cronjobs If:
+- You need fine-grained control over each task
+- You want different error handling per task
+- You have unlimited cronjob slots
+- You're comfortable with cPanel cronjobs
+
+**For most users, the master cronjob is the best choice!**
+
+## Default Task Schedule
+
+The master cronjob runs tasks on this schedule:
 
 1. **Email Queue** - Every 5 minutes (essential for timely notifications)
-2. **Sitemap** - Daily at 3 AM (good for SEO)
-3. **Card Images** - Weekly (reduces server load)
-4. **Card Import** - Weekly or monthly (depending on how often new cards are released)
+2. **Sitemap** - Daily at 3:00 AM (good for SEO)
+3. **Card Images** - Weekly on Sunday at 4:00 AM (reduces server load)
+4. **Card Import** - Weekly on Monday at 2:00 AM (new cards from API)
+5. **Log Cleanup** - Monthly on 1st at 5:00 AM (keeps logs organized)
 
 ## Security Notes
 

@@ -22,9 +22,12 @@ function queue_email(
     string $subject,
     string $template,
     array $data,
-    string $from = 'noreply@cardpoint.com',
-    string $fromName = 'Cardpoint'
+    string $from = null,
+    string $fromName = null
 ): bool {
+    // Use environment variables for from address/name if not provided
+    $from = $from ?? ($_ENV['MAIL_FROM_ADDRESS'] ?? 'noreply@cardpoint.com');
+    $fromName = $fromName ?? ($_ENV['MAIL_FROM_NAME'] ?? 'Cardpoint');
     $pdo = db();
     
     $stmt = $pdo->prepare("
@@ -47,21 +50,42 @@ function send_mail(
     string $subject,
     string $template,
     array $data,
-    string $from = 'noreply@cardpoint.com',
-    string $fromName = 'Cardpoint'
+    string $from = null,
+    string $fromName = null
 ): bool {
     $mail = new PHPMailer(true);
 
+    // Use environment variables for from address/name if not provided
+    $from = $from ?? ($_ENV['MAIL_FROM_ADDRESS'] ?? 'noreply@cardpoint.com');
+    $fromName = $fromName ?? ($_ENV['MAIL_FROM_NAME'] ?? 'Cardpoint');
+
     try {
-        // Server settings
+        // Server settings from environment
         $mail->isSMTP();
-        $mail->Host       = 'localhost';
-//        $mail->SMTPAuth   = true;
-        $mail->SMTPAuth   = false;
-//        $mail->Username   = 'smtp-username';
-//        $mail->Password   = 'smtp-password';
-//        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // or ENCRYPTION_STARTTLS
-        $mail->Port       = 1025; // 465 for SSL
+        $mail->Host       = $_ENV['MAIL_HOST'] ?? 'localhost';
+        $mail->Port       = $_ENV['MAIL_PORT'] ?? 1025;
+
+        // Authentication
+        if (!empty($_ENV['MAIL_USERNAME']) && !empty($_ENV['MAIL_PASSWORD'])) {
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $_ENV['MAIL_USERNAME'];
+            $mail->Password   = $_ENV['MAIL_PASSWORD'];
+        } else {
+            $mail->SMTPAuth   = false;
+        }
+
+        // Encryption (tls, ssl, or none)
+        $encryption = $_ENV['MAIL_ENCRYPTION'] ?? '';
+        if (strtolower($encryption) === 'tls') {
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        } elseif (strtolower($encryption) === 'ssl') {
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        }
+
+        // Enable debug output in development
+        if ($_ENV['DEBUG'] ?? false) {
+            $mail->SMTPDebug = 0; // 0 = off, 2 = detailed
+        }
 
         // Recipients
         $mail->setFrom($from, $fromName);
@@ -75,7 +99,6 @@ function send_mail(
 
         return $mail->send();
     } catch (Exception $e) {
-        var_dump($mail->ErrorInfo);
         error_log("Mailer Error: " . $mail->ErrorInfo);
         return false;
     }

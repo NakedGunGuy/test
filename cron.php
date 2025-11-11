@@ -66,6 +66,11 @@ switch ($task) {
         require __DIR__ . '/console/import_cards.php';
         break;
 
+    case 'cleanup-logs':
+        echo "Starting log cleanup...\n";
+        require __DIR__ . '/console/cleanup_logs.php';
+        break;
+
     default:
         echo "ERROR: Unknown task '$task'.\n\n";
         echo "Available tasks:\n";
