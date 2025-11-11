@@ -3,6 +3,16 @@
 # ================================================
 
 # ====================
+# HTTP BASIC AUTHENTICATION (TESTING/STAGING)
+# ====================
+# Remove or comment out this section when going live
+
+AuthType Basic
+AuthName "Cardpoint - Testing Access"
+AuthUserFile /home/perko/dev/projects/cardpoint/.htpasswd
+Require valid-user
+
+# ====================
 # SECURITY HEADERS
 # ====================
 

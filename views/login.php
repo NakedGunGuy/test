@@ -54,13 +54,13 @@
                 </div>
 
                 <button type="submit" class="btn blue btn-full auth-button">
-                    Sign In
+                    <?= t('auth.sign_in_button') ?>
                 </button>
             </form>
-            
+
             <div class="auth-footer">
-                <p class="auth-footer-text">Don't have an account? 
-                    <a href="<?= url('register') ?>" class="auth-footer-link">Sign up here</a>
+                <p class="auth-footer-text"><?= t('auth.no_account') ?>
+                    <a href="<?= url('register') ?>" class="auth-footer-link"><?= t('auth.sign_up_here') ?></a>
                 </p>
             </div>
         </div>

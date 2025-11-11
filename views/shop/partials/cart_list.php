@@ -19,10 +19,10 @@
             <h2 class="section-subtitle"><?= t('cart.shopping_cart') ?></h2>
             <div class="cart-grid">
                 <div class="cart-header" style="grid-template-columns: 2fr 1fr 1fr 1fr auto;">
-                    <div class="header-cell">Product</div>
-                    <div class="header-cell">Price</div>
-                    <div class="header-cell">Qty</div>
-                    <div class="header-cell">Total</div>
+                    <div class="header-cell"><?= t('cart.product') ?></div>
+                    <div class="header-cell"><?= t('cart.price') ?></div>
+                    <div class="header-cell"><?= t('cart.qty') ?></div>
+                    <div class="header-cell"><?= t('cart.total') ?></div>
                     <div class="header-cell"></div>
                 </div>
                 <div class="cart-body">
@@ -65,11 +65,11 @@
         <div class="">
             <div class="cart-summary">
                 <div class="summary-row">
-                    <span class="summary-label">Subtotal:</span>
+                    <span class="summary-label"><?= t('cart.subtotal') ?>:</span>
                     <span class="summary-value">€<?= number_format($cart_total, 2) ?></span>
                 </div>
                 <div class="summary-row total">
-                    <span class="summary-label">Total:</span>
+                    <span class="summary-label"><?= t('cart.total') ?>:</span>
                     <span class="summary-value">€<?= number_format($cart_total, 2) ?></span>
                 </div>
                 <div class="cart-actions">

@@ -7,7 +7,7 @@
 
 <?php start_section('page_title'); ?><?= t('nav.discover') ?><?php end_section('page_title'); ?>
 
-<div class="section" style="margin-bottom: 2rem; z-index: 5; position:relative; ">
+<div class="section" style="margin-bottom: 2.5rem; z-index: 5; position: relative;">
     <h3 class="section-header">
         <span class="section-header-icon"><?= icon('search') ?></span><?= t('products.search_filter') ?>
     </h3>
@@ -21,8 +21,8 @@
         <span class="filter-arrow">▼</span>
     </button>
 
-    <form method="get" class="search-form" id="search-form" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto auto;">
-        <div class="form-group" style="position: relative; margin-bottom: 0;">
+    <form method="get" class="search-form" id="search-form">
+        <div class="form-group" style="position: relative; margin-bottom: 0; grid-column: span 2;">
             <label class="form-label"><?= t('products.search_cards') ?></label>
             <input
                 id="search-input"
@@ -70,9 +70,9 @@
             <input class="form-input" type="number" name="max_price" placeholder="€1000" value="<?= htmlspecialchars($_GET['max_price'] ?? '') ?>"/>
         </div>
 
-        <button type="submit" class="btn blue filter-button" style="box-sizing: border-box; height: auto; line-height: normal;"><?= t('common.filter') ?></button>
+        <button type="submit" class="btn blue filter-button"><?= t('common.filter') ?></button>
 
-        <a href="<?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?>" class="btn black reset-button" style="box-sizing: border-box; height: auto; line-height: normal; display: inline-flex; align-items: center;"><?= t('common.reset') ?></a>
+        <a href="<?= parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?>" class="btn black reset-button"><?= t('common.reset') ?></a>
     </form>
 </div>
 
@@ -100,7 +100,7 @@
     <!-- Grid View -->
     <div id="grid-view" class="view-container <?= ($_SESSION['view_preference'] ?? 'grid') === 'grid' ? '' : 'hidden' ?>">
         <div class="grid">
-            <div class="grid-header" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;">
+            <div class="grid-header" style="grid-template-columns: 2.5fr 1.2fr 0.8fr 1fr 0.8fr 1.7fr;">
                 <div class="header-cell">
                     <span class="grid-header-with-icon">
                         <span>🃏</span><?= t('products.card_name') ?>

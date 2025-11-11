@@ -549,6 +549,12 @@ input:focus {
     padding-left: 20px;
 }
 
+.grid-body .grid-row .grid-cell:last-child {
+    padding: 10px 15px;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
 .grid-body .grid-row .grid-cell.actions-cell {
     display: flex;
     gap: 8px;
@@ -1846,6 +1852,14 @@ select.form-input-small {
     align-items: center;
     gap: 0.5rem;
     margin: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.add-to-cart-form .btn.blue {
+    min-width: 40px;
+    padding: 6px 12px;
+    font-size: 13px;
 }
 
 /* Compact add-to-cart form for smaller screens */
@@ -3510,12 +3524,20 @@ select.form-input-small {
 /* Search Form Components */
 .search-form {
     display: grid;
+    grid-template-columns: repeat(3, 1fr) auto auto;
     gap: 1rem;
     align-items: end;
     padding: 1.5rem;
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(15, 15, 15, 0.6) 100%);
     border-radius: 12px;
     border: 1px solid rgba(0, 174, 239, 0.1);
+}
+
+.search-form .filter-button,
+.search-form .reset-button {
+    align-self: end;
+    white-space: nowrap;
+    min-height: 42px;
 }
 
 /* Filter Toggle Button */

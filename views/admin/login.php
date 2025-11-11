@@ -6,7 +6,7 @@
         <div class="auth-header">
             <div class="auth-icon admin-auth-icon">⚡</div>
             <h1 class="auth-title"><?= t('auth.admin_portal') ?></h1>
-            <p class="auth-description">Secure access to administrative functions</p>
+            <p class="auth-description"><?= t('auth.secure_access') ?></p>
         </div>
 
         <!-- Admin Login Form -->
@@ -54,7 +54,7 @@
             </form>
             
             <div class="auth-footer admin-auth-footer">
-                <a href="<?= url('') ?>" class="return-link">← Return to main site</a>
+                <a href="<?= url('') ?>" class="return-link"><?= t('auth.return_to_main_site') ?></a>
             </div>
         </div>
     </div>

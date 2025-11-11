@@ -426,6 +426,69 @@ function t(string $key, array $replacements = []): string {
                 'admin.seo' => 'SEO',
                 'admin.settings' => 'Settings',
                 'admin.system_status' => 'System Status: Online',
+
+                // Auth - Additional
+                'auth.sign_in_button' => 'Sign In',
+                'auth.sign_up_button' => 'Sign Up',
+                'auth.no_account' => "Don't have an account?",
+                'auth.sign_up_here' => 'Sign up here',
+                'auth.return_to_main_site' => '← Return to main site',
+                'auth.secure_access' => 'Secure access to administrative functions',
+
+                // Checkout
+                'checkout.title' => 'Checkout',
+                'checkout.review_order' => 'Review your order and complete your purchase',
+                'checkout.order_summary' => 'Order Summary',
+                'checkout.qty' => 'Qty: {quantity}',
+                'checkout.shipping_info' => 'Shipping Information',
+                'checkout.payment' => 'Payment',
+                'checkout.secure_payment' => 'Secure Payment',
+                'checkout.demo_notice' => 'This is a demo store. No actual payment will be processed.',
+                'checkout.select_country_help' => 'Select a country to see shipping cost and delivery estimate',
+
+                // Cart
+                'cart.product' => 'Product',
+                'cart.price' => 'Price',
+                'cart.qty' => 'Qty',
+
+                // Errors
+                'error.404_title' => '404 - Page Not Found',
+                'error.404_heading' => 'Page Not Found',
+                'error.404_message' => "The page you're looking for doesn't exist or has been moved.",
+                'error.500_title' => '500 - Internal Server Error',
+                'error.500_heading' => 'Internal Server Error',
+                'error.500_message' => "Oops! Something went wrong on our end. We've been notified and are working to fix it. Please try again in a few moments.",
+                'error.return_home' => 'Return Home',
+
+                // Maintenance
+                'maintenance.title' => "We're Under Maintenance",
+                'maintenance.message' => "We're currently performing some updates to improve your shopping experience. We'll be back online shortly!",
+                'maintenance.expected_downtime' => 'Expected downtime: Minimal',
+                'maintenance.working_on' => "We're working on improvements",
+                'maintenance.contact_support' => 'Questions? Contact our support team',
+                'maintenance.admin_access' => 'Admin Access',
+                'maintenance.check_again' => 'Check Again',
+                'maintenance.thank_you' => 'Thank you for your patience!',
+
+                // Store Closed
+                'closed.title' => 'Store Temporarily Closed',
+                'closed.message' => "We're currently closed and not accepting new orders at this time. Please check back later or contact us directly for assistance.",
+                'closed.temporary_closure' => "Temporary closure - we'll reopen soon",
+                'closed.no_new_orders' => 'No new orders are being accepted',
+                'closed.contact_urgent' => 'Contact us for urgent inquiries',
+                'closed.existing_orders' => 'Existing orders will be processed normally',
+                'closed.check_status' => 'Check Status',
+                'closed.thank_you' => 'Thank you for your understanding. We appreciate your patience!',
+
+                // Profile
+                'profile.account_settings_title' => 'Account Settings',
+                'profile.account_settings_description' => 'Manage your account information and security',
+                'profile.profile_info' => 'Profile Information',
+                'profile.password_security' => 'Password & Security',
+                'profile.account_actions' => 'Account Actions',
+
+                // Search
+                'search.title' => 'Search',
             ],
             'si' => [
                 // Navigation
@@ -674,6 +737,69 @@ function t(string $key, array $replacements = []): string {
                 'admin.seo' => 'SEO',
                 'admin.settings' => 'Nastavitve',
                 'admin.system_status' => 'Stanje sistema: Povezano',
+
+                // Auth - Additional
+                'auth.sign_in_button' => 'Prijavi se',
+                'auth.sign_up_button' => 'Registriraj se',
+                'auth.no_account' => 'Nimate računa?',
+                'auth.sign_up_here' => 'Registrirajte se tukaj',
+                'auth.return_to_main_site' => '← Nazaj na glavno stran',
+                'auth.secure_access' => 'Varen dostop do skrbniških funkcij',
+
+                // Checkout
+                'checkout.title' => 'Blagajna',
+                'checkout.review_order' => 'Preglejte naročilo in zaključite nakup',
+                'checkout.order_summary' => 'Povzetek naročila',
+                'checkout.qty' => 'Kol.: {quantity}',
+                'checkout.shipping_info' => 'Podatki o dostavi',
+                'checkout.payment' => 'Plačilo',
+                'checkout.secure_payment' => 'Varno plačilo',
+                'checkout.demo_notice' => 'To je demo trgovina. Plačilo ne bo obdelano.',
+                'checkout.select_country_help' => 'Izberite državo za prikaz stroškov dostave in časa dostave',
+
+                // Cart
+                'cart.product' => 'Izdelek',
+                'cart.price' => 'Cena',
+                'cart.qty' => 'Kol.',
+
+                // Errors
+                'error.404_title' => '404 - Stran ni najdena',
+                'error.404_heading' => 'Stran ni najdena',
+                'error.404_message' => 'Stran, ki jo iščete, ne obstaja ali je bila premaknjena.',
+                'error.500_title' => '500 - Napaka strežnika',
+                'error.500_heading' => 'Napaka strežnika',
+                'error.500_message' => 'Ups! Nekaj je šlo narobe. Bili smo obveščeni in delamo na odpravi težave. Prosimo, poskusite znova čez nekaj trenutkov.',
+                'error.return_home' => 'Nazaj na domov',
+
+                // Maintenance
+                'maintenance.title' => 'V vzdrževanju',
+                'maintenance.message' => 'Trenutno izvajamo posodobitve za izboljšanje vaše nakupovalne izkušnje. Kmalu bomo znova online!',
+                'maintenance.expected_downtime' => 'Pričakovan čas nedostopnosti: Minimalen',
+                'maintenance.working_on' => 'Delamo na izboljšavah',
+                'maintenance.contact_support' => 'Vprašanja? Kontaktirajte našo podporo',
+                'maintenance.admin_access' => 'Skrbniški dostop',
+                'maintenance.check_again' => 'Preveri znova',
+                'maintenance.thank_you' => 'Hvala za vašo potrpežljivost!',
+
+                // Store Closed
+                'closed.title' => 'Trgovina začasno zaprta',
+                'closed.message' => 'Trenutno smo zaprti in ne sprejemamo novih naročil. Prosimo, preverite kasneje ali nas kontaktirajte za pomoč.',
+                'closed.temporary_closure' => 'Začasna zapora - kmalu bomo ponovno odprti',
+                'closed.no_new_orders' => 'Nova naročila se ne sprejemajo',
+                'closed.contact_urgent' => 'Kontaktirajte nas za nujna vprašanja',
+                'closed.existing_orders' => 'Obstoječa naročila bodo obdelana normalno',
+                'closed.check_status' => 'Preveri status',
+                'closed.thank_you' => 'Hvala za vaše razumevanje. Cenimo vašo potrpežljivost!',
+
+                // Profile
+                'profile.account_settings_title' => 'Nastavitve računa',
+                'profile.account_settings_description' => 'Upravljajte podatke o računu in varnost',
+                'profile.profile_info' => 'Profilne informacije',
+                'profile.password_security' => 'Geslo in varnost',
+                'profile.account_actions' => 'Dejanja računa',
+
+                // Search
+                'search.title' => 'Iskanje',
             ]
         ];
     }
