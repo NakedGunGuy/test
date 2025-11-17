@@ -1,12 +1,12 @@
 <?php start_section('title'); ?>
-Order Shipping - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
+<?= t('shipping.title') ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
 <?php end_section('title'); ?>
 
 <!-- Page Header -->
 <div class="section" style="margin-bottom: 2rem;">
-    <a href="<?= url('admin/orders/preparation') ?>" class="btn text back">← Back to Preparation</a>
-    <h1 class="section-title" style="margin-top: 0;">Order Shipping</h1>
-    <p style="color: #C0C0D1;">Sort prepared items by individual orders for shipping</p>
+    <a href="<?= url('admin/orders/preparation') ?>" class="btn text back">← <?= t('shipping.back_to_preparation') ?></a>
+    <h1 class="section-title" style="margin-top: 0;"><?= t('shipping.title') ?></h1>
+    <p style="color: #C0C0D1;"><?= t('shipping.description') ?></p>
 </div>
 
 <?php if (empty($orders)): ?>
@@ -18,25 +18,25 @@ Order Shipping - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
             </div>
-            <h3>No items prepared yet</h3>
-            <p>Prepare some items first in the <a href="<?= url('admin/orders/preparation') ?>" style="color: #01AFFC;">Order Preparation</a> view.</p>
+            <h3><?= t('shipping.no_items_prepared') ?></h3>
+            <p><?= t('shipping.prepare_items_first') ?> <a href="<?= url('admin/orders/preparation') ?>" style="color: #01AFFC;"><?= t('shipping.order_preparation') ?></a> <?= t('shipping.view') ?></p>
         </div>
     </div>
 <?php else: ?>
     <!-- Orders with Prepared Items -->
     <div class="section">
-        <h2 class="section-subtitle">Orders Ready for Shipping</h2>
-        <p style="color: #C0C0D1; margin-bottom: 1rem;">Pending orders with prepared items - fully prepared orders first.</p>
+        <h2 class="section-subtitle"><?= t('shipping.orders_ready') ?></h2>
+        <p style="color: #C0C0D1; margin-bottom: 1rem;"><?= t('shipping.pending_orders_info') ?></p>
 
         <div class="grid">
             <div class="grid-header" style="grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;">
-                <div class="header-cell">Order</div>
-                <div class="header-cell">Customer</div>
-                <div class="header-cell">Status</div>
-                <div class="header-cell">Prepared Items</div>
-                <div class="header-cell">Completion</div>
-                <div class="header-cell">Total</div>
-                <div class="header-cell">Actions</div>
+                <div class="header-cell"><?= t('shipping.order') ?></div>
+                <div class="header-cell"><?= t('shipping.customer') ?></div>
+                <div class="header-cell"><?= t('shipping.status') ?></div>
+                <div class="header-cell"><?= t('shipping.prepared_items') ?></div>
+                <div class="header-cell"><?= t('shipping.completion') ?></div>
+                <div class="header-cell"><?= t('shipping.total') ?></div>
+                <div class="header-cell"><?= t('shipping.actions') ?></div>
             </div>
             <div class="grid-body">
                 <?php foreach ($orders as $order): ?>
@@ -70,7 +70,7 @@ Order Shipping - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                                 <?= $order['prepared_quantity'] ?> / <?= $order['total_quantity'] ?>
                             </div>
                             <div style="font-size: 12px; color: #C0C0D1;">
-                                items prepared
+                                <?= t('shipping.items_prepared') ?>
                             </div>
                         </div>
 
@@ -85,7 +85,7 @@ Order Shipping - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                             </div>
                             <?php if ($is_fully_prepared): ?>
                                 <div style="font-size: 11px; color: #28A745; margin-top: 2px;">
-                                    <?= icon('check') ?> Ready to ship
+                                    <?= icon('check') ?> <?= t('shipping.ready_to_ship') ?>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -102,18 +102,34 @@ Order Shipping - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                                         hx-get="<?= url('admin/orders/' . $order['order_id'] . '/prepared-items') ?>"
                                         hx-target="#order-details-<?= $order['order_id'] ?>"
                                         hx-swap="innerHTML"
-                                        onclick="this.textContent = this.textContent === 'Hide Items' ? 'Show Items' : 'Hide Items'">
-                                    Show Items
+                                        onclick="this.textContent = this.textContent === '<?= t('shipping.hide_items') ?>' ? '<?= t('shipping.show_items') ?>' : '<?= t('shipping.hide_items') ?>'">
+                                    <?= t('shipping.show_items') ?>
                                 </button>
                                 <?php if ($is_fully_prepared): ?>
-                                    <form style="display: inline;"
+                                    <button type="button"
+                                            class="btn black btn-small"
+                                            onclick="document.getElementById('shipping-form-<?= $order['order_id'] ?>').style.display = document.getElementById('shipping-form-<?= $order['order_id'] ?>').style.display === 'none' ? 'flex' : 'none'; this.style.display = 'none';">
+                                        <?= t('shipping.mark_shipped') ?>
+                                    </button>
+                                    <form id="shipping-form-<?= $order['order_id'] ?>"
+                                          style="display: none; gap: 4px; flex-direction: column;"
                                           hx-post="<?= url('admin/orders/' . $order['order_id'] . '/status') ?>"
-                                          hx-target="body"
                                           hx-swap="none">
                                         <input type="hidden" name="status" value="shipped">
-                                        <button type="submit" class="btn black btn-small">
-                                            Mark Shipped
-                                        </button>
+                                        <input type="text"
+                                               name="tracking_number"
+                                               placeholder="<?= t('shipping.tracking_number') ?>"
+                                               class="form-input"
+                                               style="padding: 4px 6px; font-size: 12px;">
+                                        <div style="display: flex; gap: 4px;">
+                                            <button type="submit" class="btn blue btn-small" style="flex: 1;">
+                                                <?= icon('check') ?>
+                                            </button>
+                                            <button type="button" class="btn text btn-small" style="flex: 1;"
+                                                    onclick="this.closest('form').style.display = 'none'; this.closest('.grid-cell').querySelector('.btn.black').style.display = 'block';">
+                                                ✕
+                                            </button>
+                                        </div>
                                     </form>
                                 <?php endif; ?>
                             </div>

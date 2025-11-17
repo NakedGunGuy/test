@@ -1,11 +1,17 @@
 <?php
 
+require_once __DIR__ . '/../core/shop.php';
+
 $getUserAuth = function() {
     require_user_auth();
 };
 
 get('/cart', function () {
     $user = get_logged_in_user();
+
+    // Clean up abandoned carts to return stock for items that haven't been ordered
+    cleanup_abandoned_carts(24);
+
     $cart_id = get_user_cart_id($user['id']);
     $cart_items = get_cart_items($cart_id);
     $error = $_GET['error'] ?? null;
@@ -129,6 +135,26 @@ post('/checkout', function () {
     if (empty($cart_items)) {
         http_response_code(400);
         exit("Cart is empty.");
+    }
+
+    // Re-validate stock availability for all items in cart
+    // This prevents race conditions where stock may have become unavailable
+    // since items were added to the cart
+    $pdo = db();
+    foreach ($cart_items as $item) {
+        // Since stock is decremented when items are added to cart,
+        // current stock represents the amount available after all carts have been processed.
+        // If current stock is negative, it means more items have been added to carts
+        // than were originally available, indicating a race condition issue.
+        $stmt = $pdo->prepare("SELECT quantity FROM products WHERE id = :id");
+        $stmt->execute([':id' => $item['product_id']]);
+        $current_stock = (int)$stmt->fetchColumn();
+
+        if ($current_stock < 0) {
+            // Item stock went negative, meaning more items were added to carts than available
+            header('Location: ' . url('cart?error=' . urlencode('Item "' . $item['name'] . '" is no longer available. Stock was depleted by other customers.')));
+            exit;
+        }
     }
 
     // Calculate cart total

@@ -29,84 +29,118 @@ function get_cart_items(int $cart_id): array {
 
 function add_to_cart(int $user_id, int $product_id, int $quantity = 1): bool {
     $pdo = db();
-    $cart_id = get_user_cart_id($user_id);
+    $pdo->beginTransaction();
 
-    // check product stock
-    $stmt = $pdo->prepare("SELECT quantity FROM products WHERE id = :id");
-    $stmt->execute([':id' => $product_id]);
-    $stock = (int) $stmt->fetchColumn();
+    try {
+        // Get cart_id first before transaction to avoid nested issues
+        $cart_id = get_user_cart_id($user_id);
 
-    if ($stock < $quantity) {
+        // Update product quantity with single atomic operation to check and reduce stock
+        // This prevents race conditions in SQLite
+        $stmt = $pdo->prepare("
+            UPDATE products
+            SET quantity = quantity - :qty
+            WHERE id = :id AND quantity >= :qty
+        ");
+        $stmt->execute([
+            ':qty' => $quantity,
+            ':id' => $product_id
+        ]);
+
+        // Check if the update actually happened (affected_rows = 1 means success)
+        if ($stmt->rowCount() === 0) {
+            // No rows were updated, which means there wasn't enough stock
+            $pdo->rollback();
+            return false;
+        }
+
+        // insert or update cart_items
+        $stmt = $pdo->prepare("
+            INSERT INTO cart_items (cart_id, product_id, quantity, added_at, updated_at)
+            VALUES (:cid, :pid, :qty, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            ON CONFLICT(cart_id, product_id) DO UPDATE
+            SET quantity = quantity + excluded.quantity,
+                updated_at = CURRENT_TIMESTAMP
+        ");
+        $stmt->execute([
+            ':cid' => $cart_id,
+            ':pid' => $product_id,
+            ':qty' => $quantity
+        ]);
+
+        $pdo->commit();
+        return true;
+    } catch (Exception $e) {
+        $pdo->rollback();
         return false;
     }
-
-    // insert or update cart_items
-    $stmt = $pdo->prepare("
-        INSERT INTO cart_items (cart_id, product_id, quantity, added_at, updated_at)
-        VALUES (:cid, :pid, :qty, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-        ON CONFLICT(cart_id, product_id) DO UPDATE 
-        SET quantity = quantity + excluded.quantity,
-            updated_at = CURRENT_TIMESTAMP
-    ");
-    $stmt->execute([
-        ':cid' => $cart_id,
-        ':pid' => $product_id,
-        ':qty' => $quantity
-    ]);
-
-    // decrement stock
-    $stmt = $pdo->prepare("UPDATE products SET quantity = quantity - :qty WHERE id = :id");
-    $stmt->execute([':qty' => $quantity, ':id' => $product_id]);
-
-    return true;
 }
 
 function update_cart_quantity(int $user_id, int $product_id, int $quantity_change): void {
     $pdo = db();
-    $cart_id = get_user_cart_id($user_id);
+    $pdo->beginTransaction();
 
-    // Get current quantity
-    $stmt = $pdo->prepare("SELECT quantity FROM cart_items WHERE cart_id = :cid AND product_id = :pid");
-    $stmt->execute([':cid' => $cart_id, ':pid' => $product_id]);
-    $current_quantity = (int)$stmt->fetchColumn();
+    try {
+        $cart_id = get_user_cart_id($user_id);
 
-    $new_quantity = $current_quantity + $quantity_change;
+        // Get current quantity
+        $stmt = $pdo->prepare("SELECT quantity FROM cart_items WHERE cart_id = :cid AND product_id = :pid");
+        $stmt->execute([':cid' => $cart_id, ':pid' => $product_id]);
+        $current_quantity = (int)$stmt->fetchColumn();
 
-    if ($new_quantity <= 0) {
-        // Remove item completely if quantity becomes 0 or less
-        // The remove_from_cart function will handle stock return, so don't do it here
-        remove_from_cart($user_id, $product_id);
-    } else {
-        // Update quantity
-        $stmt = $pdo->prepare("UPDATE cart_items SET quantity = :qty WHERE cart_id = :cid AND product_id = :pid");
-        $stmt->execute([':qty' => $new_quantity, ':cid' => $cart_id, ':pid' => $product_id]);
-        
-        // Handle stock changes
-        if ($quantity_change < 0) {
-            // Return stock to product when decreasing cart quantity
-            $stmt = $pdo->prepare("UPDATE products SET quantity = quantity + :qty WHERE id = :id");
-            $stmt->execute([':qty' => abs($quantity_change), ':id' => $product_id]);
+        $new_quantity = $current_quantity + $quantity_change;
+
+        if ($new_quantity <= 0) {
+            // Remove item completely if quantity becomes 0 or less
+            $pdo->commit(); // Commit current transaction first
+            // The remove_from_cart function will handle stock return, so don't do it here
+            remove_from_cart($user_id, $product_id);
+        } else {
+            // Update quantity
+            $stmt = $pdo->prepare("UPDATE cart_items SET quantity = :qty WHERE cart_id = :cid AND product_id = :pid");
+            $stmt->execute([':qty' => $new_quantity, ':cid' => $cart_id, ':pid' => $product_id]);
+
+            // Handle stock changes
+            if ($quantity_change < 0) {
+                // Return stock to product when decreasing cart quantity
+                $stmt = $pdo->prepare("UPDATE products SET quantity = quantity + :qty WHERE id = :id");
+                $stmt->execute([':qty' => abs($quantity_change), ':id' => $product_id]);
+            }
+
+            $pdo->commit();
         }
+    } catch (Exception $e) {
+        $pdo->rollback();
+        throw $e; // Re-throw to handle appropriately
     }
 }
 
 function remove_from_cart(int $user_id, int $product_id): void {
     $pdo = db();
-    $cart_id = get_user_cart_id($user_id);
+    $pdo->beginTransaction();
 
-    // Get the quantity being removed to return to stock
-    $stmt = $pdo->prepare("SELECT quantity FROM cart_items WHERE cart_id = :cid AND product_id = :pid");
-    $stmt->execute([':cid' => $cart_id, ':pid' => $product_id]);
-    $removed_quantity = (int)$stmt->fetchColumn();
+    try {
+        $cart_id = get_user_cart_id($user_id);
 
-    // Delete from cart
-    $stmt = $pdo->prepare("DELETE FROM cart_items WHERE cart_id = :cid AND product_id = :pid");
-    $stmt->execute([':cid' => $cart_id, ':pid' => $product_id]);
-    
-    // Return stock to product
-    if ($removed_quantity > 0) {
-        $stmt = $pdo->prepare("UPDATE products SET quantity = quantity + :qty WHERE id = :id");
-        $stmt->execute([':qty' => $removed_quantity, ':id' => $product_id]);
+        // Get the quantity being removed to return to stock
+        $stmt = $pdo->prepare("SELECT quantity FROM cart_items WHERE cart_id = :cid AND product_id = :pid");
+        $stmt->execute([':cid' => $cart_id, ':pid' => $product_id]);
+        $removed_quantity = (int)$stmt->fetchColumn();
+
+        // Delete from cart
+        $stmt = $pdo->prepare("DELETE FROM cart_items WHERE cart_id = :cid AND product_id = :pid");
+        $stmt->execute([':cid' => $cart_id, ':pid' => $product_id]);
+
+        // Return stock to product
+        if ($removed_quantity > 0) {
+            $stmt = $pdo->prepare("UPDATE products SET quantity = quantity + :qty WHERE id = :id");
+            $stmt->execute([':qty' => $removed_quantity, ':id' => $product_id]);
+        }
+
+        $pdo->commit();
+    } catch (Exception $e) {
+        $pdo->rollback();
+        throw $e; // Re-throw to handle appropriately
     }
 }
 
@@ -207,6 +241,30 @@ function update_order_status(int $order_id, string $status, string $tracking_num
     $stmt->execute([':id' => $order_id]);
     $old_status = $stmt->fetchColumn();
 
+    // Handle stock management when order is cancelled
+    if ($status === 'cancelled' && $old_status !== 'cancelled') {
+        // Return stock to products when order is cancelled
+        $stmt = $pdo->prepare("
+            SELECT oi.product_id, oi.quantity
+            FROM order_items oi
+            WHERE oi.order_id = :order_id
+        ");
+        $stmt->execute([':order_id' => $order_id]);
+        $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($order_items as $item) {
+            // Return stock to product
+            $update_stock = $pdo->prepare("
+                UPDATE products SET quantity = quantity + :qty
+                WHERE id = :product_id
+            ");
+            $update_stock->execute([
+                ':qty' => $item['quantity'],
+                ':product_id' => $item['product_id']
+            ]);
+        }
+    }
+
     // Update the order status and tracking number if provided
     if ($tracking_number) {
         $stmt = $pdo->prepare("UPDATE orders SET status = :status, tracking_number = :tracking_number WHERE id = :id");
@@ -229,6 +287,58 @@ function generate_order_token(int $order_id): string {
 
 function verify_order_token(int $order_id, string $token): bool {
     return hash_equals(generate_order_token($order_id), $token);
+}
+
+/**
+ * Return stock for abandoned carts (carts not updated in the last 24 hours)
+ */
+function cleanup_abandoned_carts(int $hours_old = 24): int {
+    $pdo = db();
+
+    // Find cart items that have been in cart for more than specified hours
+    $stmt = $pdo->prepare("
+        SELECT ci.cart_id, ci.product_id, ci.quantity
+        FROM cart_items ci
+        JOIN carts c ON ci.cart_id = c.id
+        WHERE ci.added_at < datetime('now', '-{$hours_old} hours')
+    ");
+    $stmt->execute();
+    $abandoned_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $items_returned = 0;
+
+    if ($abandoned_items) {
+        $pdo->beginTransaction();
+        try {
+            foreach ($abandoned_items as $item) {
+                // Return stock to the product
+                $update_stock = $pdo->prepare("
+                    UPDATE products SET quantity = quantity + :qty
+                    WHERE id = :product_id
+                ");
+                $update_stock->execute([
+                    ':qty' => $item['quantity'],
+                    ':product_id' => $item['product_id']
+                ]);
+
+                $items_returned++;
+            }
+
+            // Remove all abandoned cart items
+            $stmt = $pdo->prepare("
+                DELETE FROM cart_items
+                WHERE added_at < datetime('now', '-{$hours_old} hours')
+            ");
+            $stmt->execute();
+
+            $pdo->commit();
+        } catch (Exception $e) {
+            $pdo->rollback();
+            throw $e;
+        }
+    }
+
+    return $items_returned;
 }
 
 function get_product_order_history(int $product_id): array {

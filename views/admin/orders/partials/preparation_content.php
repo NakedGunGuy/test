@@ -1,34 +1,34 @@
 <div id="preparation-content">
 <!-- Preparation Statistics -->
 <div class="section">
-    <h2 class="section-subtitle">Preparation Summary</h2>
+    <h2 class="section-subtitle"><?= t('preparation.summary') ?></h2>
     <div class="grid stats" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
         <div class="card stat">
             <?= icon('clipboard') ?>
             <div class="info">
                 <div class="number"><?= $stats['unprepared_orders'] ?? 0 ?></div>
-                <div class="label">Orders to Prepare</div>
+                <div class="label"><?= t('preparation.orders_to_prepare') ?></div>
             </div>
         </div>
         <div class="card stat">
             <?= icon('package') ?>
             <div class="info">
                 <div class="number"><?= $stats['total_items_remaining'] ?? 0 ?></div>
-                <div class="label">Items Remaining</div>
+                <div class="label"><?= t('preparation.items_remaining') ?></div>
             </div>
         </div>
         <div class="card stat">
             <?= icon('check') ?>
             <div class="info">
                 <div class="number"><?= $stats['total_items_prepared'] ?? 0 ?></div>
-                <div class="label">Items Prepared</div>
+                <div class="label"><?= t('preparation.items_prepared') ?></div>
             </div>
         </div>
         <div class="card stat">
             <div class="icon">🎴</div>
             <div class="info">
                 <div class="number"><?= $stats['products_needing_prep'] ?? 0 ?></div>
-                <div class="label">Products Need Prep</div>
+                <div class="label"><?= t('preparation.products_need_prep') ?></div>
             </div>
         </div>
         <?php if ($stats['total_items_prepared'] > 0): ?>
@@ -37,10 +37,10 @@
             <div class="info">
                 <div class="number">
                     <a href="<?= url('admin/orders/shipping') ?>" style="color: #01AFFC; text-decoration: none;">
-                        View Shipping →
+                        <?= t('preparation.view_shipping') ?> →
                     </a>
                 </div>
-                <div class="label">Ready to Ship</div>
+                <div class="label"><?= t('preparation.ready_to_ship') ?></div>
             </div>
         </div>
         <?php endif; ?>
@@ -56,8 +56,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </div>
-            <h3>All caught up!</h3>
-            <p>No orders are currently waiting for preparation.</p>
+            <h3><?= t('preparation.all_caught_up') ?></h3>
+            <p><?= t('preparation.no_orders_waiting') ?></p>
         </div>
     </div>
 <?php else: ?>
@@ -68,14 +68,14 @@
 
             <div class="grid">
                 <div class="grid-header" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr 2fr;">
-                    <div class="header-cell">Card</div>
-                    <div class="header-cell">Collector #</div>
-                    <div class="header-cell">Rarity</div>
-                    <div class="header-cell">Need / Total</div>
-                    <div class="header-cell">Orders</div>
-                    <div class="header-cell">Unit Price</div>
-                    <div class="header-cell">Mark Prepared</div>
-                    <div class="header-cell">Order IDs</div>
+                    <div class="header-cell"><?= t('preparation.card') ?></div>
+                    <div class="header-cell"><?= t('preparation.collector_number') ?></div>
+                    <div class="header-cell"><?= t('preparation.rarity') ?></div>
+                    <div class="header-cell"><?= t('preparation.need_total') ?></div>
+                    <div class="header-cell"><?= t('preparation.orders') ?></div>
+                    <div class="header-cell"><?= t('preparation.unit_price') ?></div>
+                    <div class="header-cell"><?= t('preparation.mark_prepared') ?></div>
+                    <div class="header-cell"><?= t('preparation.order_ids') ?></div>
                 </div>
                 <div class="grid-body">
                     <?php foreach ($items as $item): ?>
@@ -86,7 +86,7 @@
                                 </div>
                                 <?php if ($item['edition_slug']): ?>
                                     <div style="font-size: 12px; color: #C0C0D1; margin-top: 2px;">
-                                        <?= icon('file') ?> <?= htmlspecialchars($item['card_name']) ?>
+                                        <?= htmlspecialchars($item['card_name']) ?>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -103,7 +103,7 @@
 
                             <div class="grid-cell">
                                 <?php if ($item['rarity']): ?>
-                                    <span class="badge rarity rarity-<?= strtolower($item['rarity']) ?>">
+                                    <span style="font-family: monospace; font-size: 11px; color: #C0C0D1;">
                                         <?= htmlspecialchars($item['rarity']) ?>
                                     </span>
                                 <?php else: ?>
@@ -116,13 +116,13 @@
                                     <?= $item['total_remaining'] ?>
                                 </div>
                                 <div style="font-size: 12px; color: #C0C0D1;">
-                                    of <?= $item['total_quantity'] ?>
+                                    <?= t('preparation.of') ?> <?= $item['total_quantity'] ?>
                                 </div>
                             </div>
 
                             <div class="grid-cell">
                                 <span class="badge">
-                                    <?= $item['order_count'] ?> order<?= $item['order_count'] != 1 ? 's' : '' ?>
+                                    <?= $item['order_count'] ?> <?= $item['order_count'] != 1 ? t('preparation.order_plural') : t('preparation.order_singular') ?>
                                 </span>
                             </div>
 
@@ -143,9 +143,9 @@
                                            min="1"
                                            max="<?= $item['total_remaining'] ?>"
                                            value="<?= min(5, $item['total_remaining']) ?>"
-                                           style="width: 50px; padding: 2px 4px; font-size: 12px;"
+                                           style="width: 60px; padding: 4px 6px; font-size: 13px; text-align: center;"
                                            class="form-input">
-                                    <button type="submit" class="btn blue btn-small">✓</button>
+                                    <button type="submit" class="btn blue" style="padding: 4px 12px; font-size: 13px;"><?= t('preparation.mark_button') ?></button>
                                 </form>
                             </div>
 
@@ -170,12 +170,12 @@
     <!-- Preparation Instructions -->
     <div class="section">
         <div class="card" style="background: rgba(0, 174, 239, 0.05); border: 1px solid rgba(0, 174, 239, 0.2);">
-            <h3 style="margin-top: 0; color: #01AFFC;"><?= icon('clipboard') ?> Preparation Instructions</h3>
+            <h3 style="margin-top: 0; color: #01AFFC;"><?= icon('clipboard') ?> <?= t('preparation.instructions_title') ?></h3>
             <ul style="margin: 0; padding-left: 1.5rem;">
-                <li>Items are grouped by set for easier collection</li>
-                <li>Quantity shows total needed across all unprepared orders</li>
-                <li>Order IDs help you track which orders need each item</li>
-                <li>Once prepared, update individual order status to "Processing" or "Shipped" in the <a href="<?= url('admin/orders') ?>" style="color: #01AFFC;">Orders Management</a> page</li>
+                <li><?= t('preparation.instructions_1') ?></li>
+                <li><?= t('preparation.instructions_2') ?></li>
+                <li><?= t('preparation.instructions_3') ?></li>
+                <li><?= t('preparation.instructions_4') ?> <a href="<?= url('admin/orders') ?>" style="color: #01AFFC;"><?= t('preparation.orders_management') ?></a></li>
             </ul>
         </div>
     </div>

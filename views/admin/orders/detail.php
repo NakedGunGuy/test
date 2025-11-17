@@ -167,7 +167,7 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                 <?php if ($item['current_product_name']): ?>
                     <div class="stock-info">
                         <div class="stock-status <?= $item['current_stock'] > 0 ? 'in-stock' : 'out-of-stock' ?>">
-                            <?= $item['current_stock'] > 0 ? "<?= icon('check') ?> {$item['current_stock']} in stock" : '<?= icon('x') ?> Out of stock' ?>
+                            <?= $item['current_stock'] > 0 ? icon('check') . ' ' . $item['current_stock'] . ' in stock' : icon('x') . ' Out of stock' ?>
                         </div>
                     </div>
                 <?php else: ?>

@@ -535,6 +535,7 @@ post('/admin/products/update/{product_id}', function ($data) {
     $price       = $_POST['price'] ?? null;
     $quantity    = $_POST['quantity'] ?? null;
     $is_foil     = $_POST['is_foil'] ?? 0;
+    $is_used     = $_POST['is_used'] ?? 0;
 
     if ($product_id === null || !is_numeric($product_id)) {
         http_response_code(422);
@@ -577,7 +578,7 @@ post('/admin/products/update/{product_id}', function ($data) {
         return;
     }
 
-    update_product($product_id, $name, $description, $price, $quantity, $is_foil);
+    update_product($product_id, $name, $description, $price, $quantity, $is_foil, $is_used);
 
     $filters = array_filter([
         'name'      => $_GET['name'] ?? null,
@@ -589,7 +590,16 @@ post('/admin/products/update/{product_id}', function ($data) {
 
     $products = getProducts($filters, $order, 50);
 
-    partial('admin/products/partials/products_table_body', ['products' => $products]);
+    if (!empty($_SERVER['HTTP_HX_REQUEST'])) {
+        // For HTMX requests, return the wrapper element to maintain grid structure
+        ?>
+        <div class="grid-body" id="products-table">
+            <?php partial('admin/products/partials/products_table_body', ['products' => $products]); ?>
+        </div>
+        <?php
+    } else {
+        partial('admin/products/partials/products_table_body', ['products' => $products]);
+    }
 
 }, [$getAdminAuth]);
 
@@ -680,36 +690,52 @@ post('/admin/orders/{id}/status', function ($data) {
     $order_id = $data['id'];
     $status = $_POST['status'] ?? '';
     $tracking_number = $_POST['tracking_number'] ?? '';
-    
+
     $valid_statuses = ['pending', 'shipped', 'delivered', 'cancelled'];
     if (!in_array($status, $valid_statuses)) {
         http_response_code(400);
-        echo '[✗] Invalid status';
+        echo '<div style="color: #ff4444;">[✗] Invalid status</div>';
         return;
     }
-    
+
     // Use the shop function which handles email notifications
     try {
         update_order_status($order_id, $status, $tracking_number);
-        
-        $message = '[✓] ' . "Order status updated to " . ucfirst($status);
-        if ($status === 'shipped' && $tracking_number) {
-            $message .= " (Tracking: $tracking_number)";
-        }
+
+        // If shipped, reload the page to update the list
         if ($status === 'shipped') {
-            $message .= " - Shipping notification email queued";
+            header('HX-Redirect: ' . url('admin/orders/shipping'));
+            $message = '[✓] Order marked as shipped';
+            if ($tracking_number) {
+                $message .= " (Tracking: $tracking_number)";
+            }
+            echo $message;
+        } else {
+            $message = '[✓] Order status updated to ' . ucfirst($status);
+            echo $message;
         }
-        
-        echo $message;
     } catch (Exception $e) {
-        http_response_code(500);
-        echo '[✗] Failed to update status: ' . $e->getMessage();
+        // Don't fail if email fails, just log it
+        error_log('Failed to send email notification: ' . $e->getMessage());
+
+        // Still update the UI
+        if ($status === 'shipped') {
+            header('HX-Redirect: ' . url('admin/orders/shipping'));
+            $message = '[✓] Order marked as shipped';
+            if ($tracking_number) {
+                $message .= " (Tracking: $tracking_number)";
+            }
+            $message .= ' (Note: Email notification failed)';
+            echo $message;
+        } else {
+            echo '[✓] Status updated (email notification failed)';
+        }
     }
 }, [$getAdminAuth]);
 
 // Order Preparation - Grouped view for fulfillment (MUST be before {id} route)
 get('/admin/orders/preparation', function () {
-    // Get all unprepared orders (pending status only) with preparation status
+    // Get all unprepared orders (pending and paid statuses) with preparation status
     $stmt = db()->prepare("
         SELECT
             oi.product_id,
@@ -734,7 +760,7 @@ get('/admin/orders/preparation', function () {
         LEFT JOIN editions e ON p.edition_id = e.id
         LEFT JOIN cards c ON e.card_id = c.id
         LEFT JOIN sets s ON e.set_id = s.id
-        WHERE o.status = 'pending'
+        WHERE o.status IN ('pending', 'paid')
         AND oi.quantity > oi.prepared_quantity
         GROUP BY oi.product_id
         ORDER BY s.name ASC, e.collector_number ASC, c.name ASC
@@ -763,7 +789,7 @@ get('/admin/orders/preparation', function () {
             COUNT(DISTINCT CASE WHEN oi.quantity > oi.prepared_quantity THEN oi.product_id END) as products_needing_prep
         FROM order_items oi
         JOIN orders o ON oi.order_id = o.id
-        WHERE o.status = 'pending'
+        WHERE o.status IN ('pending', 'paid')
     ");
     $stats_stmt->execute();
     $stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
@@ -792,7 +818,7 @@ post('/admin/orders/preparation/mark', function () {
         FROM order_items oi
         JOIN orders o ON oi.order_id = o.id
         WHERE oi.product_id = :product_id
-        AND o.status = 'pending'
+        AND o.status IN ('pending', 'paid')
         AND oi.quantity > oi.prepared_quantity
         ORDER BY o.created_at ASC
     ");
@@ -858,7 +884,7 @@ post('/admin/orders/preparation/mark', function () {
         LEFT JOIN editions e ON p.edition_id = e.id
         LEFT JOIN cards c ON e.card_id = c.id
         LEFT JOIN sets s ON e.set_id = s.id
-        WHERE o.status = 'pending'
+        WHERE o.status IN ('pending', 'paid')
         AND oi.quantity > oi.prepared_quantity
         GROUP BY oi.product_id
         ORDER BY s.name ASC, e.collector_number ASC, c.name ASC
@@ -887,7 +913,7 @@ post('/admin/orders/preparation/mark', function () {
             COUNT(DISTINCT CASE WHEN oi.quantity > oi.prepared_quantity THEN oi.product_id END) as products_needing_prep
         FROM order_items oi
         JOIN orders o ON oi.order_id = o.id
-        WHERE o.status = 'pending'
+        WHERE o.status IN ('pending', 'paid')
     ");
     $stats_stmt->execute();
     $stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
@@ -917,8 +943,12 @@ get('/admin/orders/shipping', function () {
         FROM orders o
         JOIN users u ON o.user_id = u.id
         JOIN order_items oi ON o.id = oi.order_id
-        WHERE o.status = 'pending'
-        AND oi.prepared_quantity > 0
+        WHERE o.status IN ('pending', 'paid')
+        AND o.id IN (
+            SELECT DISTINCT order_id
+            FROM order_items
+            WHERE prepared_quantity > 0
+        )
         GROUP BY o.id
         ORDER BY
             CASE WHEN SUM(oi.quantity) = SUM(oi.prepared_quantity) THEN 0 ELSE 1 END,

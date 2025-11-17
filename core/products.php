@@ -19,7 +19,7 @@ function insert_product($edition_id, $name, $description, $price, $quantity, $is
 function update_product($id, $name, $description, $price, $quantity, $is_foil, $is_used) {
     $stmt = db()->prepare("
         UPDATE products
-        SET name = :name, description = :description, price = :price, quantity = :quantity, is_foil = :is_foil, updated_at = :updated_at
+        SET name = :name, description = :description, price = :price, quantity = :quantity, is_foil = :is_foil, is_used = :is_used, updated_at = :updated_at
         WHERE id = :id
     ");
     $stmt->execute([
@@ -29,6 +29,7 @@ function update_product($id, $name, $description, $price, $quantity, $is_foil, $
         ':price'       => $price,
         ':quantity'    => $quantity,
         ':is_foil'     => $is_foil,
+        ':is_used'     => $is_used,
         ':updated_at'  => date('Y-m-d H:i:s')
     ]);
 }
