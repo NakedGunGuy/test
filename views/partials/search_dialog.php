@@ -14,7 +14,7 @@
             hx-trigger="keyup changed delay:300ms"
             hx-target="#nav-search-results"
             hx-swap="innerHTML"
-            hx-include="[name='name']"
+            hx-include="#nav-search-input"
             autocomplete="off"
             style="width: 100%; font-size: 1.1rem;"
         >
