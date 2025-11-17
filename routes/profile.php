@@ -123,15 +123,15 @@ get('/profile/orders/list', function () {
 }, [$getUserAuth]);
 
 // Get individual order details
-get('/profile/order/{id}', function ($id) {
+get('/profile/order/{id}', function ($params) {
     $user = get_logged_in_user();
-    $order = get_user_order_details((int)$id, $user['id']);
-    
+    $order = get_user_order_details((int)$params['id'], $user['id']);
+
     if (!$order) {
         http_response_code(404);
         echo 'Order not found';
         return;
     }
-    
+
     partial('profile/partials/order_details', ['order' => $order]);
 }, [$getUserAuth]);

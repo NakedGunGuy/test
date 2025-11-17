@@ -40,20 +40,20 @@ function delete_product($id) {
 
 function getProducts($filters = [], $sort = 'p.id DESC', $limit = null, $offset = null) {
     $sql = "
-        SELECT 
+        SELECT
             p.*,
             e.collector_number AS edition_number,
             e.slug AS edition_slug,
             c.name AS card_name,
             s.name AS set_name,
             p.edition_id IS NULL AS is_custom,
-            
+
             -- number of times this product exists in carts
             IFNULL(ci.cart_count, 0) AS in_carts,
-            
+
             -- can be deleted if no carts have it
             CASE WHEN IFNULL(ci.cart_count,0) = 0 THEN 1 ELSE 0 END AS can_be_deleted,
-            
+
             -- can reduce quantity below current quantity
             CASE WHEN IFNULL(ci.cart_count,0) <= p.quantity THEN 1 ELSE 0 END AS can_edit_quantity
 
@@ -87,7 +87,7 @@ function getProducts($filters = [], $sort = 'p.id DESC', $limit = null, $offset 
     }
 
     if (isset($filters['name'])) {
-        $sql .= " AND p.name LIKE :name";
+        $sql .= " AND (p.name LIKE :name OR c.name LIKE :name)";
         $params[':name'] = "%" . $filters['name'] . "%";
     }
 
@@ -161,7 +161,7 @@ function getProductsCount($filters = []) {
     }
 
     if (isset($filters['name'])) {
-        $sql .= " AND p.name LIKE :name";
+        $sql .= " AND (p.name LIKE :name OR c.name LIKE :name)";
         $params[':name'] = "%" . $filters['name'] . "%";
     }
 

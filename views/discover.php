@@ -78,7 +78,7 @@
 
 <div class="section">
     <div class="products-stats">
-        <h3 class="products-count"><?= icon('file') ?> <?= t('products.products_found', ['count' => $pagination['total_products']]) ?><?= $pagination['total_pages'] > 1 ? ', page ' . $pagination['current_page'] . ' of ' . $pagination['total_pages'] : '' ?></h3>
+        <h3 class="products-count"><?= t('products.products_found', ['count' => $pagination['total_products']]) ?><?= $pagination['total_pages'] > 1 ? t('pagination.page_of', ['current' => $pagination['current_page'], 'total' => $pagination['total_pages']]) : '' ?></h3>
         <div class="products-controls">
             <div class="per-page-control">
                 <select aria-label="<?= t('aria.show_products_per_page') ?>" id="per_page_select" onchange="changePerPage(this.value)" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #C0C0D133; background: #1E1E27; color: #fff; font-size: 14px;">
@@ -103,7 +103,7 @@
             <div class="grid-header" style="grid-template-columns: 2.5fr 1.2fr 0.8fr 1fr 0.8fr 1.7fr;">
                 <div class="header-cell">
                     <span class="grid-header-with-icon">
-                        <span>🃏</span><?= t('products.card_name') ?>
+                        <?= t('products.card_name') ?>
                     </span>
                 </div>
                 <div class="header-cell"><?= t('products.edition') ?></div>

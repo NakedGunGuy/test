@@ -229,6 +229,8 @@ function t(string $key, array $replacements = []): string {
                 'products.unavailable' => 'Unavailable',
                 'products.regular' => 'Regular',
                 'products.foil_card' => '✨ Foil',
+                'products.no_results_found' => 'No results found',
+                'products.view_all_results' => 'View All Results',
 
                 // Authentication
                 'auth.welcome_back' => 'Welcome Back',
@@ -240,15 +242,15 @@ function t(string $key, array $replacements = []): string {
                 'auth.admin_portal' => 'Admin Portal',
                 'auth.admin_username' => 'Administrator Username',
                 'auth.admin_password' => 'Administrator Password',
-                'auth.access_admin_portal' => '🚀 Access Admin Portal',
+                'auth.access_admin_portal' => 'Access Admin Portal',
                 'auth.forgot_password' => 'Forgot password?',
                 'auth.forgot_password_title' => 'Forgot Password?',
                 'auth.forgot_password_description' => 'Enter your email address and we\'ll send you a link to reset your password.',
-                'auth.send_reset_link' => '🔄 Send Reset Link',
+                'auth.send_reset_link' => 'Send Reset Link',
                 'auth.remember_password' => 'Remember your password?',
                 'auth.reset_password_title' => 'Reset Your Password',
                 'auth.reset_password_description' => 'Enter your new password below.',
-                'auth.reset_password_button' => '🚀 Reset Password',
+                'auth.reset_password_button' => 'Reset Password',
                 'auth.new_password' => 'New Password',
                 'auth.confirm_password' => 'Confirm Password',
 
@@ -489,6 +491,19 @@ function t(string $key, array $replacements = []): string {
 
                 // Search
                 'search.title' => 'Search',
+
+                // Pagination
+                'pagination.page_of' => ', page {current} of {total}',
+
+                // Order
+                'order.order_number' => 'Order #{id}',
+                'order.placed_on' => 'Placed on',
+                'order.items_ordered' => 'Items Ordered',
+                'order.quantity' => 'Quantity',
+                'order.tracking_code' => 'Tracking Code',
+                'order.shipping_address' => 'Shipping Address',
+                'order.notes' => 'Order Notes',
+                'order.view_details' => 'View Details',
             ],
             'si' => [
                 // Navigation
@@ -538,6 +553,8 @@ function t(string $key, array $replacements = []): string {
                 'products.unavailable' => 'Ni na voljo',
                 'products.regular' => 'Običajno',
                 'products.foil_card' => '✨ Foil',
+                'products.no_results_found' => 'Ni rezultatov',
+                'products.view_all_results' => 'Prikaži vse rezultate',
 
                 // Authentication
                 'auth.welcome_back' => 'Dobrodošli nazaj',
@@ -549,15 +566,15 @@ function t(string $key, array $replacements = []): string {
                 'auth.admin_portal' => 'Skrbniški portal',
                 'auth.admin_username' => 'Skrbniško uporabniško ime',
                 'auth.admin_password' => 'Skrbniško geslo',
-                'auth.access_admin_portal' => '🚀 Dostop do skrbniškega portala',
+                'auth.access_admin_portal' => 'Dostop do skrbniškega portala',
                 'auth.forgot_password' => 'Ste pozabili geslo?',
                 'auth.forgot_password_title' => 'Ste pozabili geslo?',
                 'auth.forgot_password_description' => 'Vnesite svoj e-poštni naslov in poslali vam bomo povezavo za ponastavitev gesla.',
-                'auth.send_reset_link' => '🔄 Pošlji povezavo za ponastavitev',
+                'auth.send_reset_link' => 'Pošlji povezavo za ponastavitev',
                 'auth.remember_password' => 'Se spomnite gesla?',
                 'auth.reset_password_title' => 'Ponastavite geslo',
                 'auth.reset_password_description' => 'Spodaj vnesite novo geslo.',
-                'auth.reset_password_button' => '🚀 Ponastavi geslo',
+                'auth.reset_password_button' => 'Ponastavi geslo',
                 'auth.new_password' => 'Novo geslo',
                 'auth.confirm_password' => 'Potrdite geslo',
 
@@ -800,6 +817,19 @@ function t(string $key, array $replacements = []): string {
 
                 // Search
                 'search.title' => 'Iskanje',
+
+                // Pagination
+                'pagination.page_of' => ', stran {current} od {total}',
+
+                // Order
+                'order.order_number' => 'Naročilo #{id}',
+                'order.placed_on' => 'Oddano dne',
+                'order.items_ordered' => 'Naročeni artikli',
+                'order.quantity' => 'Količina',
+                'order.tracking_code' => 'Koda za sledenje',
+                'order.shipping_address' => 'Naslov dostave',
+                'order.notes' => 'Opombe naročila',
+                'order.view_details' => 'Poglej podrobnosti',
             ]
         ];
     }

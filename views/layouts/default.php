@@ -142,7 +142,7 @@
             <div class="page-title"><?= section('page_title', t('common.home')) ?></div>
         </section>
         <section>
-            <ul style="display: flex; gap: 1rem; align-items: center;">
+            <ul style="display: flex; gap: 1rem; align-items: center; justify-content: center">
                 <li>
                     <?php partial('partials/language_toggle'); ?>
                 </li>
@@ -171,7 +171,7 @@
 <div class="mobile-bottom-nav">
     <div class="mobile-nav-container">
         <a href="<?= url('') ?>" class="mobile-nav-item">
-            <span class="mobile-nav-icon"><img height="64" src="/assets/logo.png"></span>
+            <span class="mobile-nav-icon"><img height="32" src="/assets/logo.png"></span>
         </a>
         <a href="<?= url('discover') ?>" class="mobile-nav-item <?= str_starts_with($currentUrl, '/discover') ? 'active' : '' ?>">
             <?= icon('search', 'mobile-nav-icon') ?>
@@ -282,7 +282,10 @@
     </ul>
 
     <div class="mobile-menu-search">
-        <div class="mobile-menu-search-box" onclick="alert('Search feature coming soon!')">
+        <div class="mobile-menu-search-box"
+             hx-get="<?= url('search-dialog') ?>"
+             hx-target="#dialog"
+             hx-swap="innerHTML">
             <?= icon('search', 'mobile-menu-search-icon') ?>
             <span class="mobile-menu-search-placeholder"><?= t('common.search_cards') ?></span>
         </div>

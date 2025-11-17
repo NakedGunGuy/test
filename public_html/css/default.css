@@ -2777,7 +2777,7 @@ select.form-input-small {
     backdrop-filter: blur(20px);
     border-top: 1px solid rgba(0, 174, 239, 0.2);
     padding: 12px 0 8px 0;
-    z-index: 1000;
+    z-index: 1001;
     transform: translateZ(0);
     will-change: transform;
 }
@@ -2818,9 +2818,11 @@ select.form-input-small {
     height: 1.5rem;
 }
 
-.mobile-nav-icon svg {
+.mobile-nav-icon svg,
+.mobile-nav-icon img {
     width: 100%;
     height: 100%;
+    object-fit: contain;
 }
 
 .mobile-nav-text {
@@ -2845,6 +2847,8 @@ select.form-input-small {
     background: none;
     border: none;
     cursor: pointer;
+    position: relative;
+    z-index: 1001;
 }
 
 .hamburger-menu-btn:hover,
@@ -3114,25 +3118,72 @@ select.form-input-small {
     /* Enhanced mobile header layout improvements */
     body > div:first-of-type > header {
         padding: 8px 12px;
-        min-height: 48px;
-        flex-wrap: wrap;
-        gap: 8px;
+        min-height: auto;
+        height: auto;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
     }
 
     body > div:first-of-type > header > section:first-of-type {
-        flex: 1;
-        min-width: 0;
-        max-width: 100%;
+        order: 2;
+        width: 100%;
     }
 
     body > div:first-of-type > header > section:last-of-type {
-        flex-shrink: 0;
-        max-width: 100%;
+        order: 1;
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
     }
 
     body > div:first-of-type > header > section:last-of-type > ul {
         gap: 6px;
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
         flex-wrap: wrap;
+    }
+
+    body > div:first-of-type > header > section:last-of-type > ul > li {
+        flex: 0 0 auto;
+    }
+
+    body > div:first-of-type > header > section:last-of-type > ul > li:first-child {
+        order: 1;
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    body > div:first-of-type > header > section:last-of-type > ul > li:not(:first-child) {
+        order: 2;
+        flex: 1 1 auto;
+    }
+
+    /* Language toggle compact on mobile */
+    .language-toggle {
+        width: 100%;
+    }
+
+    .language-toggle .form-input {
+        width: 100%;
+        padding: 6px 10px;
+        font-size: 0.85rem;
+        min-height: 32px;
+    }
+
+    /* Compact buttons for mobile header */
+    body > div:first-of-type > header .btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        min-height: 32px;
+        white-space: nowrap;
+        flex: 1;
+    }
+
+    /* Page title sizing */
+    .page-title {
+        font-size: 1.25rem;
     }
 
     /* Better main content spacing */
@@ -3197,10 +3248,18 @@ select.form-input-small {
     .mobile-nav-icon {
         font-size: 1.4rem;
         margin-bottom: 2px;
+        width: 1.4rem;
+        height: 1.4rem;
     }
 
     .mobile-nav-text {
         font-size: 0.55rem;
+    }
+
+    /* Make logo in mobile nav smaller */
+    .mobile-nav-item:first-child .mobile-nav-icon {
+        width: 40px;
+        height: 40px;
     }
 
     .header-title {
@@ -4101,30 +4160,54 @@ select.form-input-small {
     }
 
     body > div:first-of-type > header {
-        padding: 6px 8px;
-        min-height: 44px;
-        flex-wrap: wrap;
-        gap: 6px;
+        padding: 6px 10px;
+        min-height: auto;
+        height: auto;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
     }
 
     body > div:first-of-type > header > section:first-of-type {
-        flex: 1;
-        min-width: 0;
-        max-width: 100%;
+        order: 2;
+        width: 100%;
     }
 
     body > div:first-of-type > header > section:last-of-type {
-        flex-shrink: 0;
+        order: 1;
         width: 100%;
         display: flex;
-        justify-content: flex-end;
+        justify-content: flex-start;
     }
 
     body > div:first-of-type > header > section:last-of-type > ul {
-        gap: 4px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
+        gap: 5px;
+        flex-direction: row;
+        align-items: center;
         width: 100%;
+        flex-wrap: wrap;
+    }
+
+    body > div:first-of-type > header > section:last-of-type > ul > li {
+        flex: 0 0 auto;
+    }
+
+    body > div:first-of-type > header > section:last-of-type > ul > li:first-child {
+        order: 1;
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    body > div:first-of-type > header > section:last-of-type > ul > li:not(:first-child) {
+        order: 2;
+        flex: 1 1 auto;
+    }
+
+    body > div:first-of-type > header .btn {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+        min-height: 28px;
+        flex: 1;
     }
 
     main {
@@ -4308,26 +4391,53 @@ select.form-input-small {
 
     body > div:first-of-type > header {
         padding: 8px 12px;
+        min-height: auto;
         height: auto;
-        min-height: 50px;
-        flex-wrap: wrap;
-        gap: 8px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
     }
 
     body > div:first-of-type > header > section:first-of-type {
-        flex: 1;
-        min-width: 0;
-        align-items: flex-start;
-        gap: 4px;
+        order: 2;
+        width: 100%;
     }
 
     body > div:first-of-type > header > section:last-of-type {
-        flex-shrink: 0;
+        order: 1;
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
     }
 
     body > div:first-of-type > header > section:last-of-type > ul {
         gap: 6px;
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
         flex-wrap: wrap;
+    }
+
+    body > div:first-of-type > header > section:last-of-type > ul > li {
+        flex: 0 0 auto;
+    }
+
+    body > div:first-of-type > header > section:last-of-type > ul > li:first-child {
+        order: 1;
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    body > div:first-of-type > header > section:last-of-type > ul > li:not(:first-child) {
+        order: 2;
+        flex: 1 1 auto;
+    }
+
+    body > div:first-of-type > header .btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        min-height: 32px;
+        flex: 1;
     }
 
     main {
@@ -4583,14 +4693,32 @@ select.form-input-small {
 /* Mobile responsiveness for language toggle */
 @media (max-width: 768px) {
     .language-toggle {
-        order: -1;
-        margin-right: 1rem;
+        display: flex;
+        align-items: center;
     }
 
     .language-selector {
-        min-width: 120px;
-        font-size: 13px;
-        padding: 6px 10px;
+        width: 48px;
+        min-width: 48px;
+        max-width: 48px;
+        font-size: 18px;
+        padding: 6px 2px;
+        height: 32px;
+        text-align: center;
+        text-indent: 2px;
+        overflow: hidden;
+        white-space: nowrap;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        padding-right: 2px;
+        background-image: none;
+    }
+
+    .language-selector option {
+        color: #FFFFFF;
+        font-size: 14px;
+        text-indent: 0;
     }
 }
 

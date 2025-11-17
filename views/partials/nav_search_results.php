@@ -13,16 +13,16 @@
         onclick="document.getElementById('dialog').close()"
     >
         <div style="display: flex; align-items: center; gap: 12px;">
-            <?php if (!empty($product['image_url'])): ?>
+            <?php if (!empty($product['edition_slug'])): ?>
                 <img
-                    src="<?= htmlspecialchars($product['image_url']) ?>"
+                    src="<?= card_image($product['edition_slug']) ?>"
                     alt="<?= htmlspecialchars($product['name']) ?>"
                     style="width: 40px; height: 56px; object-fit: cover; border-radius: 4px;"
                 >
             <?php endif; ?>
             <div style="flex: 1;">
                 <div style="font-weight: 600; color: white; margin-bottom: 4px;">
-                    <?= htmlspecialchars($product['name']) ?>
+                    <?= htmlspecialchars($product['card_name'] ?? $product['name']) ?>
                 </div>
                 <div style="font-size: 0.85rem; color: #999;">
                     <?= htmlspecialchars($product['set_name'] ?? '') ?>

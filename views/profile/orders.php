@@ -57,7 +57,9 @@ Order History - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         <?php else: ?>
             <div class="grid orders list" style="grid-template-columns: 1fr;">
                 <?php foreach ($orders as $order): ?>
-                    <div class="card order">
+                    <div class="card order"
+                         onclick="loadOrderDetails(<?= $order['id'] ?>)"
+                         style="cursor: pointer;">
                         <div class="header">
                             <div class="info">
                                 <h4><?= t('profile.order_number', ['id' => $order['id']]) ?></h4>
@@ -95,14 +97,46 @@ Order History - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                                 <span class="status-text"><?= t('status.' . $order['status'] . '_icon') ?></span>
                             </div>
 
-                            <span class="status-text"><?= t('profile.order_id', ['id' => $order['id']]) ?></span>
+                            <span style="color: #00AEEF; font-size: 0.9rem;">
+                                <?= t('order.view_details') ?> →
+                            </span>
                         </div>
                     </div>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
-        
-        
+
+
     </div>
     </div>
 </div>
+
+<?php start_section('js'); ?>
+<script>
+function loadOrderDetails(orderId) {
+    const dialog = document.getElementById('dialog');
+    const url = '<?= url('profile/order/') ?>' + orderId;
+
+    console.log('Fetching order details from:', url);
+
+    // Fetch order details
+    fetch(url)
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            return response.text();
+        })
+        .then(html => {
+            console.log('Order details loaded successfully');
+            dialog.innerHTML = html;
+            dialog.showModal();
+        })
+        .catch(error => {
+            console.error('Error loading order details:', error);
+            alert('Failed to load order details: ' + error.message);
+        });
+}
+</script>
+<?php end_section('js'); ?>
