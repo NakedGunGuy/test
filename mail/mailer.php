@@ -22,8 +22,8 @@ function queue_email(
     string $subject,
     string $template,
     array $data,
-    string $from = null,
-    string $fromName = null
+    ?string $from = null,
+    ?string $fromName = null
 ): bool {
     // Use environment variables for from address/name if not provided
     $from = $from ?? ($_ENV['MAIL_FROM_ADDRESS'] ?? 'noreply@cardpoint.com');
@@ -50,8 +50,8 @@ function send_mail(
     string $subject,
     string $template,
     array $data,
-    string $from = null,
-    string $fromName = null
+    ?string $from = null,
+    ?string $fromName = null
 ): bool {
     $mail = new PHPMailer(true);
 
