@@ -22,18 +22,25 @@
                 <?php foreach ($set_items as $item): ?>
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid rgba(0, 174, 239, 0.1);">
                         <div style="flex: 1;">
-                            <span style="font-weight: 600;">
-                                <?= htmlspecialchars($item['card_name'] ?: $item['product_name']) ?>
-                            </span>
-                            <?php if ($item['collector_number']): ?>
-                                <span style="color: #C0C0D1; margin-left: 8px; font-size: 12px;">
-                                    #<?= htmlspecialchars($item['collector_number']) ?>
+                            <div>
+                                <span style="font-weight: 600;">
+                                    <?= htmlspecialchars($item['card_name'] ?: $item['product_name']) ?>
                                 </span>
-                            <?php endif; ?>
-                            <?php if ($item['rarity']): ?>
-                                <span class="badge rarity rarity-<?= strtolower($item['rarity']) ?>" style="margin-left: 8px; font-size: 10px;">
-                                    <?= htmlspecialchars($item['rarity']) ?>
-                                </span>
+                                <?php if ($item['collector_number']): ?>
+                                    <span style="color: #C0C0D1; margin-left: 8px; font-size: 12px;">
+                                        #<?= htmlspecialchars($item['collector_number']) ?>
+                                    </span>
+                                <?php endif; ?>
+                                <?php if ($item['rarity']): ?>
+                                    <span class="badge rarity rarity-<?= strtolower($item['rarity']) ?>" style="margin-left: 8px; font-size: 10px;">
+                                        <?= htmlspecialchars($item['rarity']) ?>
+                                    </span>
+                                <?php endif; ?>
+                            </div>
+                            <?php if (!empty($item['product_description'])): ?>
+                                <div style="font-size: 11px; color: #C0C0D1; margin-top: 2px; font-style: italic;">
+                                    <?= htmlspecialchars($item['product_description']) ?>
+                                </div>
                             <?php endif; ?>
                         </div>
 

@@ -123,6 +123,10 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                 <span class="info-label">ZIP:</span>
                 <span class="info-value"><?= htmlspecialchars($shipping_address['zip'] ?? '') ?></span>
             </div>
+            <div class="info-row">
+                <span class="info-label">Country:</span>
+                <span class="info-value"><?= htmlspecialchars(get_country_name($shipping_address['country'] ?? '')) ?></span>
+            </div>
         </div>
     </div>
     <?php endif; ?>
@@ -150,6 +154,11 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                                 <?php if ($item['is_foil']): ?>
                                     <span class="foil-badge">✨ Foil</span>
                                 <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+                        <?php if (!empty($item['current_product_description'])): ?>
+                            <div class="item-description" style="margin-top: 4px; font-size: 12px; color: #C0C0D1; font-style: italic;">
+                                <?= htmlspecialchars($item['current_product_description']) ?>
                             </div>
                         <?php endif; ?>
                     </div>

@@ -53,10 +53,7 @@ function getProducts($filters = [], $sort = 'p.id DESC', $limit = null, $offset 
             IFNULL(ci.cart_count, 0) AS in_carts,
 
             -- can be deleted if no carts have it
-            CASE WHEN IFNULL(ci.cart_count,0) = 0 THEN 1 ELSE 0 END AS can_be_deleted,
-
-            -- can reduce quantity below current quantity
-            CASE WHEN IFNULL(ci.cart_count,0) <= p.quantity THEN 1 ELSE 0 END AS can_edit_quantity
+            CASE WHEN IFNULL(ci.cart_count,0) = 0 THEN 1 ELSE 0 END AS can_be_deleted
 
         FROM products p
         LEFT JOIN editions e ON p.edition_id = e.id

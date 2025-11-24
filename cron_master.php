@@ -43,9 +43,15 @@ $schedule = [
         'script' => __DIR__ . '/console/send_emails.php',
         'description' => 'Process email queue'
     ],
-    'sitemap' => [
+    'abandoned-carts' => [
         'frequency' => 'daily',
         'time' => '03:00',  // Run at 3:00 AM
+        'script' => __DIR__ . '/console/cleanup_abandoned_carts.php',
+        'description' => 'Return inventory from abandoned carts'
+    ],
+    'sitemap' => [
+        'frequency' => 'daily',
+        'time' => '03:30',  // Run at 3:30 AM (offset from cart cleanup)
         'script' => __DIR__ . '/console/generate_sitemap.php',
         'description' => 'Generate XML sitemap'
     ],

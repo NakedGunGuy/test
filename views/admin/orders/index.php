@@ -75,7 +75,7 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
         </div>
     <?php else: ?>
         <div class="grid">
-            <div class="grid-header" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;">
+            <div class="grid-header" style="grid-template-columns: 1.5fr 2fr 1fr 1fr 1fr 1.5fr 1fr;">
                 <div class="header-cell">Order</div>
                 <div class="header-cell">Customer</div>
                 <div class="header-cell">Items</div>
@@ -86,40 +86,41 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             </div>
             <div class="grid-body">
                 <?php foreach ($orders as $order): ?>
-                    <div class="grid-row" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;">
+                    <div class="grid-row" style="grid-template-columns: 1.5fr 2fr 1fr 1fr 1fr 1.5fr 1fr;">
                         <div class="grid-cell">
-                            <div style="font-weight: 600;">#<?= $order['id'] ?></div>
-                            <div style="font-size: 12px; color: #C0C0D1; margin-top: 2px;">
-                                <?= date('M j, Y g:i A', strtotime($order['created_at'])) ?>
+                            <div style="font-weight: 600; margin-bottom: 8px; margin-right: 8px;">#<?= $order['id'] ?></div>
+                            <div style="font-size: 11px; color: #C0C0D1; line-height: 1.5;">
+                                <?= date('M j, Y', strtotime($order['created_at'])) ?><br>
+                                <?= date('g:i A', strtotime($order['created_at'])) ?>
                             </div>
                         </div>
-                        
+
                         <div class="grid-cell">
-                            <div style="font-weight: 600;"><?= htmlspecialchars($order['username']) ?></div>
-                            <div style="font-size: 12px; color: #C0C0D1; margin-top: 2px;">
+                            <div style="font-weight: 600; margin-bottom: 6px; margin-right: 8px;"><?= htmlspecialchars($order['username']) ?></div>
+                            <div style="font-size: 11px; color: #C0C0D1; overflow: hidden; text-overflow: ellipsis;">
                                 <?= htmlspecialchars($order['email']) ?>
                             </div>
                         </div>
-                        
+
                         <div class="grid-cell">
                             <?= $order['item_count'] ?> item<?= $order['item_count'] != 1 ? 's' : '' ?>
                         </div>
-                        
+
                         <div class="grid-cell">
                             <span style="font-weight: 600; color: #01AFFC;">
                                 €<?= number_format($order['total_amount'], 2) ?>
                             </span>
                         </div>
-                        
+
                         <div class="grid-cell">
                             <span class="badge status status-<?= $order['status'] ?>">
                                 <?= ucfirst($order['status']) ?>
                             </span>
                         </div>
-                        
+
                         <div class="grid-cell">
-                            <form style="display: inline;" 
-                                  hx-post="<?= url('admin/orders/' . $order['id'] . '/status') ?>" 
+                            <form style="display: inline;"
+                                  hx-post="<?= url('admin/orders/' . $order['id'] . '/status') ?>"
                                   hx-trigger="change"
                                   data-toast="Order status updated!">
                                 <select name="status" class="form-input" style="width: auto; padding: 4px 8px; font-size: 12px;">
@@ -130,7 +131,7 @@ Orders - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                                 </select>
                             </form>
                         </div>
-                        
+
                         <div class="grid-cell">
                             <a href="<?= url('admin/orders/' . $order['id']) ?>" class="btn blue btn-small">View Details</a>
                         </div>

@@ -12,11 +12,25 @@ define('CARD_WEIGHT_GRAMS', 2); // Average weight per card in grams
 function get_shipping_countries() {
     $db = db();
     $stmt = $db->query("
-        SELECT * FROM shipping_countries 
-        WHERE is_enabled = 1 
+        SELECT * FROM shipping_countries
+        WHERE is_enabled = 1
         ORDER BY country_name ASC
     ");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/**
+ * Get country name from country code
+ */
+function get_country_name($country_code) {
+    $db = db();
+    $stmt = $db->prepare("
+        SELECT country_name FROM shipping_countries
+        WHERE country_code = :country_code
+    ");
+    $stmt->execute([':country_code' => $country_code]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result ? $result['country_name'] : $country_code;
 }
 
 /**

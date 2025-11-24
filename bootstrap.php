@@ -9,9 +9,18 @@ const ROUTE_PATH = ROOT_PATH . '/routes';
 const MAIL_PATH = ROOT_PATH . '/mail';
 
 if (file_exists(ROOT_PATH . '/.env')) {
-	foreach (parse_ini_file(__DIR__ . '/.env') as $key => $value) {
-		$_ENV[$key] = $value;
+	$env_data = parse_ini_file(ROOT_PATH . '/.env');
+	if ($env_data === false) {
+		error_log('[CRITICAL] Failed to parse .env file at ' . ROOT_PATH . '/.env');
+	} else {
+		foreach ($env_data as $key => $value) {
+			$_ENV[$key] = $value;
+			$_SERVER[$key] = $value;  // Also set in $_SERVER for compatibility
+			putenv("$key=$value");     // Also set with putenv() for getenv()
+		}
 	}
+} else {
+	error_log('[WARNING] .env file not found at ' . ROOT_PATH . '/.env');
 }
 
 // Load logger early

@@ -9,9 +9,6 @@ $getUserAuth = function() {
 get('/cart', function () {
     $user = get_logged_in_user();
 
-    // Clean up abandoned carts to return stock for items that haven't been ordered
-    cleanup_abandoned_carts(24);
-
     $cart_id = get_user_cart_id($user['id']);
     $cart_items = get_cart_items($cart_id);
     $error = $_GET['error'] ?? null;
@@ -207,7 +204,8 @@ post('/checkout', function () {
     $total_with_shipping = $cart_total + $shipping_cost;
 
     // Check Stripe minimum amount with shipping (50 euro cents)
-    if (!empty($_ENV['STRIPE_SECRET_KEY']) && $total_with_shipping < 0.50) {
+    $has_stripe = !empty($_ENV['STRIPE_SECRET_KEY'] ?? $_SERVER['STRIPE_SECRET_KEY'] ?? getenv('STRIPE_SECRET_KEY'));
+    if ($has_stripe && $total_with_shipping < 0.50) {
         header('Location: ' . url('cart?error=' . urlencode('Order total with shipping must be at least €0.50 to process payment.')));
         exit;
     }
@@ -224,7 +222,21 @@ post('/checkout', function () {
     $token = generate_order_token($order_id);
     
     // Check if Stripe is configured
-    if (empty($_ENV['STRIPE_SECRET_KEY'])) {
+
+    error_log("=== STRIPE DEBUG ===");
+    error_log("ROOT_PATH: " . ROOT_PATH);
+    error_log("Count of \$_ENV vars: " . count($_ENV));
+    error_log("Count of \$_SERVER vars with STRIPE: " . count(array_filter(array_keys($_SERVER), fn($k) => strpos($k, 'STRIPE') !== false)));
+    error_log("\$_ENV STRIPE_SECRET_KEY: " . (isset($_ENV['STRIPE_SECRET_KEY']) ? 'SET (first 20): ' . substr($_ENV['STRIPE_SECRET_KEY'], 0, 20) : 'NOT SET'));
+    error_log("\$_SERVER STRIPE_SECRET_KEY: " . (isset($_SERVER['STRIPE_SECRET_KEY']) ? 'SET (first 20): ' . substr($_SERVER['STRIPE_SECRET_KEY'], 0, 20) : 'NOT SET'));
+    error_log("getenv STRIPE_SECRET_KEY: " . (getenv('STRIPE_SECRET_KEY') !== false ? 'SET (first 20): ' . substr(getenv('STRIPE_SECRET_KEY'), 0, 20) : 'NOT SET'));
+    error_log("Vendor autoload: " . (file_exists(ROOT_PATH . '/vendor/autoload.php') ? 'YES' : 'NO'));
+
+    // Check all three methods to get the Stripe key
+    $stripe_key = $_ENV['STRIPE_SECRET_KEY'] ?? $_SERVER['STRIPE_SECRET_KEY'] ?? getenv('STRIPE_SECRET_KEY') ?: null;
+    error_log("Final stripe_key value: " . ($stripe_key ? 'SET (first 20): ' . substr($stripe_key, 0, 20) : 'NULL'));
+
+    if (empty($stripe_key)) {
         // Demo mode - simulate payment success
         update_order_status($order_id, 'paid');
         
@@ -237,7 +249,8 @@ post('/checkout', function () {
     }
     
     // Debug: Check if APP_URL is set
-    if (empty($_ENV['APP_URL'])) {
+    $app_url = $_ENV['APP_URL'] ?? $_SERVER['APP_URL'] ?? getenv('APP_URL') ?: null;
+    if (empty($app_url)) {
         update_order_status($order_id, 'cancelled');
         header('Location: ' . url('checkout/cancel?order_id=' . $order_id . '&error=' . urlencode('APP_URL not configured')));
         exit;
@@ -245,7 +258,7 @@ post('/checkout', function () {
 
     // Real Stripe integration
     require_once ROOT_PATH . '/vendor/autoload.php';
-    \Stripe\Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
+    \Stripe\Stripe::setApiKey($stripe_key);
 
     $lineItems = [];
     foreach ($cart_items as $item) {
@@ -279,8 +292,8 @@ post('/checkout', function () {
             'line_items'           => $lineItems,
             'mode'                 => 'payment',
             'metadata'             => ['order_id' => $order_id],
-            'success_url'          => $_ENV['APP_URL'] . '/checkout/success?order_id=' . $order_id . '&token=' . $token,
-            'cancel_url'           => $_ENV['APP_URL'] . '/checkout/cancel?order_id=' . $order_id . '&token=' . $token,
+            'success_url'          => $app_url . '/checkout/success?order_id=' . $order_id . '&token=' . $token,
+            'cancel_url'           => $app_url . '/checkout/cancel?order_id=' . $order_id . '&token=' . $token,
         ]);
 
         // Redirect to Stripe checkout

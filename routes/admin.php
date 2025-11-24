@@ -8,13 +8,13 @@ get('/admin', function () {
     // Get dashboard statistics
     $low_stock_threshold = get_low_stock_threshold();
     $stats_stmt = db()->prepare("
-        SELECT 
+        SELECT
             (SELECT COUNT(*) FROM products WHERE quantity > 0) as total_products,
             (SELECT COUNT(DISTINCT ci.product_id) FROM cart_items ci JOIN products p ON ci.product_id = p.id) as products_in_carts,
-            (SELECT COUNT(*) FROM orders WHERE status = 'pending') as pending_orders,
+            (SELECT COUNT(*) FROM orders WHERE status = 'paid') as pending_orders,
             (SELECT COUNT(*) FROM products WHERE quantity <= :low_stock_threshold AND quantity > 0) as low_stock,
             (SELECT COUNT(*) FROM products WHERE quantity = 0) as out_of_stock,
-            (SELECT ROUND(SUM(total_amount), 2) FROM orders WHERE created_at >= date('now', '-30 days')) as revenue,
+            (SELECT ROUND(SUM(total_amount), 2) FROM orders WHERE status IN ('paid', 'shipped', 'delivered', 'cancelled') AND created_at >= date('now', '-30 days')) as revenue,
             (SELECT COALESCE(SUM(quantity), 0) FROM products WHERE quantity > 0) as total_units_available,
             (SELECT COALESCE(SUM(ci.quantity), 0) FROM cart_items ci) as total_units_in_carts
     ");
@@ -543,7 +543,7 @@ post('/admin/products/update/{product_id}', function ($data) {
         return;
     }
 
-    $stmt = db()->prepare("SELECT quantity, (SELECT COUNT(*) FROM cart_items ci WHERE ci.product_id = p.id) AS in_carts FROM products p WHERE id = :id");
+    $stmt = db()->prepare("SELECT id FROM products WHERE id = :id");
     $stmt->execute([':id' => $product_id]);
     $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -565,11 +565,6 @@ post('/admin/products/update/{product_id}', function ($data) {
 
     if ($quantity === null || !is_numeric($quantity) || $quantity < 0) {
         $errors[] = 'Quantity must be a positive number';
-    }
-
-    // prevent reducing quantity below cart count
-    if ($quantity < $product['in_carts']) {
-        $errors[] = "Quantity cannot be lower than {$product['in_carts']} (products in carts)";
     }
 
     if ($errors) {
@@ -622,13 +617,13 @@ post('/admin/products/delete/{product_id}', function ($data) {
     }
 
     // check if product is in any cart
-    $stmt = db()->prepare("SELECT COUNT(*) AS in_carts FROM cart_items WHERE product_id = :id");
+    $stmt = db()->prepare("SELECT COALESCE(SUM(quantity), 0) AS cart_quantity FROM cart_items WHERE product_id = :id");
     $stmt->execute([':id' => $product_id]);
-    $in_carts = $stmt->fetch(PDO::FETCH_ASSOC)['in_carts'];
+    $cart_quantity = $stmt->fetch(PDO::FETCH_ASSOC)['cart_quantity'];
 
-    if ($in_carts > 0) {
+    if ($cart_quantity > 0) {
         http_response_code(403);
-        echo "[✗] Cannot delete product: it exists in {$in_carts} cart(s)";
+        echo "[✗] Cannot delete product: {$cart_quantity} items in customer carts";
         return;
     }
 
@@ -650,9 +645,9 @@ post('/admin/products/delete/{product_id}', function ($data) {
 
 // Admin Orders Management
 get('/admin/orders', function () {
-    // Get orders with user information and order totals
+    // Get orders with user information and order totals (exclude unpaid pending orders)
     $stmt = db()->prepare("
-        SELECT 
+        SELECT
             o.*,
             u.username,
             u.email,
@@ -661,23 +656,25 @@ get('/admin/orders', function () {
         FROM orders o
         JOIN users u ON o.user_id = u.id
         LEFT JOIN order_items oi ON o.id = oi.order_id
+        WHERE o.status IN ('paid', 'shipped', 'delivered', 'cancelled')
         GROUP BY o.id
         ORDER BY o.created_at DESC
         LIMIT 50
     ");
     $stmt->execute();
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    // Get order statistics
+
+    // Get order statistics (only paid orders)
     $stats_stmt = db()->prepare("
         SELECT
-            COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_count,
+            COUNT(CASE WHEN status = 'paid' THEN 1 END) as pending_count,
             COUNT(CASE WHEN status = 'shipped' THEN 1 END) as shipped_count,
             COUNT(CASE WHEN status = 'delivered' THEN 1 END) as delivered_count,
             COUNT(*) as total_orders,
             ROUND(SUM(total_amount), 2) as total_revenue
         FROM orders
-        WHERE created_at >= date('now', '-30 days')
+        WHERE status IN ('paid', 'shipped', 'delivered', 'cancelled')
+        AND created_at >= date('now', '-30 days')
     ");
     $stats_stmt->execute();
     $stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
@@ -735,13 +732,14 @@ post('/admin/orders/{id}/status', function ($data) {
 
 // Order Preparation - Grouped view for fulfillment (MUST be before {id} route)
 get('/admin/orders/preparation', function () {
-    // Get all unprepared orders (pending and paid statuses) with preparation status
+    // Get all unprepared orders (paid orders only) with preparation status
     $stmt = db()->prepare("
         SELECT
             oi.product_id,
             oi.quantity,
             oi.price,
             p.name as product_name,
+            p.description as product_description,
             p.edition_id,
             e.slug as edition_slug,
             e.collector_number,
@@ -760,7 +758,7 @@ get('/admin/orders/preparation', function () {
         LEFT JOIN editions e ON p.edition_id = e.id
         LEFT JOIN cards c ON e.card_id = c.id
         LEFT JOIN sets s ON e.set_id = s.id
-        WHERE o.status IN ('pending', 'paid')
+        WHERE o.status = 'paid'
         AND oi.quantity > oi.prepared_quantity
         GROUP BY oi.product_id
         ORDER BY s.name ASC, e.collector_number ASC, c.name ASC
@@ -789,7 +787,7 @@ get('/admin/orders/preparation', function () {
             COUNT(DISTINCT CASE WHEN oi.quantity > oi.prepared_quantity THEN oi.product_id END) as products_needing_prep
         FROM order_items oi
         JOIN orders o ON oi.order_id = o.id
-        WHERE o.status IN ('pending', 'paid')
+        WHERE o.status = 'paid'
     ");
     $stats_stmt->execute();
     $stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
@@ -866,6 +864,7 @@ post('/admin/orders/preparation/mark', function () {
             oi.quantity,
             oi.price,
             p.name as product_name,
+            p.description as product_description,
             p.edition_id,
             e.slug as edition_slug,
             e.collector_number,
@@ -884,7 +883,7 @@ post('/admin/orders/preparation/mark', function () {
         LEFT JOIN editions e ON p.edition_id = e.id
         LEFT JOIN cards c ON e.card_id = c.id
         LEFT JOIN sets s ON e.set_id = s.id
-        WHERE o.status IN ('pending', 'paid')
+        WHERE o.status = 'paid'
         AND oi.quantity > oi.prepared_quantity
         GROUP BY oi.product_id
         ORDER BY s.name ASC, e.collector_number ASC, c.name ASC
@@ -913,7 +912,7 @@ post('/admin/orders/preparation/mark', function () {
             COUNT(DISTINCT CASE WHEN oi.quantity > oi.prepared_quantity THEN oi.product_id END) as products_needing_prep
         FROM order_items oi
         JOIN orders o ON oi.order_id = o.id
-        WHERE o.status IN ('pending', 'paid')
+        WHERE o.status = 'paid'
     ");
     $stats_stmt->execute();
     $stats = $stats_stmt->fetch(PDO::FETCH_ASSOC);
@@ -927,7 +926,7 @@ post('/admin/orders/preparation/mark', function () {
 
 // Order Shipping - Sort prepared items by individual orders
 get('/admin/orders/shipping', function () {
-    // Get pending orders that have prepared items ready for shipping
+    // Get paid orders that have prepared items ready for shipping
     $stmt = db()->prepare("
         SELECT DISTINCT
             o.id as order_id,
@@ -943,7 +942,7 @@ get('/admin/orders/shipping', function () {
         FROM orders o
         JOIN users u ON o.user_id = u.id
         JOIN order_items oi ON o.id = oi.order_id
-        WHERE o.status IN ('pending', 'paid')
+        WHERE o.status = 'paid'
         AND o.id IN (
             SELECT DISTINCT order_id
             FROM order_items
@@ -970,6 +969,7 @@ get('/admin/orders/{id}/prepared-items', function ($data) {
         SELECT
             oi.*,
             p.name as product_name,
+            p.description as product_description,
             c.name as card_name,
             s.name as set_name,
             e.collector_number,
@@ -1020,6 +1020,7 @@ get('/admin/orders/{id}', function ($data) {
         SELECT
             oi.*,
             p.name as current_product_name,
+            p.description as current_product_description,
             p.quantity as current_stock,
             e.collector_number,
             c.name as card_name,
@@ -1051,30 +1052,32 @@ get('/admin/orders/{id}', function ($data) {
 
 // Admin Analytics
 get('/admin/analytics', function () {
-    // Sales data for the last 30 days
+    // Sales data for the last 30 days (only paid orders)
     $sales_stmt = db()->prepare("
-        SELECT 
+        SELECT
             DATE(created_at) as date,
             COUNT(*) as orders_count,
             ROUND(SUM(total_amount), 2) as daily_revenue
-        FROM orders 
-        WHERE created_at >= date('now', '-30 days')
+        FROM orders
+        WHERE status IN ('paid', 'shipped', 'delivered', 'cancelled')
+        AND created_at >= date('now', '-30 days')
         GROUP BY DATE(created_at)
         ORDER BY date DESC
     ");
     $sales_stmt->execute();
     $daily_sales = $sales_stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    // Top selling products
+
+    // Top selling products (only paid orders)
     $top_products_stmt = db()->prepare("
-        SELECT 
+        SELECT
             p.name,
             SUM(oi.quantity) as total_sold,
             ROUND(SUM(oi.quantity * oi.price), 2) as revenue
         FROM order_items oi
         JOIN products p ON oi.product_id = p.id
         JOIN orders o ON oi.order_id = o.id
-        WHERE o.created_at >= date('now', '-30 days')
+        WHERE o.status IN ('paid', 'shipped', 'delivered', 'cancelled')
+        AND o.created_at >= date('now', '-30 days')
         GROUP BY p.id, p.name
         ORDER BY total_sold DESC
         LIMIT 10
@@ -1084,14 +1087,14 @@ get('/admin/analytics', function () {
     
     // Overall statistics
     $overview_stmt = db()->prepare("
-        SELECT 
-            (SELECT COUNT(*) FROM orders) as total_orders,
+        SELECT
+            (SELECT COUNT(*) FROM orders WHERE status IN ('paid', 'shipped', 'delivered', 'cancelled')) as total_orders,
             (SELECT COUNT(*) FROM products WHERE quantity > 0) as products_in_stock,
             (SELECT COUNT(DISTINCT ci.product_id) FROM cart_items ci JOIN products p ON ci.product_id = p.id) as products_in_carts,
             (SELECT COUNT(*) FROM products WHERE quantity <= 5 AND quantity > 0) as low_stock_products,
             (SELECT COUNT(*) FROM users) as total_customers,
-            (SELECT ROUND(SUM(total_amount), 2) FROM orders) as total_revenue,
-            (SELECT ROUND(AVG(total_amount), 2) FROM orders) as avg_order_value,
+            (SELECT ROUND(SUM(total_amount), 2) FROM orders WHERE status IN ('paid', 'shipped', 'delivered', 'cancelled')) as total_revenue,
+            (SELECT ROUND(AVG(total_amount), 2) FROM orders WHERE status IN ('paid', 'shipped', 'delivered', 'cancelled')) as avg_order_value,
             (SELECT COALESCE(SUM(quantity), 0) FROM products WHERE quantity > 0) as total_units_available,
             (SELECT COALESCE(SUM(ci.quantity), 0) FROM cart_items ci) as total_units_in_carts
     ");

@@ -1,5 +1,5 @@
 <?php start_section('title'); ?>
-Order Successful - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
+Order Successful - <?= htmlspecialchars($_ENV['APP_NAME'] ?? 'Cardpoint') ?>
 <?php end_section('title'); ?>
 
 <?php 

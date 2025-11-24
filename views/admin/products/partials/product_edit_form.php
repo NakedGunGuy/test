@@ -52,17 +52,16 @@
             
             <div class="form-group">
                 <label class="form-label">Quantity</label>
-                <input 
-                    type="number" 
+                <input
+                    type="number"
                     name="quantity"
-                    value="<?= $product['quantity'] ?>" 
-                    min="<?= $product['in_carts'] ?>" 
+                    value="<?= $product['quantity'] ?>"
+                    min="0"
                     class="form-input"
-                    <?= $product['can_edit_quantity'] ? '' : 'readonly title="Quantity cannot be lower than items in carts"' ?>
                     required
                 >
                 <?php if ($product['in_carts'] > 0): ?>
-                    <div class="form-help"><?= $product['in_carts'] ?> items currently in customer carts</div>
+                    <div class="form-help">Note: <?= $product['in_carts'] ?> items currently reserved in customer carts</div>
                 <?php endif; ?>
             </div>
         </div>

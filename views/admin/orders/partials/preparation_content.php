@@ -89,6 +89,11 @@
                                         <?= htmlspecialchars($item['card_name']) ?>
                                     </div>
                                 <?php endif; ?>
+                                <?php if (!empty($item['product_description'])): ?>
+                                    <div style="font-size: 11px; color: #C0C0D1; margin-top: 4px; font-style: italic;">
+                                        <?= htmlspecialchars($item['product_description']) ?>
+                                    </div>
+                                <?php endif; ?>
                             </div>
 
                             <div class="grid-cell">
@@ -166,18 +171,5 @@
             </div>
         </div>
     <?php endforeach; ?>
-
-    <!-- Preparation Instructions -->
-    <div class="section">
-        <div class="card" style="background: rgba(0, 174, 239, 0.05); border: 1px solid rgba(0, 174, 239, 0.2);">
-            <h3 style="margin-top: 0; color: #01AFFC;"><?= icon('clipboard') ?> <?= t('preparation.instructions_title') ?></h3>
-            <ul style="margin: 0; padding-left: 1.5rem;">
-                <li><?= t('preparation.instructions_1') ?></li>
-                <li><?= t('preparation.instructions_2') ?></li>
-                <li><?= t('preparation.instructions_3') ?></li>
-                <li><?= t('preparation.instructions_4') ?> <a href="<?= url('admin/orders') ?>" style="color: #01AFFC;"><?= t('preparation.orders_management') ?></a></li>
-            </ul>
-        </div>
-    </div>
 <?php endif; ?>
 </div> <!-- End preparation-content -->
