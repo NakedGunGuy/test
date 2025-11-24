@@ -531,3 +531,180 @@ function send_order_shipped_email(int $order_id, string $tracking_number = ''): 
     );
 }
 
+function send_order_refunded_email(int $order_id, string $reason = ''): bool {
+    require_once MAIL_PATH . '/mailer.php';
+
+    $pdo = db();
+
+    // Get order details
+    $stmt = $pdo->prepare("
+        SELECT o.*, u.username, u.email
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        WHERE o.id = :order_id
+    ");
+    $stmt->execute([':order_id' => $order_id]);
+    $order = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$order) {
+        return false;
+    }
+
+    // Get order items with product details
+    $stmt = $pdo->prepare("
+        SELECT
+            oi.*,
+            CASE
+                WHEN p.edition_id IS NOT NULL THEN
+                    c.name || ' - ' || s.name || ' #' || e.collector_number ||
+                    CASE WHEN e.rarity THEN ' (' || e.rarity || ')' ELSE '' END ||
+                    CASE WHEN p.is_foil = 1 THEN ' [Foil]' ELSE '' END
+                ELSE
+                    oi.name
+            END as card_details
+        FROM order_items oi
+        LEFT JOIN products p ON oi.product_id = p.id
+        LEFT JOIN editions e ON p.edition_id = e.id
+        LEFT JOIN cards c ON e.card_id = c.id
+        LEFT JOIN sets s ON e.set_id = s.id
+        WHERE oi.order_id = :order_id
+    ");
+    $stmt->execute([':order_id' => $order_id]);
+    $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Parse shipping address
+    $shipping_address = null;
+    if ($order['shipping_address']) {
+        $shipping_address = json_decode($order['shipping_address'], true);
+    }
+
+    // Prepare email data
+    $email_data = [
+        'order' => [
+            'id' => $order['id'],
+            'status' => $order['status'],
+            'total_amount' => $order['total_amount'],
+            'created_at' => $order['created_at'],
+            'customer_name' => $shipping_address['full_name'] ?? $order['username']
+        ],
+        'items' => $items,
+        'shipping_address' => $shipping_address,
+        'refund_reason' => $reason
+    ];
+
+    // Queue the email
+    return queue_email(
+        $order['email'],
+        'Order Refunded #' . $order['id'],
+        'order_refunded',
+        $email_data
+    );
+}
+
+/**
+ * Deny an order and process refund via Stripe
+ *
+ * @param int $order_id The order ID to deny
+ * @param string $reason Optional reason for denial/refund
+ * @return array ['success' => bool, 'message' => string, 'refund_id' => string|null]
+ */
+function deny_and_refund_order(int $order_id, string $reason = ''): array {
+    $pdo = db();
+
+    // Get order details
+    $stmt = $pdo->prepare("
+        SELECT o.*, u.email, u.username
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        WHERE o.id = :id
+    ");
+    $stmt->execute([':id' => $order_id]);
+    $order = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$order) {
+        return ['success' => false, 'message' => 'Order not found', 'refund_id' => null];
+    }
+
+    // Check if order is in a refundable status (paid, shipped)
+    if (!in_array($order['status'], ['paid', 'shipped'])) {
+        return ['success' => false, 'message' => 'Order cannot be refunded (status: ' . $order['status'] . ')', 'refund_id' => null];
+    }
+
+    // Check if Stripe is configured
+    $stripe_key = $_ENV['STRIPE_SECRET_KEY'] ?? $_SERVER['STRIPE_SECRET_KEY'] ?? getenv('STRIPE_SECRET_KEY') ?: null;
+
+    if (empty($stripe_key)) {
+        // Demo mode - just cancel the order without actual Stripe refund
+        update_order_status($order_id, 'cancelled');
+        send_order_refunded_email($order_id, $reason ?: 'Order denied by admin (Demo mode - no actual refund processed)');
+
+        return [
+            'success' => true,
+            'message' => 'Order denied and cancelled (Demo mode - Stripe not configured)',
+            'refund_id' => 'demo_mode'
+        ];
+    }
+
+    // Real Stripe refund
+    try {
+        require_once ROOT_PATH . '/vendor/autoload.php';
+        \Stripe\Stripe::setApiKey($stripe_key);
+
+        // Search for the payment intent associated with this order
+        // We'll search for checkout sessions with this order_id in metadata
+        $sessions = \Stripe\Checkout\Session::all([
+            'limit' => 10,
+        ]);
+
+        $payment_intent_id = null;
+        foreach ($sessions->data as $session) {
+            if (isset($session->metadata['order_id']) && $session->metadata['order_id'] == $order_id) {
+                $payment_intent_id = $session->payment_intent;
+                break;
+            }
+        }
+
+        if (!$payment_intent_id) {
+            return ['success' => false, 'message' => 'Payment intent not found for this order', 'refund_id' => null];
+        }
+
+        // Create the refund
+        $refund = \Stripe\Refund::create([
+            'payment_intent' => $payment_intent_id,
+            'reason' => 'requested_by_customer', // Stripe requires specific reason values
+            'metadata' => [
+                'order_id' => $order_id,
+                'admin_reason' => $reason
+            ]
+        ]);
+
+        // Update order status to cancelled
+        update_order_status($order_id, 'cancelled');
+
+        // Store refund information in order notes
+        $notes = $order['notes'] ?? '';
+        $notes .= "\n\n[" . date('Y-m-d H:i:s') . "] Refund processed: " . $refund->id;
+        if ($reason) {
+            $notes .= "\nReason: " . $reason;
+        }
+        $notes .= "\nRefund amount: €" . number_format($refund->amount / 100, 2);
+
+        $stmt = $pdo->prepare("UPDATE orders SET notes = :notes WHERE id = :id");
+        $stmt->execute([':notes' => $notes, ':id' => $order_id]);
+
+        // Send refund notification email
+        send_order_refunded_email($order_id, $reason);
+
+        return [
+            'success' => true,
+            'message' => 'Order refunded successfully (€' . number_format($refund->amount / 100, 2) . ')',
+            'refund_id' => $refund->id
+        ];
+
+    } catch (\Stripe\Exception\ApiErrorException $e) {
+        return ['success' => false, 'message' => 'Stripe error: ' . $e->getMessage(), 'refund_id' => null];
+    } catch (Exception $e) {
+        return ['success' => false, 'message' => 'Error: ' . $e->getMessage(), 'refund_id' => null];
+    }
+}
+

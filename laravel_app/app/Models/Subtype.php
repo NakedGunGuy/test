@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Subtype extends Model
 {
@@ -11,7 +12,7 @@ class Subtype extends Model
     ];
 
     // Define relationships
-    public function cards()
+    public function cards(): BelongsToMany
     {
         return $this->belongsToMany(Card::class, 'card_subtypes');
     }

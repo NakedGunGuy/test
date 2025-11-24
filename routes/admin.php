@@ -730,6 +730,26 @@ post('/admin/orders/{id}/status', function ($data) {
     }
 }, [$getAdminAuth]);
 
+// Deny order and refund
+post('/admin/orders/{id}/deny', function ($data) {
+    $order_id = $data['id'];
+    $reason = $_POST['reason'] ?? '';
+
+    // Process refund
+    $result = deny_and_refund_order($order_id, $reason);
+
+    if ($result['success']) {
+        http_response_code(200);
+        echo '[✓] ' . $result['message'];
+
+        // Redirect back to order detail to show updated status
+        header('HX-Redirect: ' . url('admin/orders/' . $order_id));
+    } else {
+        http_response_code(400);
+        echo '[✗] ' . $result['message'];
+    }
+}, [$getAdminAuth]);
+
 // Order Preparation - Grouped view for fulfillment (MUST be before {id} route)
 get('/admin/orders/preparation', function () {
     // Get all unprepared orders (paid orders only) with preparation status

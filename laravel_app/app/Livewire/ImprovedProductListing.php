@@ -5,11 +5,10 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Product;
 use App\Models\Set;
-use App\Models\Game;
 use Livewire\Attributes\Computed;
 use Livewire\WithPagination;
 
-class ProductListing extends Component
+class ImprovedProductListing extends Component
 {
     use WithPagination;
 
@@ -17,20 +16,17 @@ class ProductListing extends Component
     public $min_price = null;
     public $max_price = null;
     public $set_id = null;
-    public $game_id = null; // New game filter
     public $is_foil = null;
     public $in_stock_only = true;
     public $per_page = 10;
     public $view = 'grid'; // grid, list, box
     public $show_filters = false; // For mobile filter toggle
-    public $cart_quantity = [];
 
     protected $queryString = [
         'name' => ['except' => ''],
         'min_price' => ['except' => null],
         'max_price' => ['except' => null],
         'set_id' => ['except' => null],
-        'game_id' => ['except' => null], // New query parameter
         'is_foil' => ['except' => null],
         'in_stock_only' => ['except' => true],
         'per_page' => ['except' => 10],
@@ -40,7 +36,7 @@ class ProductListing extends Component
     #[Computed]
     public function products()
     {
-        $query = Product::with(['edition.card', 'edition.set', 'edition.card.game']);
+        $query = Product::with(['edition.card', 'edition.set']);
 
         if ($this->name) {
             $query->where(function($q) {
@@ -69,13 +65,6 @@ class ProductListing extends Component
             });
         }
 
-        // Filter by game if specified
-        if ($this->game_id) {
-            $query->whereHas('edition.card', function($q) {
-                $q->where('game_id', $this->game_id);
-            });
-        }
-
         if ($this->is_foil !== null && $this->is_foil !== '') {
             $query->where('is_foil', $this->is_foil ? true : false);
         }
@@ -87,17 +76,7 @@ class ProductListing extends Component
     #[Computed]
     public function sets()
     {
-        // If game is selected, only show sets from that game
-        if ($this->game_id) {
-            return Set::where('game_id', $this->game_id)->orderBy('name')->get();
-        }
         return Set::orderBy('name')->get();
-    }
-
-    #[Computed]
-    public function games()
-    {
-        return Game::orderBy('name')->get();
     }
 
     public function mount()
@@ -127,36 +106,11 @@ class ProductListing extends Component
         $this->show_filters = !$this->show_filters;
     }
 
-    public function addToCart($product_id)
-    {
-        $quantity = $this->cart_quantity[$product_id] ?? 1;
-        $product = Product::find($product_id);
-
-        if (!$product) {
-            session()->flash('error', 'Product not found');
-            return;
-        }
-
-        if ($quantity > $product->quantity) {
-            session()->flash('error', 'Not enough stock available');
-            return;
-        }
-
-        // In a real implementation, you would add to cart logic here
-        // For now, just show a success message
-        session()->flash('message', 'Product added to cart successfully!');
-
-        $this->dispatch('product-added-to-cart',
-            message: 'Product added to cart successfully!'
-        );
-    }
-
     public function render()
     {
-        return view('livewire.product-listing', [
+        return view('livewire.improved-product-listing', [
             'products' => $this->products,
             'sets' => $this->sets,
-            'games' => $this->games, // Pass games to the view
         ]);
     }
 

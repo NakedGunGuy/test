@@ -32,8 +32,8 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
             </div>
         </div>
         <div class="status-actions">
-            <form style="display: flex; gap: 10px; align-items: center;" 
-                  hx-post="<?= url('admin/orders/' . $order['id'] . '/status') ?>" 
+            <form style="display: flex; gap: 10px; align-items: center;"
+                  hx-post="<?= url('admin/orders/' . $order['id'] . '/status') ?>"
                   hx-trigger="submit"
                   data-toast="Order status updated!">
                 <select name="status" class="form-input" style="padding: 8px 12px;" onchange="toggleTrackingField(this)">
@@ -51,7 +51,16 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                        style="padding: 8px 12px; display: <?= $order['status'] === 'shipped' ? 'block' : 'none' ?>;">
                 <button type="submit" class="btn btn-small blue">Update</button>
             </form>
-            
+
+            <?php if (in_array($order['status'], ['paid', 'shipped'])): ?>
+            <button type="button"
+                    class="btn btn-small red"
+                    onclick="showDenyDialog(<?= $order['id'] ?>)"
+                    style="margin-left: 10px;">
+                Deny & Refund
+            </button>
+            <?php endif; ?>
+
             <script>
                 function toggleTrackingField(select) {
                     const trackingField = document.getElementById('tracking_field');
@@ -61,6 +70,26 @@ Order #<?= $order['id'] ?> - Admin - <?= htmlspecialchars($_ENV['APP_NAME']) ?>
                     } else {
                         trackingField.style.display = 'none';
                         trackingField.value = '';
+                    }
+                }
+
+                function showDenyDialog(orderId) {
+                    const reason = prompt('Enter reason for denying this order and processing refund (optional):');
+                    if (reason !== null) { // User didn't cancel
+                        if (confirm('Are you sure you want to deny this order and process a full refund? This action cannot be undone.')) {
+                            // Create and submit form via HTMX
+                            const formData = new FormData();
+                            formData.append('reason', reason);
+
+                            htmx.ajax('POST', '<?= url('admin/orders/') ?>' + orderId + '/deny', {
+                                values: { reason: reason },
+                                target: 'body',
+                                swap: 'none'
+                            }).then(() => {
+                                // Reload the page after successful refund
+                                window.location.reload();
+                            });
+                        }
                     }
                 }
             </script>

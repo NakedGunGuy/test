@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
@@ -26,17 +28,24 @@ class Order extends Model
     ];
 
     // Define relationships
-    public function user()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function orderItems()
+    public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    public function shippingTier()
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'order_items')
+                    ->withPivot('quantity', 'price', 'name')
+                    ->withTimestamps();
+    }
+
+    public function shippingTier(): BelongsTo
     {
         return $this->belongsTo(ShippingWeightTier::class);
     }

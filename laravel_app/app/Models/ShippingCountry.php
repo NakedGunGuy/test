@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ShippingCountry extends Model
 {
@@ -21,7 +22,7 @@ class ShippingCountry extends Model
     ];
 
     // Define relationships
-    public function shippingWeightTiers()
+    public function shippingWeightTiers(): HasMany
     {
         return $this->hasMany(ShippingWeightTier::class);
     }

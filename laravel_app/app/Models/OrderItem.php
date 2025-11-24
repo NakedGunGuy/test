@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderItem extends Model
 {
@@ -20,13 +21,19 @@ class OrderItem extends Model
     ];
 
     // Define relationships
-    public function order()
+    public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
     }
 
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    // Calculate the total price for this order item
+    public function getTotalAttribute()
+    {
+        return $this->price * $this->quantity;
     }
 }

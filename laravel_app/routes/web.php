@@ -18,6 +18,7 @@ use App\Http\Controllers\AuthController;
 // Home and discover routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/discover', [HomeController::class, 'discover'])->name('discover');
+Route::get('/product/{id}', [HomeController::class, 'product'])->name('product.show');
 
 // Authentication routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');

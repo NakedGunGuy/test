@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Edition extends Model
 {
@@ -24,17 +26,22 @@ class Edition extends Model
     ];
 
     // Define relationships
-    public function card()
+    public function card(): BelongsTo
     {
         return $this->belongsTo(Card::class);
     }
 
-    public function set()
+    public function set(): BelongsTo
     {
         return $this->belongsTo(Set::class);
     }
 
-    public function products()
+    public function game()
+    {
+        return $this->hasOneThrough(Game::class, Card::class);
+    }
+
+    public function products(): HasMany
     {
         return $this->hasMany(Product::class);
     }

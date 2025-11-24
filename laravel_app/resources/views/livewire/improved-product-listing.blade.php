@@ -1,8 +1,8 @@
-<div>
+<div class="discover-page">
     <!-- Mobile/Tablet Filter Toggle Button -->
     <div class="md:hidden mb-4">
-        <button
-            type="button"
+        <button 
+            type="button" 
             wire:click="toggleFilters"
             class="filter-toggle-btn w-full flex justify-between items-center p-3 bg-gray-100 rounded-lg"
         >
@@ -16,21 +16,7 @@
 
     <!-- Filters -->
     <div class="{{ $show_filters ? 'block' : 'hidden md:block' }} mb-6 p-4 bg-gray-50 rounded-lg">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-            <div>
-                <label for="game_id" class="block text-sm font-medium text-gray-700">Game</label>
-                <select
-                    id="game_id"
-                    wire:model.live="game_id"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                >
-                    <option value="">All Games</option>
-                    @foreach($games as $game)
-                        <option value="{{ $game->id }}">{{ $game->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
                 <input
@@ -171,6 +157,7 @@
                             src="{{ $this->cardImage($product->edition?->slug) }}"
                             alt="{{ $product->edition?->card?->name ?? $product->name }}"
                             class="w-full h-48 object-cover cursor-pointer"
+                            wire:click="$dispatch('show-card-image', {slug: '{{ $product->edition?->slug }}'})"
                         />
                     </div>
 
@@ -192,14 +179,14 @@
 
                         <div class="product-card-details mt-2">
                             <div class="stock-info">
-                                <span class="stock-badge inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                    {{ $product->quantity > 0
-                                        ? ($product->quantity <= 5
-                                            ? 'bg-yellow-100 text-yellow-800'
-                                            : 'bg-green-100 text-green-800')
+                                <span class="stock-badge inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                    {{ $product->quantity > 0 
+                                        ? ($product->quantity <= 5 
+                                            ? 'bg-yellow-100 text-yellow-800' 
+                                            : 'bg-green-100 text-green-800') 
                                         : 'bg-red-100 text-red-800' }}">
-                                    {{ $product->quantity > 0
-                                        ? $product->quantity . ' in stock'
+                                    {{ $product->quantity > 0 
+                                        ? $product->quantity . ' in stock' 
                                         : 'Out of stock' }}
                                 </span>
                             </div>
@@ -217,11 +204,11 @@
                     <div class="product-card-footer p-4">
                         @if($product->quantity > 0)
                             <div class="flex">
-                                <input
-                                    type="number"
-                                    wire:model.live="cart_quantity.{{ $product->id }}"
-                                    min="1"
-                                    max="{{ $product->quantity }}"
+                                <input 
+                                    type="number" 
+                                    wire:model.live="cart_quantity.{{ $product->id }}" 
+                                    min="1" 
+                                    max="{{ $product->quantity }}" 
                                     value="1"
                                     class="w-16 border border-gray-300 rounded-l text-center"
                                 >
@@ -233,8 +220,8 @@
                                 </button>
                             </div>
                         @else
-                            <button
-                                disabled
+                            <button 
+                                disabled 
                                 class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded text-gray-500 bg-gray-100"
                             >
                                 Out of Stock
@@ -257,7 +244,8 @@
                                 <img
                                     src="{{ $this->cardImage($product->edition?->slug) }}"
                                     alt="{{ $product->edition?->card?->name ?? $product->name }}"
-                                    class="w-16 h-16 object-cover rounded mr-4"
+                                    class="w-16 h-16 object-cover rounded mr-4 cursor-pointer"
+                                    wire:click="$dispatch('show-card-image', {slug: '{{ $product->edition?->slug }}'})"
                                 />
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-900">
@@ -284,11 +272,11 @@
                                         €{{ number_format($product->price, 2) }}
                                     </p>
                                     <p class="text-sm text-gray-500">
-                                        Qty:
-                                        <span class="{{ $product->quantity > 0
-                                            ? ($product->quantity <= 5
-                                                ? 'text-yellow-600 font-bold'
-                                                : 'text-green-600')
+                                        Qty: 
+                                        <span class="{{ $product->quantity > 0 
+                                            ? ($product->quantity <= 5 
+                                                ? 'text-yellow-600 font-bold' 
+                                                : 'text-green-600') 
                                             : 'text-red-600 font-bold' }}">
                                             {{ $product->quantity }}
                                         </span>
@@ -298,11 +286,11 @@
                                 <div>
                                     @if($product->quantity > 0)
                                         <div class="flex items-center space-x-2">
-                                            <input
-                                                type="number"
-                                                wire:model.live="cart_quantity.{{ $product->id }}"
-                                                min="1"
-                                                max="{{ $product->quantity }}"
+                                            <input 
+                                                type="number" 
+                                                wire:model.live="cart_quantity.{{ $product->id }}" 
+                                                min="1" 
+                                                max="{{ $product->quantity }}" 
                                                 value="1"
                                                 class="w-16 border border-gray-300 rounded text-center"
                                             >
@@ -314,8 +302,8 @@
                                             </button>
                                         </div>
                                     @else
-                                        <button
-                                            disabled
+                                        <button 
+                                            disabled 
                                             class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-gray-100"
                                         >
                                             Out
@@ -335,7 +323,7 @@
             </ul>
         </div>
     @else
-        <!-- Grid View -->
+        <!-- Grid View (Table Style) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             @forelse($products as $product)
                 <div class="bg-white overflow-hidden shadow rounded-lg">
@@ -344,7 +332,8 @@
                             <img
                                 src="{{ $this->cardImage($product->edition?->slug) }}"
                                 alt="{{ $product->edition?->card?->name ?? $product->name }}"
-                                class="w-32 h-32 object-cover rounded"
+                                class="w-32 h-32 object-cover rounded cursor-pointer"
+                                wire:click="$dispatch('show-card-image', {slug: '{{ $product->edition?->slug }}'})"
                             />
                         </div>
 
@@ -370,10 +359,10 @@
                             <span class="text-lg font-medium text-gray-900">
                                 €{{ number_format($product->price, 2) }}
                             </span>
-                            <span class="text-sm {{ $product->quantity > 0
-                                ? ($product->quantity <= 5
-                                    ? 'text-yellow-600 font-bold'
-                                    : 'text-green-600')
+                            <span class="text-sm {{ $product->quantity > 0 
+                                ? ($product->quantity <= 5 
+                                    ? 'text-yellow-600 font-bold' 
+                                    : 'text-green-600') 
                                 : 'text-red-600 font-bold' }}">
                                 Qty: {{ $product->quantity }}
                             </span>
@@ -382,11 +371,11 @@
                         <div class="mt-4">
                             @if($product->quantity > 0)
                                 <div class="flex">
-                                    <input
-                                        type="number"
-                                        wire:model.live="cart_quantity.{{ $product->id }}"
-                                        min="1"
-                                        max="{{ $product->quantity }}"
+                                    <input 
+                                        type="number" 
+                                        wire:model.live="cart_quantity.{{ $product->id }}" 
+                                        min="1" 
+                                        max="{{ $product->quantity }}" 
                                         value="1"
                                         class="w-16 border border-gray-300 rounded-l text-center"
                                     >
@@ -421,22 +410,46 @@
         </div>
     @endif
 
-    <!-- Flash Messages -->
-    @if(session()->has('message'))
-        <div x-data="{ show: true }"
-             x-show="show"
-             x-init="setTimeout(() => show = false, 3000)"
-             class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50">
-            {{ session('message') }}
+    <!-- Card Image Modal -->
+    <div x-data="{ showImage: false, imageSrc: '', imageAlt: '' }" 
+         x-show="showImage"
+         x-on:show-card-image.window="showImage = true; imageSrc = $event.detail.slug; imageAlt = 'Card Image'"
+         x-on:keydown.escape.window="showImage = false"
+         class="fixed inset-0 z-50 overflow-y-auto" 
+         style="display: none;">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div x-on:click="showImage = false" class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <div class="mt-2">
+                                <img :src="imageSrc" :alt="imageAlt" class="max-w-full max-h-[70vh] mx-auto">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button x-on:click="showImage = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Close
+                    </button>
+                </div>
+            </div>
         </div>
-    @endif
-
-    @if(session()->has('error'))
-        <div x-data="{ show: true }"
-             x-show="show"
-             x-init="setTimeout(() => show = false, 3000)"
-             class="fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded shadow-lg z-50">
-            {{ session('error') }}
-        </div>
-    @endif
+    </div>
 </div>
+
+@push('scripts')
+<script>
+    // Add search functionality with debouncing
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('product-added-to-cart', (event) => {
+            // Show notification when product is added to cart
+            console.log('Product added to cart:', event.message);
+        });
+    });
+</script>
+@endpush>

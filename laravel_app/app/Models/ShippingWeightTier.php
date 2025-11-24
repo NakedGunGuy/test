@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ShippingWeightTier extends Model
 {
@@ -23,12 +25,12 @@ class ShippingWeightTier extends Model
     ];
 
     // Define relationships
-    public function country()
+    public function country(): BelongsTo
     {
         return $this->belongsTo(ShippingCountry::class);
     }
 
-    public function orders()
+    public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'shipping_tier_id');
     }
